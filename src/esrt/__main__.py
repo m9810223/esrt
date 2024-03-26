@@ -27,7 +27,7 @@ _host_annotated = t.Annotated[
 _method_annotated = t.Annotated[
     str, typer.Option('-X', '--method', '--request', help='HTTP method')
 ]
-_path_annotated = t.Annotated[str, typer.Option('-P', '--path', help='HTTP path')]
+_path_annotated = t.Annotated[str, typer.Argument(help='HTTP path')]
 _index_annotation = typer.Option(
     '-i', '--index', help='A comma-separated list of index names to search'
 )

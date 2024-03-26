@@ -10,6 +10,39 @@ pipx install esrt
 
 ---
 
+## `e` - search
+
+```sh
+esrt e localhost -d e.json
+```
+
+`e.json`:
+
+```json
+{
+  "_source": [],
+  "size": 1,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "_index": "my-index"
+          }
+        }
+      ],
+      "must": [],
+      "must_not": [],
+      "should": []
+    }
+  }
+}
+```
+
+```sh
+esrt e localhost | jq '.hits.hits.[] | . + ._source | del(._source)' -c
+```
+
 ## `s` - scan, source
 
 ```sh
@@ -29,14 +62,19 @@ cat <<EOF | esrt s localhost -d - | jq -c
     }
   }
 }
-
 EOF
 ```
 
 ## `r` - perform_request (request path)
 
 ```sh
-esrt r localhost -X GET -P _cat/indices -p 'pretty=&format=json&v&s=index' | jq
+cat <<EOF | esrt r localhost -X POST _sql -d -
+SELECT * FROM my-index
+EOF
+```
+
+```sh
+esrt r localhost -X GET _cat/indices -p 'pretty=&format=json&v&s=index' | jq
 ```
 
 ## `t` - streaming_bulk (bulk) / target
