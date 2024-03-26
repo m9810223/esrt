@@ -1,0 +1,119 @@
+# fail_fast: true
+
+exclude: |
+  (?x)^(
+    .*/migrations/.*|
+    CHANGELOG.md
+  )$
+
+repos:
+  ### LOCAL
+
+  - repo: local
+    hooks:
+      - id: sh -c
+        name: sh -c
+        entry: sh -c
+        args:
+          - echo "pre-commit!"
+        language: system
+        require_serial: true
+        # verbose: true
+
+  ### PYTHON
+
+  - repo: https://github.com/psf/black
+    rev: 552baf822992936134cbd31a38f69c8cfe7c0f05  # frozen: 24.3.0
+    hooks: # https://black.readthedocs.io/en/stable/integrations/source_version_control.html
+      - id: black
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 1986670a8c4578a526ad3dddee3b35d9cfb9d7be  # frozen: v0.3.4
+    hooks: # https://beta.ruff.rs/docs/installation-and-usage/#usage
+      - id: ruff
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "9db9854e3041219b1eb619872a2dfaf58adfb20b"  # frozen: v1.9.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        args:
+          - --explicit-package-bases
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: df17dfa3911b81b4a27190b0eea5b1debc7ffa0a # frozen: v3.15.1
+    hooks:
+      - id: pyupgrade
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: 3a6eb0fadf60b3cccfd80bad9dbb6fae7e47b316 # frozen: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+      - id: python-no-eval
+      - id: python-no-log-warn
+      - id: python-use-type-annotations
+      - id: text-unicode-replacement-char
+
+  ### MISC
+
+  - repo: https://github.com/crate-ci/typos
+    rev: 68c7289a620636165869822d2d233e785272935b  # frozen: v1.19.0
+    hooks:
+      - id: typos
+
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: 0afbc519ee4aa0a1eb0f7dd78876c8de46d4cf08 # frozen: v2.12.0
+    hooks:
+      - id: pretty-format-yaml
+        args:
+          - --offset=2
+          - --preserve-quotes
+          - --autofix
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: c4a0b883114b00d8d76b479c820ce7950211c99b # frozen: v4.5.0
+    hooks: # https://pre-commit.com/hooks.html
+      # `(\S) - ` -> `$1 # `
+      - id: check-added-large-files # prevents giant files from being committed.
+      - id: check-ast # simply checks whether the files parse as valid python.
+      - id: check-builtin-literals # requires literal syntax when initializing empty or zero python builtin types.
+      - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
+      # - id: check-docstring-first # checks a common error of defining a docstring after code.
+      - id: check-executables-have-shebangs # ensures that (non-binary) executables have a shebang.
+      - id: check-json # checks json files for parseable syntax.
+      - id: check-shebang-scripts-are-executable # ensures that (non-binary) files with a shebang are executable.
+      - id: pretty-format-json # sets a standard for formatting json files.
+        args:
+          - --autofix
+          - --indent=2
+          - --no-sort-keys
+          - --no-ensure-ascii
+      - id: check-merge-conflict # checks for files that contain merge conflict strings.
+      # - id: check-symlinks # checks for symlinks which do not point to anything.
+      - id: check-toml # checks toml files for parseable syntax.
+      - id: check-vcs-permalinks # ensures that links to vcs websites are permalinks.
+      # - id: check-xml # checks xml files for parseable syntax.
+      - id: check-yaml # checks yaml files for parseable syntax.
+        args:
+          - --allow-multiple-documents
+        exclude: mkdocs.yml
+      - id: debug-statements # checks for debugger imports and py37+ `breakpoint()` calls in python source.
+      # - id: destroyed-symlinks # detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to.
+      # - id: detect-aws-credentials # detects *your* aws credentials from the aws cli credentials file.
+      - id: detect-private-key # detects the presence of private keys.
+      - id: double-quote-string-fixer # replaces double quoted strings with single quoted strings.
+      - id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
+        exclude: package.json
+      # - id: file-contents-sorter # sorts the lines in specified files (defaults to alphabetical). you must provide list of target files as input in your .pre-commit-config.yaml file.
+      - id: fix-byte-order-marker # removes utf-8 byte order marker.
+      # - id: fix-encoding-pragma # adds # -*- coding: utf-8 -*- to the top of python files.
+      # - id: forbid-new-submodules # prevents addition of new git submodules.
+      # - id: forbid-submodules # forbids any submodules in the repository
+      - id: mixed-line-ending # replaces or checks mixed line ending.
+      - id: name-tests-test # verifies that test files are named correctly.
+        args:
+          - --pytest-test-first
+      # - id: no-commit-to-branch # don't commit to branch
+      # - id: requirements-txt-fixer # sorts entries in requirements.txt.
+      # - id: sort-simple-yaml # sorts simple yaml files which consist only of top-level keys, preserving comments and blocks.
+      - id: trailing-whitespace # trims trailing whitespace.

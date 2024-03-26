@@ -1,0 +1,71 @@
+[project]
+name = "esrt"
+version = "0.0.0"
+requires-python = ">=3.9"
+readme = "README.md"
+dependencies = ["elasticsearch==6.8.2", "typer>=0.10.0", "uvicorn>=0.29.0"]
+
+[project.scripts]
+esrt = "esrt.__main__:main"
+
+
+[tool.pdm]
+distribution = true
+
+
+[tool.semantic_release]
+# https://python-semantic-release.readthedocs.io/en/latest/configuration.html
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/esrt/__version__.py:VERSION"]
+# build_command = "pip install pdm && pdm build"
+
+[tool.black]
+# https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html
+line-length = 100
+skip-string-normalization = true
+
+[tool.ruff]
+line-length = 100
+fix = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.lint]
+extend-select = [
+  "W",   # pycodestyle Warning
+  "I",   # isort
+  "N",   # pep8-naming
+  "S",   # flake8-bandit
+  "PTH", # flake8-use-pathlib
+  "PGH", # pygrep-hooks
+  "TRY", # tryceratops
+]
+ignore = [
+  "S101",   # Use of `assert` detected
+  "TRY003",
+]
+
+[tool.ruff.lint.isort]
+# https://beta.ruff.rs/docs/settings/#isort
+lines-after-imports = 2
+force-single-line = true
+force-sort-within-sections = true
+known-local-folder = []
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# https://docs.pytest.org/en/stable/reference/reference.html
+# https://docs.pytest.org/en/stable/explanation/goodpractices.html
+# https://docs.pytest.org/en/stable/example/pythoncollection.html
+addopts = "--import-mode=importlib -r fEsxX --disable-warnings --showlocals --tb=short"
+# --cov --cov-report=term --cov-report=html
+# --exitfirst
+# --failed-first
+# pytest-xdist
+
+testpaths = [
+  #
+  "libs/logging_config",
+]
