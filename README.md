@@ -36,7 +36,7 @@ EOF
 ## `q` - perform_request (request path)
 
 ```sh
-esrt q localhost -X GET -P _cat/indices -p 'pretty=&format=json&v&s=index' | jq
+esrt r localhost -X GET -P _cat/indices -p 'pretty=&format=json&v&s=index' | jq
 ```
 
 ## `t` - streaming_bulk (bulk) / target

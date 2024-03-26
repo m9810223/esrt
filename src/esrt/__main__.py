@@ -106,7 +106,7 @@ def scan_(
             foutput.write(json_obj_to_line(hit))
 
 
-@app.command(name='q', help='Transport.perform_request')
+@app.command(name='r', help='Transport.perform_request')
 def perform_request(
     host: _host_annotated,
     method: _method_annotated = 'GET',
