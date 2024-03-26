@@ -2,6 +2,21 @@
 
 
 
+## v0.9.0 (2024-03-26)
+
+### Feature
+
+* feat: release ([`a9cbd9f`](https://github.com/m9810223/esrt/commit/a9cbd9f45807711461432fea7cd9fac760bd811a))
+
+* feat: release ([`7c33b14`](https://github.com/m9810223/esrt/commit/7c33b14ba7717019523c09db6526901d637127c8))
+
+* feat: release ([`f97a836`](https://github.com/m9810223/esrt/commit/f97a836fc7609456c656ddc1a8c5c6287b814e51))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`72c971b`](https://github.com/m9810223/esrt/commit/72c971b7eda78c1f5faad0393a3177702847eecd))
+
+
 ## v0.8.0 (2024-03-26)
 
 ### Feature
