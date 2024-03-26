@@ -2,6 +2,13 @@
 
 
 
+## v0.10.0 (2024-03-26)
+
+### Feature
+
+* feat: release ([`bfa3232`](https://github.com/m9810223/esrt/commit/bfa3232c471e92821484e033ccd3ec161d09f484))
+
+
 ## v0.9.0 (2024-03-26)
 
 ### Feature
