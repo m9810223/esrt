@@ -77,6 +77,7 @@ def scan_(
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
     #
+    progress: t.Annotated[bool, typer.Option()] = False,
     verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
     #
     scroll: t.Annotated[str, typer.Option('--scroll', help='Scroll duration')] = '5m',
@@ -88,6 +89,10 @@ def scan_(
 ):
     client = es.Client(host=host)
     _body = finput_body and finput_body.read().strip() or '{}'
+    _once = client.search(index=index, body=_body and json.loads(_body), params={'size': 1})
+    total = _once['hits']['total']
+    with redirect_stdout(sys.stderr):
+        print(f"{total = }")
     _iterable = scan(
         client=client,
         index=index,
@@ -101,12 +106,15 @@ def scan_(
         clear_scroll=clear_scroll,
     )
     context = nullcontext(_iterable)
-    if verbose:
+    if progress:
         context = typer.progressbar(
             iterable=_iterable, label='scan', show_pos=True, file=sys.stderr
         )
     with context as hits:
         for hit in hits:
+            if verbose:
+                with redirect_stdout(sys.stderr):
+                    print(hit)
             foutput.write(json_obj_to_line(hit))
 
 
@@ -154,6 +162,7 @@ def streaming_bulk_(
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
     #
     progress: t.Annotated[bool, typer.Option(' /-S', ' /--no-progress')] = True,
+    verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
     #
     chunk_size: t.Annotated[int, typer.Option('--chunk-size')] = 500,
     max_chunk_bytes: t.Annotated[int, typer.Option('--max-chunk-bytes')] = 100 * 1024 * 1024,
@@ -195,10 +204,12 @@ def streaming_bulk_(
             if not ok:
                 with redirect_stdout(sys.stderr):
                     print(f'Failed to index {item}')
-                foutput.write(json_obj_to_line(item))
+                with redirect_stdout(sys.stderr):
+                    foutput.write(json_obj_to_line(item))
                 failed += 1
-            else:
-                foutput.write(json_obj_to_line(item))
+            elif verbose:
+                with redirect_stdout(sys.stderr):
+                    foutput.write(json_obj_to_line(item))
                 success += 1
     with redirect_stdout(sys.stderr):
         print()
