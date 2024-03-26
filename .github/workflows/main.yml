@@ -1,0 +1,12 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  # permissions -> https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idpermissions
+
+  python-semantic-release:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    uses: ./.github/workflows/_python-semantic-release.yml
+    permissions:
+      contents: write

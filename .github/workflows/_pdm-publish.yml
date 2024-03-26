@@ -1,0 +1,21 @@
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    strategy:
+      matrix:
+        py_ver:
+          - "3.9"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: ${{ matrix.py_ver }}
+          cache: true
+          cache-dependency-path: "**/pdm.lock"
+      - run: pdm publish -v -u "__token__" -P "${{ secrets.PYPI_API_TOKEN }}"
