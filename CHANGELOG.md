@@ -2,6 +2,17 @@
 
 
 
+## v0.8.0 (2024-03-26)
+
+### Feature
+
+* feat: release ([`52e805d`](https://github.com/m9810223/esrt/commit/52e805d1bfaa10eac4a621092af492071bcc2f27))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`3bad3f7`](https://github.com/m9810223/esrt/commit/3bad3f72e8a849737743289ef4c29e357fede1c5))
+
+
 ## v0.7.0 (2024-03-26)
 
 ### Feature
