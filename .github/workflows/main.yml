@@ -10,10 +10,3 @@ jobs:
     uses: ./.github/workflows/_python-semantic-release.yml
     permissions:
       contents: write
-
-  pdm-publish:
-    uses: ./.github/workflows/_pdm-publish.yml
-    permissions:
-      contents: read
-      id-token: write
-    secrets: inherit
