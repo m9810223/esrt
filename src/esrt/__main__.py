@@ -202,6 +202,21 @@ def streaming_bulk_(
         print(f'{failed = }')
 
 
+@app.command(name='sql', help='POST /_sql')
+def sql(
+    host: _host_annotated,
+    finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
+    foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
+):
+    return perform_request(
+        host=host,
+        method='POST',
+        path='/_sql',
+        finput_body=finput_body,
+        foutput=foutput,
+    )
+
+
 def main():
     sys.path.insert(0, str(Path.cwd()))
     app()
