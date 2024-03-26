@@ -18,7 +18,13 @@ from .utils import parse_header
 from .utils import parse_params
 
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(
+    no_args_is_help=True,
+    context_settings=dict(
+        help_option_names=['-h', '--help'],
+    ),
+    pretty_exceptions_enable=False,
+)
 
 
 _host_annotated = t.Annotated[
