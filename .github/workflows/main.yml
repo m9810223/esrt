@@ -12,8 +12,6 @@ jobs:
       contents: write
 
   pdm-publish:
-    needs:
-      - is-success
     uses: ./.github/workflows/_pdm-publish.yml
     permissions:
       contents: read
