@@ -33,7 +33,7 @@ cat <<EOF | esrt s localhost -d - | jq -c
 EOF
 ```
 
-## `q` - perform_request (request path)
+## `r` - perform_request (request path)
 
 ```sh
 esrt r localhost -X GET -P _cat/indices -p 'pretty=&format=json&v&s=index' | jq
