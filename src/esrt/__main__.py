@@ -29,7 +29,7 @@ _host_annotated = t.Annotated[
     str, typer.Argument(help='Elasticsearch host. e.g. 127.0.0.1 -> http://127.0.0.1:9200')
 ]
 _method_annotated = t.Annotated[
-    str, typer.Option('-X', '--method', '--request', help='HTTP method')
+    str, typer.Option('-X', '--method', '--request', parser=str.upper, help='HTTP method')
 ]
 _path_annotated = t.Annotated[str, typer.Argument(help='HTTP path')]
 _index_annotation = typer.Option(
