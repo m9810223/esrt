@@ -2,6 +2,13 @@
 
 
 
+## v1.1.0 (2024-03-27)
+
+### Feature
+
+* feat: release ([`240abda`](https://github.com/m9810223/esrt/commit/240abda8324b75dd997125e1d5d7c57e5bf67148))
+
+
 ## v1.0.0 (2024-03-27)
 
 ### Breaking
