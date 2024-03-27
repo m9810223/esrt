@@ -26,25 +26,25 @@ app = typer.Typer(
 
 
 class Help:
-    _fmt = '{:12}'
+    _fmt = '{:9}'
     e_search = typer.style(
-        typer.style(_fmt.format('[search]'), fg=typer.colors.MAGENTA, bold=True)
+        typer.style(_fmt.format('search'), fg=typer.colors.MAGENTA, bold=True)
         + typer.style('Elasticsearch.search', bold=True, dim=True, italic=True),
     )
     s_scan = typer.style(
-        typer.style(_fmt.format('[scan]'), fg=typer.colors.MAGENTA, bold=True)
+        typer.style(_fmt.format('scan'), fg=typer.colors.MAGENTA, bold=True)
         + typer.style('helpers.scan', bold=True, dim=True, italic=True)
     )
     r_request = typer.style(
-        typer.style(_fmt.format('[request]'), fg=typer.colors.MAGENTA, bold=True)
+        typer.style(_fmt.format('request'), fg=typer.colors.MAGENTA, bold=True)
         + typer.style('Transport.perform_request', bold=True, dim=True, italic=True),
     )
     sql = typer.style(
-        typer.style(_fmt.format('[sql]'), fg=typer.colors.MAGENTA, bold=True)
+        typer.style(_fmt.format('sql'), fg=typer.colors.MAGENTA, bold=True)
         + typer.style('e -X POST /_sql', bold=True, dim=True, italic=True),
     )
     t_transmit = typer.style(
-        typer.style(_fmt.format('[transmit]'), fg=typer.colors.MAGENTA, bold=True)
+        typer.style(_fmt.format('transmit'), fg=typer.colors.MAGENTA, bold=True)
         + typer.style('helpers.streaming_bulk', bold=True, dim=True, italic=True)
     )
 
