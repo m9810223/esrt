@@ -2,6 +2,15 @@
 
 
 
+## v1.0.0 (2024-03-27)
+
+### Breaking
+
+* feat: release v1
+
+BREAKING CHANGE: release v1 ([`93ee3e4`](https://github.com/m9810223/esrt/commit/93ee3e4c78be8e8e3e1148727e059cdb099d9fbb))
+
+
 ## v0.14.0 (2024-03-27)
 
 ### Feature
