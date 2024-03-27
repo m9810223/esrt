@@ -12,6 +12,7 @@ import typer
 from uvicorn.importer import import_from_string
 
 from . import es
+from .__version__ import VERSION
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 from .utils import parse_header
@@ -22,6 +23,12 @@ app = typer.Typer(
     no_args_is_help=True,
     context_settings={'help_option_names': ['-h', '--help']},
     pretty_exceptions_enable=False,
+    help=' '.join(
+        [
+            typer.style(f'esrt v{VERSION}', fg=typer.colors.BRIGHT_CYAN, bold=True),
+            typer.style('CLI use Python Elasticsearch==6.8.2', fg=typer.colors.BLACK, bold=True),
+        ]
+    ),
 )
 
 
