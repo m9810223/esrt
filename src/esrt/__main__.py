@@ -25,6 +25,30 @@ app = typer.Typer(
 )
 
 
+class Help:
+    _fmt = '{:12}'
+    e_search = typer.style(
+        typer.style(_fmt.format('[search]'), fg=typer.colors.MAGENTA, bold=True)
+        + typer.style('Elasticsearch.search', bold=True, dim=True, italic=True),
+    )
+    s_scan = typer.style(
+        typer.style(_fmt.format('[scan]'), fg=typer.colors.MAGENTA, bold=True)
+        + typer.style('helpers.scan', bold=True, dim=True, italic=True)
+    )
+    r_request = typer.style(
+        typer.style(_fmt.format('[request]'), fg=typer.colors.MAGENTA, bold=True)
+        + typer.style('Transport.perform_request', bold=True, dim=True, italic=True),
+    )
+    sql = typer.style(
+        typer.style(_fmt.format('[sql]'), fg=typer.colors.MAGENTA, bold=True)
+        + typer.style('e -X POST /_sql', bold=True, dim=True, italic=True),
+    )
+    t_transmit = typer.style(
+        typer.style(_fmt.format('[transmit]'), fg=typer.colors.MAGENTA, bold=True)
+        + typer.style('helpers.streaming_bulk', bold=True, dim=True, italic=True)
+    )
+
+
 _host_annotated = t.Annotated[
     str, typer.Argument(help='Elasticsearch host. e.g. 127.0.0.1 -> http://127.0.0.1:9200')
 ]
@@ -47,7 +71,7 @@ _headers_annotated = t.Annotated[
 ]
 
 
-@app.command(name='e', help='Elasticsearch.search')
+@app.command(name='e', short_help=Help.e_search)
 def search(
     host: _host_annotated,
     index: t.Annotated[t.Optional[str], _index_annotation] = None,
@@ -70,7 +94,7 @@ def search(
     foutput.write(json_obj_to_line(hits))
 
 
-@app.command(name='s', help='helpers.scan (source)')
+@app.command(name='s', short_help=Help.s_scan)
 def scan_(
     host: _host_annotated,
     index: t.Annotated[t.Optional[str], _index_annotation] = None,
@@ -118,7 +142,7 @@ def scan_(
             foutput.write(json_obj_to_line(hit))
 
 
-@app.command(name='r', help='Transport.perform_request')
+@app.command(name='r', short_help=Help.r_request)
 def perform_request(
     host: _host_annotated,
     method: _method_annotated = 'GET',
@@ -144,7 +168,7 @@ def perform_request(
     foutput.write(json_obj_to_line(response))
 
 
-@app.command(name='t', help='helpers.streaming_bulk (target)')
+@app.command(name='t', short_help=Help.t_transmit)
 def streaming_bulk_(
     host: _host_annotated,
     handler: t.Annotated[
@@ -217,7 +241,7 @@ def streaming_bulk_(
         print(f'{failed = }')
 
 
-@app.command(name='sql', help='POST /_sql')
+@app.command(name='sql', short_help=Help.sql)
 def sql(
     host: _host_annotated,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
