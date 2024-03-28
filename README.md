@@ -3,7 +3,8 @@
 [![pypi](https://img.shields.io/pypi/v/esrt.svg)](https://pypi.python.org/pypi/esrt)
 
 ```sh
-pipx install esrt
+pip install pipx
+pipx install esrt -f
 ```
 
 ## Example
