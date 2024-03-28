@@ -19,12 +19,15 @@ docker run --rm -it --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpi
 
 ## `r` - Send a request
 
+create a index:
+
 ```sh
-# create a index: `my-index`
 esrt r localhost -X PUT /my-index
 # ->
 # {"acknowledged": true, "shards_acknowledged": true, "index": "my-index"}
 ```
+
+cat it:
 
 ```sh
 esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
@@ -57,10 +60,9 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 
 ## `t` - Transmit data (`streaming_bulk`)
 
-bulk with data from file:
+bulk with data from file `dev.ndjson`:
 
 ```json
-// dev.ndjson
 { "_op_type": "index",  "_index": "my-index", "_type": "type1", "_id": "1", "field1": "ii" }
 { "_op_type": "delete", "_index": "my-index", "_type": "type1", "_id": "1" }
 { "_op_type": "create", "_index": "my-index", "_type": "type1", "_id": "1", "field1": "cc" }
@@ -79,8 +81,9 @@ esrt t localhost -d dev.ndjson
 
 ---
 
+Piping `heredoc` also works. And `-d` can be omitted.
+
 ```sh
-# Piping `heredoc` also works. And `-d` can be omitted.
 cat <<EOF | esrt t localhost
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
