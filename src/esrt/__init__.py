@@ -1,6 +1,6 @@
-from .handlers import ActionHandler
+from .handlers import DocHandler
 
 
 __all__ = [
-    'ActionHandler',
+    'DocHandler',
 ]

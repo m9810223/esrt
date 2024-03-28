@@ -4,7 +4,7 @@ import sys
 import typing as t
 
 
-class ActionHandler:
+class BaseHandler:
     def __init__(self, actions: t.Iterable[str]):
         self._iter = iter(actions)
 
@@ -18,10 +18,15 @@ class ActionHandler:
         for action in actions:
             yield self.handle_one(action)
 
-    def handle_one(self, action: str):
-        return json.loads(action)
+    def handle_one(self, action):
+        return action
 
     @staticmethod
     def print(*args, **kwargs):
         with redirect_stdout(sys.stderr):
             print(*args, **kwargs)
+
+
+class DocHandler(BaseHandler):
+    def handle_one(self, action: str):
+        return json.loads(action)

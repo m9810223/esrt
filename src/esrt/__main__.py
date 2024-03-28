@@ -60,44 +60,46 @@ class Help:
 _host_annotated = t.Annotated[
     str, typer.Argument(help='Elasticsearch host. e.g. 127.0.0.1 -> http://127.0.0.1:9200')
 ]
+_index_annotation = typer.Option(
+    '-i', '--index', help='A comma-separated list of index names to search'
+)
 _method_annotated = t.Annotated[
     str, typer.Option('-X', '--method', '--request', parser=str.upper, help='HTTP method')
 ]
 _path_annotated = t.Annotated[str, typer.Argument(help='HTTP path')]
-_index_annotation = typer.Option(
-    '-i', '--index', help='A comma-separated list of index names to search'
-)
-_finput_annotation = typer.Option('-d', '--data', help='Input file')
-_foutput_annotated = t.Annotated[
-    typer.FileTextWrite, typer.Option('-o', '--output', help='Output file')
-]
 _params_annotated = t.Annotated[
     t.Optional[list[dict]], typer.Option('-p', '--params', parser=parse_params, help='HTTP params')
 ]
 _headers_annotated = t.Annotated[
     t.Optional[list[dict]], typer.Option('-H', '--header', parser=parse_header, help='HTTP headers')
 ]
+#
+_finput_annotation = typer.Option('-d', '--data', help='Input file')
+_foutput_annotated = t.Annotated[
+    typer.FileTextWrite, typer.Option('-o', '--output', help='Output file')
+]
+#
+_doc_type_annotated = t.Annotated[
+    t.Optional[str], typer.Option('-t', '--type', help='Document type')
+]
 
 
 @app.command(name='e', no_args_is_help=True, short_help=Help.e_search)
 def search(
     host: _host_annotated,
-    index: t.Annotated[t.Optional[str], _index_annotation] = None,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
     #
+    index: t.Annotated[t.Optional[str], _index_annotation] = None,
+    doc_type: _doc_type_annotated = None,
     params: _params_annotated = None,
-    doc_type: t.Annotated[
-        t.Optional[str], typer.Option('-t', '--type', help='Document type')
-    ] = None,
 ):
     client = es.Client(host=host)
     hits = client.search(
         index=index,
-        body=finput_body and finput_body.read().strip() or '{}',
-        #
-        params=merge_dicts(params),
         doc_type=doc_type,
+        body=finput_body and finput_body.read().strip() or '{}',
+        params=merge_dicts(params),
     )
     foutput.write(json_obj_to_line(hits))
 
@@ -105,12 +107,15 @@ def search(
 @app.command(name='s', no_args_is_help=True, short_help=Help.s_scan)
 def scan_(
     host: _host_annotated,
-    index: t.Annotated[t.Optional[str], _index_annotation] = None,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
     #
     progress: t.Annotated[bool, typer.Option()] = False,
     verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
+    #
+    index: t.Annotated[t.Optional[str], _index_annotation] = None,
+    doc_type: _doc_type_annotated = None,
+    params: _params_annotated = None,
     #
     scroll: t.Annotated[str, typer.Option('--scroll', help='Scroll duration')] = '5m',
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
@@ -118,17 +123,27 @@ def scan_(
     size: t.Annotated[int, typer.Option('--size')] = 1000,
     request_timeout: t.Annotated[t.Optional[int], typer.Option('--request-timeout')] = None,
     clear_scroll: t.Annotated[bool, typer.Option(' /--keep-scroll')] = True,
+    # scroll_kwargs
 ):
     client = es.Client(host=host)
-    _body = finput_body and finput_body.read().strip() or '{}'
-    _once = client.search(index=index, body=_body and json.loads(_body), params={'size': 1})
+    body = finput_body and finput_body.read().strip() or '{}'
+    _once_params = merge_dicts(params)
+    _once_params['size'] = '1'
+    _once = client.search(
+        index=index,
+        doc_type=doc_type,
+        body=body and json.loads(body),
+        params=_once_params,  # *
+    )
     total = _once['hits']['total']
     with redirect_stdout(sys.stderr):
         print(f"{total = }")
     _iterable = scan(
         client=client,
         index=index,
-        query=_body and json.loads(_body),
+        doc_type=doc_type,
+        query=body and json.loads(body),
+        params=merge_dicts(params),
         #
         scroll=scroll,
         raise_on_error=raise_on_error,
@@ -136,6 +151,7 @@ def scan_(
         size=size,
         request_timeout=request_timeout,
         clear_scroll=clear_scroll,
+        # scroll_kwargs
     )
     context = nullcontext(_iterable)
     if progress:
@@ -153,25 +169,24 @@ def scan_(
 @app.command(name='r', no_args_is_help=True, short_help=Help.r_request)
 def perform_request(
     host: _host_annotated,
-    method: _method_annotated = 'GET',
-    path: _path_annotated = '/',
-    #
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
     #
+    method: _method_annotated = 'GET',
+    url: _path_annotated = '/',
     params: _params_annotated = None,
     headers: _headers_annotated = None,
+    #
 ):
     client = es.Client(host=host)
-    if not path.startswith('/'):
-        path = '/' + path
+    if not url.startswith('/'):
+        url = '/' + url
     response = client.transport.perform_request(
         method=method,
-        url=path,
-        body=finput_body and finput_body.read(),
-        #
-        params=merge_dicts(params),
+        url=url,
         headers=merge_dicts(headers),
+        params=merge_dicts(params),
+        body=finput_body and finput_body.read(),
     )
     foutput.write(json_obj_to_line(response))
 
@@ -179,15 +194,6 @@ def perform_request(
 @app.command(name='t', no_args_is_help=True, short_help=Help.t_transmit)
 def streaming_bulk_(
     host: _host_annotated,
-    handler: t.Annotated[
-        t.Callable[[t.Iterable[str]], t.Iterable[str]],
-        typer.Option(
-            '-w',
-            '--handler',
-            parser=import_from_string,
-            help='A callable handle actions. e.g. --handler esrt:ActionHandler',
-        ),
-    ] = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[str]], 'esrt:ActionHandler'),
     finput_body: t.Annotated[typer.FileText, _finput_annotation] = t.cast(
         typer.FileText, sys.stdin
     ),
@@ -195,6 +201,19 @@ def streaming_bulk_(
     #
     progress: t.Annotated[bool, typer.Option(' /-S', ' /--no-progress')] = True,
     verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
+    #
+    index: t.Annotated[t.Optional[str], _index_annotation] = None,
+    params: _params_annotated = None,
+    handler: t.Annotated[
+        t.Callable[[t.Iterable[str]], t.Iterable[str]],
+        typer.Option(
+            '-w',
+            '--handler',
+            parser=import_from_string,
+            help='A callable handle actions. e.g. --handler esrt:DocHandler',
+        ),
+    ] = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[str]], 'esrt:DocHandler'),
+    doc_type: _doc_type_annotated = None,
     #
     chunk_size: t.Annotated[int, typer.Option('--chunk-size')] = 500,
     max_chunk_bytes: t.Annotated[int, typer.Option('--max-chunk-bytes')] = 100 * 1024 * 1024,
@@ -215,15 +234,19 @@ def streaming_bulk_(
         client=client,
         actions=handler(finput_body),
         #
-        yield_ok=True,
-        #
         chunk_size=chunk_size,
         max_chunk_bytes=max_chunk_bytes,
         raise_on_error=raise_on_error,
+        # expand_action_callback
         raise_on_exception=raise_on_exception,
         max_retries=max_retries,
         initial_backoff=initial_backoff,
         max_backoff=max_backoff,
+        yield_ok=True,  # *
+        #
+        index=index,
+        doc_type=doc_type,
+        params=merge_dicts(params),
     )
     context = nullcontext(_iterable)
     if progress:
@@ -257,10 +280,10 @@ def sql(
 ):
     return perform_request(
         host=host,
-        method='POST',
-        path='/_sql',
         finput_body=finput_body,
         foutput=foutput,
+        method='POST',  # *
+        url='/_sql',  # *
     )
 
 
