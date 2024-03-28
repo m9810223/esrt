@@ -5,17 +5,7 @@ from string import ascii_letters
 import typing as t
 
 
-def handle(actions: t.Iterable[str]):
-    for action in actions:
-        d: dict[str, t.Any] = json.loads(action)
-        yield d
-        d2 = deepcopy(d)
-        d2['_source']['field1'] += '!!!'
-        d2['_source']['field2'] = ''.join(choices(ascii_letters, k=8))
-        yield d2
-
-
-def main():
+if __name__ == '__main__':
     for i in range(1, 2222):
         d = {
             '_index': 'my-index-b',
@@ -26,5 +16,11 @@ def main():
         print(json.dumps(d))
 
 
-if __name__ == '__main__':
-    main()
+def handle(actions: t.Iterable[str]):
+    for action in actions:
+        d: dict[str, t.Any] = json.loads(action)
+        yield d
+        d2 = deepcopy(d)
+        d2['_source']['field1'] += '!!!'
+        d2['_source']['field2'] = ''.join(choices(ascii_letters, k=8))
+        yield d2

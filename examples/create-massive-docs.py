@@ -3,7 +3,7 @@ from random import choices
 from string import ascii_letters
 
 
-def main():
+if __name__ == '__main__':
     for i in range(1, 2222):
         d = {
             '_index': 'my-index-a',
@@ -12,7 +12,3 @@ def main():
             '_source': {'field1': ''.join(choices(ascii_letters, k=8))},
         }
         print(json.dumps(d))
-
-
-if __name__ == '__main__':
-    main()
