@@ -19,7 +19,7 @@ docker run --rm -it --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpi
 
 ## `r` - Send a request
 
-create a index:
+Create a index:
 
 ```sh
 esrt r localhost -X PUT /my-index
@@ -27,7 +27,7 @@ esrt r localhost -X PUT /my-index
 # {"acknowledged": true, "shards_acknowledged": true, "index": "my-index"}
 ```
 
-cat it:
+Cat it:
 
 ```sh
 esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
@@ -35,7 +35,7 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
 # [{"health": "yellow", "status": "open", "index": "my-index", "uuid": "FQjeEOKQT8aroL2dgO7yDg", "pri": "5", "rep": "1", "docs.count": "0", "docs.deleted": "0", "store.size": "324b", "pri.store.size": "324b"}]
 ```
 
-*Note: esrt won't keep `-p pretty` format by default, but you can use `jq` instead.*
+*Note: `esrt` doesn't keep `-p pretty` format by default, but you can use `jq` instead.*
 
 ```sh
 esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
@@ -60,7 +60,7 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 
 ## `t` - Transmit data (`streaming_bulk`)
 
-bulk with data from file `dev.ndjson`:
+Bulk with data from file `dev.ndjson`:
 
 ```json
 { "_op_type": "index",  "_index": "my-index", "_type": "type1", "_id": "1", "field1": "ii" }
