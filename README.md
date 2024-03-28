@@ -35,7 +35,7 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
 # [{"health": "yellow", "status": "open", "index": "my-index", "uuid": "FQjeEOKQT8aroL2dgO7yDg", "pri": "5", "rep": "1", "docs.count": "0", "docs.deleted": "0", "store.size": "324b", "pri.store.size": "324b"}]
 ```
 
-*Note: `esrt` doesn't keep `-p pretty` format by default, but you can use `jq` instead.*
+*`esrt` doesn't keep `-p pretty` format, but you can use `jq`.*
 
 ```sh
 esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
