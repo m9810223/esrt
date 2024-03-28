@@ -43,6 +43,7 @@ extend-select = [
 ignore = [
   "S101",   # Use of `assert` detected
   "TRY003",
+  "S311",
 ]
 
 [tool.ruff.lint.isort]

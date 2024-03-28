@@ -100,7 +100,7 @@ Pipe `_search` result and update `_index` with `customized handler` to do more o
 ```sh
 alias jq_es_hits="jq '.hits.hits.[]' -c"
 #
-esrt r localhost -X GET /my-index/_search | jq_es_hits | esrt t localhost -w dev:MyHandler # <- `dev.py`
+esrt r localhost -X GET /my-index/_search | jq_es_hits | esrt t localhost -w dev:MyHandler # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  1
@@ -110,7 +110,7 @@ esrt r localhost -X GET /my-index/_search | jq_es_hits | esrt t localhost -w dev
 ```
 
 ```py
-# dev.py
+# examples/my-handlers.py
 import json
 import typing as t
 
@@ -175,4 +175,74 @@ EOF
 # total = 2
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 # {"_index": "new-my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+```
+
+---
+
+## Other Examples
+
+```sh
+python examples/create-massive-docs.py | esrt t localhost
+```
+
+```py
+# examples/create-massive-docs.py
+import json
+from random import choices
+from string import ascii_letters
+
+
+def main():
+    for i in range(1, 2222):
+        d = {
+            '_index': 'my-index-a',
+            '_id': i,
+            '_type': 'type1',
+            '_source': {'field1': ''.join(choices(ascii_letters, k=8))},
+        }
+        print(json.dumps(d))
+
+
+if __name__ == '__main__':
+    main()
+```
+
+---
+
+```sh
+python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
+```
+
+```py
+# examples/copy-more-docs.py
+from copy import deepcopy
+import json
+from random import choices
+from string import ascii_letters
+import typing as t
+
+
+def handle(actions: t.Iterable[str]):
+    for action in actions:
+        d: dict[str, t.Any] = json.loads(action)
+        yield d
+        d2 = deepcopy(d)
+        d2['_source']['field1'] += '!!!'
+        d2['_source']['field2'] = ''.join(choices(ascii_letters, k=8))
+        yield d2
+
+
+def main():
+    for i in range(1, 2222):
+        d = {
+            '_index': 'my-index-b',
+            '_id': i,
+            '_type': 'type1',
+            '_source': {'field1': ''.join(choices(ascii_letters, k=8))},
+        }
+        print(json.dumps(d))
+
+
+if __name__ == '__main__':
+    main()
 ```
