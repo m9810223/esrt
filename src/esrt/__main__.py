@@ -25,7 +25,7 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
     help=' '.join(
         [
-            typer.style(f'esrt v{VERSION}', fg=typer.colors.BRIGHT_CYAN, bold=True),
+            typer.style(f"esrt v{VERSION}", fg=typer.colors.BRIGHT_CYAN, bold=True),
             typer.style('CLI use Python Elasticsearch==6.8.2', fg=typer.colors.BLACK, bold=True),
         ]
     ),
@@ -257,15 +257,16 @@ def streaming_bulk_(
         success, failed = 0, 0
         for ok, item in items:
             if not ok:
+                failed += 1
                 with redirect_stdout(sys.stderr):
                     print(f'Failed to index {item}')
                 with redirect_stdout(sys.stderr):
                     foutput.write(json_obj_to_line(item))
-                failed += 1
-            elif verbose:
-                with redirect_stdout(sys.stderr):
-                    foutput.write(json_obj_to_line(item))
+            else:
                 success += 1
+                if verbose:
+                    with redirect_stdout(sys.stderr):
+                        foutput.write(json_obj_to_line(item))
     with redirect_stdout(sys.stderr):
         print()
         print(f'{success = }')
