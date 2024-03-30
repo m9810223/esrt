@@ -14,7 +14,7 @@ esrt --install-completion # Install completion for the current shell.
 - `s`: scan / scroll
 - `r`: request / api / a
 - `t`: transmit / bulk / b
-- `sql`: sql / query
+- `sql`: sql / query / q
 
 ---
 
@@ -23,12 +23,20 @@ esrt --install-completion # Install completion for the current shell.
 You can start an es service with docker.
 
 ```sh
-docker run --rm -it --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
+docker run --rm -itd --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
 ```
 
 ---
 
 ## `r` - Send a request
+
+Check server:
+
+```sh
+esrt r localhost -X HEAD
+# ->
+# true
+```
 
 Create a index:
 
@@ -43,7 +51,7 @@ Cat it:
 ```sh
 esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
 # ->
-# [{"health": "yellow", "status": "open", "index": "my-index", "uuid": "FQjeEOKQT8aroL2dgO7yDg", "pri": "5", "rep": "1", "docs.count": "0", "docs.deleted": "0", "store.size": "324b", "pri.store.size": "324b"}]
+# [{"health": "yellow", "status": "open", "index": "my-index", "uuid": "avrhX1hzQLyfEGvXsA96NA", "pri": "5", "rep": "1", "docs.count": "0", "docs.deleted": "0", "store.size": "324b", "pri.store.size": "324b"}]
 ```
 
 *`esrt` doesn't keep `-p pretty` format, but you can use `jq`.*
@@ -56,7 +64,7 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 #     "health": "yellow",
 #     "status": "open",
 #     "index": "my-index",
-#     "uuid": "FQjeEOKQT8aroL2dgO7yDg",
+#     "uuid": "avrhX1hzQLyfEGvXsA96NA",
 #     "pri": "5",
 #     "rep": "1",
 #     "docs.count": "0",
@@ -71,7 +79,7 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 
 ## `t` - Transmit data (`streaming_bulk`)
 
-Bulk with data from file `dev.ndjson`:
+Bulk with data from file `examples/bulk.ndjson`:
 
 ```json
 { "_op_type": "index",  "_index": "my-index", "_type": "type1", "_id": "1", "field1": "ii" }
@@ -81,12 +89,12 @@ Bulk with data from file `dev.ndjson`:
 ```
 
 ```sh
-esrt t localhost -d dev.ndjson
+esrt t localhost -d examples/bulk.ndjson
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  4
-#
-# success = 0
+
+# success = 4
 # failed = 0
 ```
 
@@ -103,8 +111,8 @@ EOF
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  3
-#
-# success = 0
+
+# success = 3
 # failed = 0
 ```
 
@@ -113,14 +121,14 @@ EOF
 Pipe `_search` result and update `_index` with `customized handler` to do more operations before bulk!
 
 ```sh
-alias jq_es_hits="jq '.hits.hits.[]' -c"
+alias jq_es_hits="jq '.hits.hits.[]'"
 #
-esrt r localhost -X GET /my-index/_search | jq_es_hits | esrt t localhost -w dev:MyHandler # <- `examples/my-handlers.py`
+esrt r localhost -X GET /my-index-2/_search | jq_es_hits  -c | esrt t localhost -w examples.my-handlers:MyHandler # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  1
-#
-# success = 0
+# streaming_bulk  [####################################]  3
+
+# success = 3
 # failed = 0
 ```
 
@@ -152,21 +160,25 @@ def my_handler(actions: t.Iterable[str]):
 ## `e` Search docs
 
 ```sh
-esrt e localhost | jq_es_hits
+esrt e localhost | jq_es_hits -c
 # ->
 # {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 # {"_index":"my-index","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"cc","field2":"uu"}}
 # {"_index":"my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
-# {"_index":"new-my-index","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"cc","field2":"uu"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
 # {"_index":"my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
 ```
 
 ```sh
-cat <<EOF | esrt e localhost -d - | jq_es_hits
-{"query": {"term": {"_index": "new-my-index"}}}
+cat <<EOF | esrt e localhost -d - | jq_es_hits -c
+{"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
-# {"_index":"new-my-index","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"cc","field2":"uu"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
 ```
 
 ## `s` - Search and `Scroll`
@@ -174,12 +186,14 @@ EOF
 ```sh
 esrt s localhost
 # ->
-# total = 5
+# total = 7
 # {"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
+# {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 # {"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
-# {"_index": "new-my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+# {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 # {"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
+# {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 ```
 
 ```sh
@@ -187,18 +201,13 @@ cat <<EOF | esrt s localhost -d -
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
-# total = 2
+# total = 1
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
-# {"_index": "new-my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 ```
 
 ---
 
 ## Other Examples
-
-```sh
-python examples/create-massive-docs.py | esrt t localhost
-```
 
 ```py
 # examples/create-massive-docs.py
@@ -217,11 +226,17 @@ if __name__ == '__main__':
         print(json.dumps(d))
 ```
 
----
-
 ```sh
-python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
+python examples/create-massive-docs.py | esrt t localhost
+# ->
+# <Client([{'host': 'localhost', 'port': 9200}])>
+# streaming_bulk  [####################################]  654321
+
+# success = 654321
+# failed = 0
 ```
+
+---
 
 ```py
 # examples/copy-more-docs.py
@@ -250,4 +265,10 @@ def handle(actions: t.Iterable[str]):
         d2['_source']['field1'] += '!!!'
         d2['_source']['field2'] = str(uuid.uuid4())
         yield d2
+```
+
+```sh
+python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
+# ->
+
 ```

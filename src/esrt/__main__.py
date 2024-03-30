@@ -282,6 +282,7 @@ def streaming_bulk_(
         print(f'{failed = }')
 
 
+@app.command(name='q', no_args_is_help=True, short_help=Help.sql)
 @app.command(name='query', no_args_is_help=True, short_help=Help.sql)
 @app.command(name='sql', no_args_is_help=True, short_help=Help.sql)
 def sql(
