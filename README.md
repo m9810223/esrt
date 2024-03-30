@@ -227,7 +227,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | esrt t localhost -c 100000
+python examples/create-massive-docs.py | esrt t localhost -c 10000
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  654321
@@ -247,7 +247,7 @@ import uuid
 
 
 if __name__ == '__main__':
-    for i, _ in enumerate(range(654321), start=1):
+    for i, _ in enumerate(range(54321), start=1):
         d = {
             '_index': 'my-index-b',
             '_id': i,
@@ -268,11 +268,11 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle -c 100000
+python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  1308642
+# streaming_bulk  [####################################]  108642
 
-# success = 1308642
+# success = 108642
 # failed = 0
 ```
