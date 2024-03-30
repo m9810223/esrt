@@ -85,6 +85,7 @@ _doc_type_annotated = t.Annotated[
 
 
 @app.command(name='e', no_args_is_help=True, short_help=Help.e_search)
+@app.command(name='search', no_args_is_help=True, short_help=Help.e_search)
 def search(
     host: _host_annotated,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
@@ -105,6 +106,8 @@ def search(
 
 
 @app.command(name='s', no_args_is_help=True, short_help=Help.s_scan)
+@app.command(name='scroll', no_args_is_help=True, short_help=Help.s_scan)
+@app.command(name='scan', no_args_is_help=True, short_help=Help.s_scan)
 def scan_(
     host: _host_annotated,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
@@ -167,6 +170,8 @@ def scan_(
 
 
 @app.command(name='r', no_args_is_help=True, short_help=Help.r_request)
+@app.command(name='api', no_args_is_help=True, short_help=Help.r_request)
+@app.command(name='request', no_args_is_help=True, short_help=Help.r_request)
 def perform_request(
     host: _host_annotated,
     finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
@@ -191,7 +196,10 @@ def perform_request(
     foutput.write(json_obj_to_line(response))
 
 
+@app.command(name='b', no_args_is_help=True, short_help=Help.t_transmit)
+@app.command(name='bulk', no_args_is_help=True, short_help=Help.t_transmit)
 @app.command(name='t', no_args_is_help=True, short_help=Help.t_transmit)
+@app.command(name='transmit', no_args_is_help=True, short_help=Help.t_transmit)
 def streaming_bulk_(
     host: _host_annotated,
     finput_body: t.Annotated[typer.FileText, _finput_annotation] = t.cast(
@@ -273,6 +281,7 @@ def streaming_bulk_(
         print(f'{failed = }')
 
 
+@app.command(name='query', no_args_is_help=True, short_help=Help.sql)
 @app.command(name='sql', no_args_is_help=True, short_help=Help.sql)
 def sql(
     host: _host_annotated,

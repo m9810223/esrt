@@ -5,7 +5,18 @@
 ```sh
 pip install pipx
 pipx install esrt -f
+esrt --install-completion # Install completion for the current shell.
 ```
+
+## Commands
+
+- `e`: search
+- `s`: scan / scroll
+- `r`: request / api
+- `t`: transmit / bulk
+- `sql`: sql / query
+
+---
 
 ## Example
 
