@@ -58,29 +58,37 @@ class Help:
 
 
 _host_annotated = t.Annotated[
-    str, typer.Argument(help='Elasticsearch host. e.g. 127.0.0.1 -> http://127.0.0.1:9200')
+    str,
+    typer.Argument(
+        metavar='ES_HOST', help='Elasticsearch host. e.g. 127.0.0.1 -> http://127.0.0.1:9200'
+    ),
 ]
 _index_annotation = typer.Option(
-    '-i', '--index', help='A comma-separated list of index names to search'
+    '-i', '--index', metavar='INDEX', help='A comma-separated list of index names to search'
 )
 _method_annotated = t.Annotated[
-    str, typer.Option('-X', '--method', '--request', parser=str.upper, help='HTTP method')
+    str,
+    typer.Option(
+        '-X', '--method', '--request', metavar='HTTP_METHOD', parser=str.upper, help='HTTP method'
+    ),
 ]
-_path_annotated = t.Annotated[str, typer.Argument(help='HTTP path')]
+_path_annotated = t.Annotated[str, typer.Argument(metavar='URL_PATH', help='HTTP path')]
 _params_annotated = t.Annotated[
-    t.Optional[list[dict]], typer.Option('-p', '--params', parser=parse_params, help='HTTP params')
+    t.Optional[list[dict]],
+    typer.Option('-p', '--params', metavar='QUERY_PARAM', parser=parse_params, help='HTTP params'),
 ]
 _headers_annotated = t.Annotated[
-    t.Optional[list[dict]], typer.Option('-H', '--header', parser=parse_header, help='HTTP headers')
+    t.Optional[list[dict]],
+    typer.Option('-H', '--header', metavar='HTTP_HEADER', parser=parse_header, help='HTTP headers'),
 ]
 #
-_finput_annotation = typer.Option('-d', '--data', help='Input file')
+_finput_annotation = typer.Option('-d', '--data', metavar='FILE', help='Input file')
 _foutput_annotated = t.Annotated[
-    typer.FileTextWrite, typer.Option('-o', '--output', help='Output file')
+    typer.FileTextWrite, typer.Option('-o', '--output', metavar='FILE', help='Output file')
 ]
 #
 _doc_type_annotated = t.Annotated[
-    t.Optional[str], typer.Option('-t', '--type', help='Document type')
+    t.Optional[str], typer.Option('-t', '--type', metavar='DOC_TYPE', help='Document type')
 ]
 
 
@@ -120,7 +128,9 @@ def scan_(
     doc_type: _doc_type_annotated = None,
     params: _params_annotated = None,
     #
-    scroll: t.Annotated[str, typer.Option('--scroll', help='Scroll duration')] = '5m',
+    scroll: t.Annotated[
+        str, typer.Option('--scroll', metavar='TIME', help='Scroll duration')
+    ] = '5m',
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
     preserve_order: t.Annotated[bool, typer.Option('--preserve-order')] = False,
     size: t.Annotated[int, typer.Option('--size')] = 1000,
