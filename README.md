@@ -5,7 +5,7 @@
 ```sh
 pip install pipx
 pipx install esrt -f
-esrt --install-completion # Install completion for the current shell.
+esrt --install-completion  # Install completion for the current shell.
 ```
 
 ## Commands
@@ -123,7 +123,7 @@ Pipe `_search` result and update `_index` with `customized handler` to do more o
 ```sh
 alias jq_es_hits="jq '.hits.hits.[]'"
 #
-esrt r localhost -X GET /my-index-2/_search | jq_es_hits  -c | esrt t localhost -w examples.my-handlers:MyHandler # <- `examples/my-handlers.py`
+esrt r localhost -X GET /my-index-2/_search | jq_es_hits  -c | esrt t localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  3
@@ -235,7 +235,7 @@ python examples/create-massive-docs.py | tee -a _.ndjson | esrt t localhost -c 1
 # success = 654321
 # failed = 0
 
-cat _.ndjson
+cat _.ndjson  # <- 79M
 # ->
 # {"_index": "my-index-a", "_id": 1, "_type": "type1", "_source": {"field1": "7e6a3924-1258-4e44-a19b-15395e802b1b"}}
 # {"_index": "my-index-a", "_id": 2, "_type": "type1", "_source": {"field1": "9a05ea11-349b-452f-b771-a1aa168bdca9"}}
