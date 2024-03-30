@@ -25,7 +25,7 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
     help=' '.join(
         [
-            typer.style(f"esrt v{VERSION}", fg=typer.colors.BRIGHT_CYAN, bold=True),
+            typer.style(f'esrt v{VERSION}', fg=typer.colors.BRIGHT_CYAN, bold=True),
             typer.style('CLI use Python Elasticsearch==6.8.2', fg=typer.colors.BLACK, bold=True),
         ]
     ),
@@ -137,7 +137,7 @@ def scan_(
     )
     total = _once['hits']['total']
     with redirect_stdout(sys.stderr):
-        print(f"{total = }")
+        print(f'{total = }')
     _iterable = scan(
         client=client,
         index=index,
