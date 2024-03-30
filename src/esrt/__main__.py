@@ -169,8 +169,9 @@ def scan_(
             foutput.write(json_obj_to_line(hit))
 
 
-@app.command(name='r', no_args_is_help=True, short_help=Help.r_request)
+@app.command(name='a', no_args_is_help=True, short_help=Help.r_request)
 @app.command(name='api', no_args_is_help=True, short_help=Help.r_request)
+@app.command(name='r', no_args_is_help=True, short_help=Help.r_request)
 @app.command(name='request', no_args_is_help=True, short_help=Help.r_request)
 def perform_request(
     host: _host_annotated,

@@ -12,8 +12,8 @@ esrt --install-completion # Install completion for the current shell.
 
 - `e`: search
 - `s`: scan / scroll
-- `r`: request / api
-- `t`: transmit / bulk
+- `r`: request / api / a
+- `t`: transmit / bulk / b
 - `sql`: sql / query
 
 ---
