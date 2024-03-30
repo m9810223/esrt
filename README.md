@@ -192,23 +192,18 @@ python examples/create-massive-docs.py | esrt t localhost
 ```py
 # examples/create-massive-docs.py
 import json
-from random import choices
-from string import ascii_letters
+import uuid
 
 
-def main():
-    for i in range(1, 2222):
+if __name__ == '__main__':
+    for i, _ in enumerate(range(654321), start=1):
         d = {
             '_index': 'my-index-a',
             '_id': i,
             '_type': 'type1',
-            '_source': {'field1': ''.join(choices(ascii_letters, k=8))},
+            '_source': {'field1': str(uuid.uuid4())},
         }
         print(json.dumps(d))
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ---
@@ -221,9 +216,19 @@ python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:
 # examples/copy-more-docs.py
 from copy import deepcopy
 import json
-from random import choices
-from string import ascii_letters
 import typing as t
+import uuid
+
+
+if __name__ == '__main__':
+    for i, _ in enumerate(range(654321), start=1):
+        d = {
+            '_index': 'my-index-b',
+            '_id': i,
+            '_type': 'type1',
+            '_source': {'field1': str(uuid.uuid4())},
+        }
+        print(json.dumps(d))
 
 
 def handle(actions: t.Iterable[str]):
@@ -232,21 +237,6 @@ def handle(actions: t.Iterable[str]):
         yield d
         d2 = deepcopy(d)
         d2['_source']['field1'] += '!!!'
-        d2['_source']['field2'] = ''.join(choices(ascii_letters, k=8))
+        d2['_source']['field2'] = str(uuid.uuid4())
         yield d2
-
-
-def main():
-    for i in range(1, 2222):
-        d = {
-            '_index': 'my-index-b',
-            '_id': i,
-            '_type': 'type1',
-            '_source': {'field1': ''.join(choices(ascii_letters, k=8))},
-        }
-        print(json.dumps(d))
-
-
-if __name__ == '__main__':
-    main()
 ```
