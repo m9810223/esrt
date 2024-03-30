@@ -227,7 +227,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | esrt t localhost
+python examples/create-massive-docs.py | esrt t localhost -c 100000
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  654321
@@ -268,7 +268,11 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
+python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle -c 100000
 # ->
+# <Client([{'host': 'localhost', 'port': 9200}])>
+# streaming_bulk  [####################################]  1308642
 
+# success = 1308642
+# failed = 0
 ```

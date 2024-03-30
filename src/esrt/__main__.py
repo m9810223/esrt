@@ -234,7 +234,7 @@ def streaming_bulk_(
     ] = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[str]], 'esrt:DocHandler'),
     doc_type: _doc_type_annotated = None,
     #
-    chunk_size: t.Annotated[int, typer.Option('--chunk-size')] = 500,
+    chunk_size: t.Annotated[int, typer.Option('-c', '--chunk-size')] = 500,
     max_chunk_bytes: t.Annotated[int, typer.Option('--max-chunk-bytes')] = 100 * 1024 * 1024,
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
     raise_on_exception: t.Annotated[bool, typer.Option(' /--no-raise-on-exception')] = True,
