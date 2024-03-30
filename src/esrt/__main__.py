@@ -49,7 +49,7 @@ class Help:
     )
     sql = typer.style(
         typer.style(_fmt.format('sql'), fg=typer.colors.MAGENTA, bold=True)
-        + typer.style('e -X POST /_sql', bold=True, dim=True, italic=True),
+        + typer.style('request -X POST /_sql', bold=True, dim=True, italic=True),
     )
     t_transmit = typer.style(
         typer.style(_fmt.format('transmit'), fg=typer.colors.MAGENTA, bold=True)
