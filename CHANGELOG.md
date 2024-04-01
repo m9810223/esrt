@@ -2,6 +2,13 @@
 
 
 
+## v1.22.0 (2024-04-01)
+
+### Feature
+
+* feat: envvar `ESRT_TRANSMIT_CHUNK_SIZE` ([`0c0509c`](https://github.com/m9810223/esrt/commit/0c0509cc279097fdd022d88533dee08a4964d1bc))
+
+
 ## v1.21.0 (2024-03-30)
 
 ### Feature
