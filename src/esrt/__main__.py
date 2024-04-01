@@ -90,6 +90,10 @@ _foutput_annotated = t.Annotated[
 _doc_type_annotated = t.Annotated[
     t.Optional[str], typer.Option('-t', '--type', metavar='DOC_TYPE', help='Document type')
 ]
+#
+_chunk_size_annotated = t.Annotated[
+    int, typer.Option('-c', '--chunk-size', envvar='ESRT_TRANSMIT_CHUNK_SIZE')
+]
 
 
 @app.command(name='e', no_args_is_help=True, short_help=Help.e_search)
@@ -234,7 +238,7 @@ def streaming_bulk_(
     ] = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[str]], 'esrt:DocHandler'),
     doc_type: _doc_type_annotated = None,
     #
-    chunk_size: t.Annotated[int, typer.Option('-c', '--chunk-size')] = 500,
+    chunk_size: _chunk_size_annotated = 500,
     max_chunk_bytes: t.Annotated[int, typer.Option('--max-chunk-bytes')] = 100 * 1024 * 1024,
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
     raise_on_exception: t.Annotated[bool, typer.Option(' /--no-raise-on-exception')] = True,
@@ -242,6 +246,7 @@ def streaming_bulk_(
     initial_backoff: t.Annotated[int, typer.Option('--initial-backoff')] = 2,
     max_backoff: t.Annotated[int, typer.Option('--max-backoff')] = 600,
 ):
+    return print(f'{chunk_size = }')
     client = es.Client(host=host)
     with redirect_stdout(sys.stderr):
         print(client)
