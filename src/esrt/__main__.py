@@ -246,7 +246,6 @@ def streaming_bulk_(
     initial_backoff: t.Annotated[int, typer.Option('--initial-backoff')] = 2,
     max_backoff: t.Annotated[int, typer.Option('--max-backoff')] = 600,
 ):
-    return print(f'{chunk_size = }')
     client = es.Client(host=host)
     with redirect_stdout(sys.stderr):
         print(client)
