@@ -91,9 +91,7 @@ _doc_type_annotated = t.Annotated[
     t.Optional[str], typer.Option('-t', '--type', metavar='DOC_TYPE', help='Document type')
 ]
 #
-_chunk_size_annotated = t.Annotated[
-    int, typer.Option('-c', '--chunk-size', envvar='ESRT_TRANSMIT_CHUNK_SIZE')
-]
+_chunk_size_annotated = t.Annotated[int, typer.Option('-c', '--chunk-size')]
 
 
 @app.command(name='e', no_args_is_help=True, short_help=Help.e_search)
