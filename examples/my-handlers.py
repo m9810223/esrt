@@ -16,4 +16,8 @@ class MyHandler(DocHandler):
 # function style
 def my_handler(actions: t.Iterable[str]):
     for action in actions:
-        yield json.loads(action)
+        obj = json.loads(action)
+        prefix = 'new-'
+        if not t.cast(str, obj['_index']).startswith(prefix):
+            obj['_index'] = prefix + obj['_index']
+        yield obj
