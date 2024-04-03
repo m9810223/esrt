@@ -123,7 +123,7 @@ Pipe `_search` result and update `_index` with `customized handler` to do more o
 ```sh
 alias jq_es_hits="jq '.hits.hits.[]'"
 #
-esrt r localhost -X GET /my-index-2/_search | jq_es_hits  -c | esrt t localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
+esrt r localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt t localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  3
