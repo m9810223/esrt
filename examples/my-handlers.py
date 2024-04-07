@@ -13,6 +13,7 @@ def my_handler(actions: t.Iterable[str]):
             obj['_index'] = prefix + obj['_index']
         yield obj
 
+
 # class style
 class MyHandler(DocHandler):
     def handle(self, actions: t.Iterable[str]):

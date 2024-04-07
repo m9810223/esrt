@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import time
 import typing as t
+from urllib.parse import quote
 
 from elasticsearch.helpers import scan
 from elasticsearch.helpers import streaming_bulk
@@ -201,7 +202,7 @@ def perform_request(
         url = '/' + url
     response = client.transport.perform_request(
         method=method,
-        url=url,
+        url=quote(url),
         headers=merge_dicts(headers),
         params=merge_dicts(params),
         body=finput_body and finput_body.read(),
