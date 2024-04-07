@@ -102,10 +102,10 @@ esrt t localhost -d examples/bulk.ndjson
 
 ---
 
-Piping `heredoc` also works. And `-d` can be omitted.
+Read payload from `stdin`. And `-d` can be omitted.
 
 ```sh
-cat <<EOF | esrt t localhost
+esrt t localhost <<EOF
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -116,6 +116,16 @@ EOF
 
 # success = 3
 # failed = 0
+```
+
+Piping `heredoc` also works.
+
+```sh
+cat <<EOF | esrt t localhost
+{ "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+{ "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+{ "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+EOF
 ```
 
 ---
@@ -183,7 +193,7 @@ esrt e localhost | jq_es_hits -c
 ```
 
 ```sh
-cat <<EOF | esrt e localhost -d - | jq_es_hits -c
+esrt e localhost -d - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -208,7 +218,7 @@ esrt s localhost
 ```
 
 ```sh
-cat <<EOF | esrt s localhost -d -
+esrt s localhost -d - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
