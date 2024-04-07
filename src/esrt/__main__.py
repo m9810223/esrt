@@ -194,7 +194,7 @@ def perform_request(
     method: _method_annotated = 'GET',
     url: _path_annotated = '/',
     quote_url: t.Annotated[
-        bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote')
+        bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote but keep `,` and `*`')
     ] = False,
     params: _params_annotated = None,
     headers: _headers_annotated = None,
@@ -204,7 +204,7 @@ def perform_request(
     if not url.startswith('/'):
         url = '/' + url
     if quote_url:
-        url = quote(url)
+        url = quote(string=url, safe=',*')
     response = client.transport.perform_request(
         method=method,
         url=url,
