@@ -193,6 +193,7 @@ def perform_request(
     #
     method: _method_annotated = 'GET',
     url: _path_annotated = '/',
+    quote_url: t.Annotated[bool, typer.Option('-Q', '--quote-url/--no-quote-url')] = False,
     params: _params_annotated = None,
     headers: _headers_annotated = None,
     #
@@ -200,9 +201,11 @@ def perform_request(
     client = es.Client(host=host)
     if not url.startswith('/'):
         url = '/' + url
+    if quote_url:
+        url = quote(url)
     response = client.transport.perform_request(
         method=method,
-        url=quote(url),
+        url=url,
         headers=merge_dicts(headers),
         params=merge_dicts(params),
         body=finput_body and finput_body.read(),
