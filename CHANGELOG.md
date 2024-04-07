@@ -2,6 +2,13 @@
 
 
 
+## v1.29.0 (2024-04-07)
+
+### Feature
+
+* feat: release ([`e084956`](https://github.com/m9810223/esrt/commit/e084956f046404db6f1beae9a839dbe2f9213e9e))
+
+
 ## v1.28.0 (2024-04-07)
 
 ### Feature
