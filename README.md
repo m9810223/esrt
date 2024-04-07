@@ -46,6 +46,8 @@ esrt r localhost -X PUT /my-index
 # {"acknowledged": true, "shards_acknowledged": true, "index": "my-index"}
 ```
 
+*If you want to `esrt` quote url path for you, add flag: `-Q`(`--quote-url`)*
+
 Cat it:
 
 ```sh

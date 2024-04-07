@@ -193,7 +193,9 @@ def perform_request(
     #
     method: _method_annotated = 'GET',
     url: _path_annotated = '/',
-    quote_url: t.Annotated[bool, typer.Option('-Q', '--quote-url/--no-quote-url')] = False,
+    quote_url: t.Annotated[
+        bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote')
+    ] = False,
     params: _params_annotated = None,
     headers: _headers_annotated = None,
     #
