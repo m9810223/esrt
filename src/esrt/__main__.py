@@ -82,6 +82,9 @@ _headers_annotated = t.Annotated[
     t.Optional[list[dict]],
     typer.Option('-H', '--header', metavar='HTTP_HEADER', parser=parse_header, help='HTTP headers'),
 ]
+_kwargs_annotated = t.Annotated[
+    t.Optional[list[dict]], typer.Option('-k', '--kwargs', parser=parse_params)
+]
 #
 _finput_annotation = typer.Option('-d', '--data', metavar='FILE', help='Input file')
 _foutput_annotated = t.Annotated[
@@ -140,6 +143,7 @@ def scan_(
     request_timeout: t.Annotated[t.Optional[int], typer.Option('--request-timeout')] = None,
     clear_scroll: t.Annotated[bool, typer.Option(' /--keep-scroll')] = True,
     # scroll_kwargs
+    kwargs: _kwargs_annotated = None,
 ):
     client = es.Client(host=host)
     body = finput_body and finput_body.read().strip() or '{}'
@@ -168,6 +172,7 @@ def scan_(
         request_timeout=request_timeout,
         clear_scroll=clear_scroll,
         # scroll_kwargs
+        **merge_dicts(kwargs),
     )
     context = nullcontext(_iterable)
     if progress:
@@ -194,7 +199,10 @@ def perform_request(
     method: _method_annotated = 'GET',
     url: _path_annotated = '/',
     quote_url: t.Annotated[
-        bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote but keep `,` and `*`')
+        bool,
+        typer.Option(
+            '-Q', '--quote-url', help='Encode path with urllib.parse.quote but keep `,` and `*`'
+        ),
     ] = False,
     params: _params_annotated = None,
     headers: _headers_annotated = None,
@@ -249,6 +257,8 @@ def streaming_bulk_(
     max_retries: t.Annotated[int, typer.Option('--max-retries')] = 3,
     initial_backoff: t.Annotated[int, typer.Option('--initial-backoff')] = 2,
     max_backoff: t.Annotated[int, typer.Option('--max-backoff')] = 600,
+    #
+    kwargs: _kwargs_annotated = None,
 ):
     client = es.Client(host=host)
     with redirect_stdout(sys.stderr):
@@ -274,6 +284,8 @@ def streaming_bulk_(
         index=index,
         doc_type=doc_type,
         params=merge_dicts(params),
+        #
+        **merge_dicts(kwargs),
     )
     context = nullcontext(_iterable)
     if progress:
