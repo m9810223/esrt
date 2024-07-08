@@ -291,12 +291,12 @@ def streaming_bulk_(
 @app.command(name='sql', no_args_is_help=True, short_help=Help.sql)
 def sql(
     host: _host_annotated,
-    finput_body: t.Annotated[t.Optional[typer.FileText], _finput_annotation] = None,
+    sql_stmt: typer.FileText,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
 ):
     return perform_request(
         host=host,
-        finput_body=finput_body,
+        finput_body=sql_stmt,
         foutput=foutput,
         method='POST',  # *
         url='/_sql',  # *
