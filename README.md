@@ -23,7 +23,12 @@ esrt --install-completion  # Install completion for the current shell.
 You can start an es service with docker.
 
 ```sh
-docker run --rm -itd --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
+esrt_es_name="esrt-es"
+docker run --name $esrt_es_name --rm -itd --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
+
+# install sql command and restart container:
+docker exec $esrt_es_name elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/5.6.9.0/elasticsearch-sql-5.6.9.0.zip
+docker restart $esrt_es_name
 ```
 
 ---
@@ -134,7 +139,9 @@ Pipe `_search` result and update `_index` with `customized handler` to do more o
 
 ```sh
 alias jq_es_hits="jq '.hits.hits.[]'"
-#
+```
+
+```sh
 esrt r localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt t localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
@@ -224,6 +231,18 @@ EOF
 # ->
 # total = 1
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+```
+
+## `sql` - Elasticsearch SQL
+
+```sh
+esrt sql localhost - <<EOF | jq_es_hits -c
+SELECT * from new-my-index-2
+EOF
+# ->
+# {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
+# {"_index":"new-my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
 ```
 
 ---

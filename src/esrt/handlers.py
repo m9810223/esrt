@@ -1,5 +1,6 @@
 from contextlib import redirect_stdout
 import json
+from pathlib import Path
 import sys
 import typing as t
 
@@ -30,3 +31,7 @@ class BaseHandler:
 class DocHandler(BaseHandler):
     def handle_one(self, action: str):
         return json.loads(action)
+
+
+def insert_cwd():
+    sys.path.insert(0, str(Path.cwd()))

@@ -13,10 +13,13 @@ from typer.core import TyperGroup
 from uvicorn.importer import import_from_string
 
 from . import es
+from . import exceptions
 from .__version__ import VERSION
 from .cli_help import Help
 from .cli_mixins import AliasGroupMixin
 from .cli_mixins import OrderGroupMixin
+from .handlers import insert_cwd
+from .sql import SqlUrlEnum
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 from .utils import parse_header
@@ -292,6 +295,7 @@ def streaming_bulk_(
 def sql(
     host: _host_annotated,
     sql_stmt: typer.FileText,
+    api: SqlUrlEnum = SqlUrlEnum.default,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
 ):
     return perform_request(
@@ -299,5 +303,22 @@ def sql(
         finput_body=sql_stmt,
         foutput=foutput,
         method='POST',  # *
-        url='/_sql',  # *
+        url=f'/{api.value}',  # *
     )
+
+
+def main():
+    insert_cwd()
+    try:
+        app()
+    except exceptions.TransportError as e:
+        print(typer.style(e.info, dim=True))  # long
+        print(typer.style(e, fg='yellow'))  # short
+        sys.exit(1)
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
