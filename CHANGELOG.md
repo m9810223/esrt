@@ -2,6 +2,13 @@
 
 
 
+## v1.34.1 (2024-07-08)
+
+### Fix
+
+* fix: sql ([`67eb589`](https://github.com/m9810223/esrt/commit/67eb58937fbe23eaffb65cf48ee76c7cece96b41))
+
+
 ## v1.34.0 (2024-06-24)
 
 ### Feature
