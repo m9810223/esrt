@@ -2,6 +2,13 @@
 
 
 
+## v1.35.0 (2024-07-08)
+
+### Feature
+
+* feat: release ([`29f1503`](https://github.com/m9810223/esrt/commit/29f1503529556c40918ae8ef4976313c8a6a57c6))
+
+
 ## v1.34.1 (2024-07-08)
 
 ### Fix
