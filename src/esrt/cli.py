@@ -74,7 +74,7 @@ _kwargs_annotated = t.Annotated[
     t.Optional[list[dict]], typer.Option('-k', '--kwargs', parser=parse_params)
 ]
 #
-_finput_annotation = typer.Option('-d', '--data', metavar='FILE', help='Input file')
+_finput_annotation = typer.Option('-f', '--file', metavar='FILE', help='Input file')
 _foutput_annotated = t.Annotated[
     typer.FileTextWrite, typer.Option('-o', '--output', metavar='FILE', help='Output file')
 ]
@@ -294,13 +294,13 @@ def streaming_bulk_(
 @app.command(name='sql', no_args_is_help=True, short_help=Help.sql)
 def sql(
     host: _host_annotated,
-    sql_stmt: typer.FileText,
+    finput_body: t.Annotated[typer.FileText, _finput_annotation],
     api: SqlUrlEnum = SqlUrlEnum.default,
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
 ):
     return perform_request(
         host=host,
-        finput_body=sql_stmt,
+        finput_body=finput_body,
         foutput=foutput,
         method='POST',  # *
         url=f'/{api.value}',  # *

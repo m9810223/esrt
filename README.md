@@ -96,7 +96,7 @@ Bulk with data from file `examples/bulk.ndjson`:
 ```
 
 ```sh
-esrt t localhost -d examples/bulk.ndjson
+esrt t localhost -f examples/bulk.ndjson
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  4
@@ -200,7 +200,7 @@ esrt e localhost | jq_es_hits -c
 ```
 
 ```sh
-esrt e localhost -d - <<EOF | jq_es_hits -c
+esrt e localhost -f - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -225,7 +225,7 @@ esrt s localhost
 ```
 
 ```sh
-esrt s localhost -d - <<EOF
+esrt s localhost -f - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
@@ -236,7 +236,7 @@ EOF
 ## `sql` - Elasticsearch SQL
 
 ```sh
-esrt sql localhost - <<EOF | jq_es_hits -c
+esrt sql localhost -f - <<EOF | jq_es_hits -c
 SELECT * from new-my-index-2
 EOF
 # ->
