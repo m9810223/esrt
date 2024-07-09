@@ -2,6 +2,13 @@
 
 
 
+## v2.1.0 (2024-07-09)
+
+### Feature
+
+* feat: release ([`adee084`](https://github.com/m9810223/esrt/commit/adee084f270bbc4fa7e1380fe533b43c9c30bcdd))
+
+
 ## v2.0.0 (2024-07-09)
 
 ### Breaking
