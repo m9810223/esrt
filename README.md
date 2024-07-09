@@ -236,6 +236,11 @@ EOF
 ## `sql` - Elasticsearch SQL
 
 ```sh
+# Elasticsearch v6
+export ESRT_SQL_API=_xpack/sql
+```
+
+```sh
 esrt sql localhost -f - <<EOF | jq_es_hits -c
 SELECT * from new-my-index-2
 EOF

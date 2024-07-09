@@ -19,7 +19,6 @@ from .cli_help import Help
 from .cli_mixins import AliasGroupMixin
 from .cli_mixins import OrderGroupMixin
 from .handlers import insert_cwd
-from .sql import SqlUrlEnum
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 from .utils import parse_header
@@ -295,15 +294,21 @@ def streaming_bulk_(
 def sql(
     host: _host_annotated,
     finput_body: t.Annotated[typer.FileText, _finput_annotation],
-    api: SqlUrlEnum = SqlUrlEnum.default,
+    api: t.Annotated[
+        str,
+        typer.Option(envvar='ESRT_SQL_API', help='[ _sql | _xpack/sql | _nlpcn/sql | ... ]'),
+        # https://github.com/NLPchina/elasticsearch-sql
+    ] = '_sql',
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
 ):
+    if not api.startswith('/'):
+        api = '/' + api
     return perform_request(
         host=host,
         finput_body=finput_body,
         foutput=foutput,
         method='POST',  # *
-        url=f'/{api.value}',  # *
+        url=api,  # *
     )
 
 
