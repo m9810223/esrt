@@ -6,6 +6,7 @@ import time
 import typing as t
 from urllib.parse import quote
 
+from elasticsearch import __versionstr__ as es_version
 from elasticsearch.helpers import scan
 from elasticsearch.helpers import streaming_bulk
 import typer
@@ -38,7 +39,9 @@ app = typer.Typer(
     help=' '.join(
         [
             typer.style(f'esrt v{VERSION}', fg=typer.colors.BRIGHT_CYAN, bold=True),
-            typer.style('CLI use Python Elasticsearch==6.8.2', fg=typer.colors.BLACK, bold=True),
+            typer.style(
+                f'CLI use Python Elasticsearch=={es_version}', fg=typer.colors.BLACK, bold=True
+            ),
         ]
     ),
     #
