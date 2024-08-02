@@ -303,6 +303,8 @@ def sql(
         # https://github.com/NLPchina/elasticsearch-sql
     ] = '_sql',
     foutput: _foutput_annotated = t.cast(typer.FileTextWrite, sys.stdout),
+    params: _params_annotated = None,
+    headers: _headers_annotated = None,
 ):
     if not api.startswith('/'):
         api = '/' + api
@@ -312,6 +314,8 @@ def sql(
         foutput=foutput,
         method='POST',  # *
         url=api,  # *
+        params=params,
+        headers=headers,
     )
 
 
