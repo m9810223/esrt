@@ -4,8 +4,6 @@ import typing as t
 
 
 def parse_params(x: str, /) -> dict[str, str]:
-    if x is None:
-        return {}
     result = {}
     for pair in x.split('&'):
         if '=' in pair:
@@ -17,9 +15,9 @@ def parse_params(x: str, /) -> dict[str, str]:
 
 
 def parse_header(x: str, /) -> dict[str, str]:
-    if x is None:
-        return {}
-    return dict([x.split(':', 1)])
+    k, v = x.split(':', 1)
+    result = {k.rstrip(): v.lstrip()}
+    return result
 
 
 def merge_dicts(dicts: t.Optional[t.Iterable[dict[str, str]]], /):
