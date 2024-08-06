@@ -2,6 +2,13 @@
 
 
 
+## v2.6.0 (2024-08-06)
+
+### Feature
+
+* feat: refine host ([`09c9909`](https://github.com/m9810223/esrt/commit/09c9909720dd47b1a8804e24b1200adeda13a55d))
+
+
 ## v2.5.0 (2024-08-06)
 
 ### Feature
