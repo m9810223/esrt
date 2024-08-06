@@ -2,6 +2,23 @@
 
 
 
+## v2.4.0 (2024-08-06)
+
+### Feature
+
+* feat: refine host ([`8641785`](https://github.com/m9810223/esrt/commit/8641785d414040ea7345b8575272f7734b130bdf))
+
+* feat: add `certifi` ([`2560d32`](https://github.com/m9810223/esrt/commit/2560d32152747470939ec948f89d4ac70e86e0e0))
+
+### Fix
+
+* fix: remove header value space ([`6b3bd79`](https://github.com/m9810223/esrt/commit/6b3bd79e2ac64602932726fbf04c87743dae810a))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`b83f742`](https://github.com/m9810223/esrt/commit/b83f7426a87ab5dc7e2b526b3661d0ab215ec368))
+
+
 ## v2.3.0 (2024-08-02)
 
 ### Feature
