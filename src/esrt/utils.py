@@ -3,8 +3,8 @@ import json
 import typing as t
 
 
-def parse_params(x: str, /) -> dict[str, str]:
-    result = {}
+def parse_params(x: str, /):
+    result: dict[str, t.Union[str, int]] = {}
     for pair in x.split('&'):
         if '=' in pair:
             k, v = pair.split('=', 1)
