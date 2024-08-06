@@ -11,6 +11,9 @@ def parse_params(x: str, /) -> dict[str, str]:
         else:
             k, v = pair, ''
         result[k] = v
+        # TODO
+        if k == 'request_timeout':
+            result[k] = int(v)
     return result
 
 
