@@ -2,6 +2,21 @@
 
 
 
+## v2.6.2 (2024-08-06)
+
+### Chore
+
+* chore: add main.py ([`5ba9aed`](https://github.com/m9810223/esrt/commit/5ba9aed982b87aefe3cd710a7a4d6fccbfeb9cc1))
+
+### Fix
+
+* fix: type annotation ([`66968e5`](https://github.com/m9810223/esrt/commit/66968e5e313c6b8d5a547cfa13f49381eae30eef))
+
+### Unknown
+
+* fixup! chore: add main.py ([`83bb05b`](https://github.com/m9810223/esrt/commit/83bb05bbe962bcfc419057221236f20058991d5c))
+
+
 ## v2.6.1 (2024-08-06)
 
 ### Fix
