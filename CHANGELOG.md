@@ -2,6 +2,13 @@
 
 
 
+## v2.6.1 (2024-08-06)
+
+### Fix
+
+* fix: cast param `request_timeout` to int ([`ee8d945`](https://github.com/m9810223/esrt/commit/ee8d945aa787b9920e91b87287e04a8b2078058b))
+
+
 ## v2.6.0 (2024-08-06)
 
 ### Feature
