@@ -27,11 +27,11 @@ version_variables = ["src/esrt/__version__.py:VERSION"]
 
 [tool.black]
 # https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html
-line-length = 100
+line-length = 256
 skip-string-normalization = true
 
 [tool.ruff]
-line-length = 100
+line-length = 256
 fix = true
 show-fixes = true
 output-format = "full"
