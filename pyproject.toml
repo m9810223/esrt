@@ -1,6 +1,6 @@
 [project]
 name = "esrt"
-version = "2.6.2"
+version = "3.0.0"
 requires-python = ">=3.9"
 readme = "README.md"
 dependencies = [
