@@ -2,6 +2,19 @@
 
 
 
+## v3.2.0 (2024-08-08)
+
+### Chore
+
+* chore: redirect_stdout ([`8d98a39`](https://github.com/m9810223/esrt/commit/8d98a39c6c02a37692738cd39a40ea2a1df29eba))
+
+* chore: logging color ([`526c545`](https://github.com/m9810223/esrt/commit/526c5456ad796cc751b9b5a81144aa693f433309))
+
+### Feature
+
+* feat: release ([`13b4e3d`](https://github.com/m9810223/esrt/commit/13b4e3d2911c915219f39937b23b08ebc51cb7a3))
+
+
 ## v3.1.0 (2024-08-08)
 
 ### Feature
