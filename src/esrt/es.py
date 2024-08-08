@@ -1,4 +1,8 @@
+from pprint import pformat
+
 from elasticsearch import Elasticsearch
+
+from .logger import logger
 
 
 class Client(Elasticsearch):
@@ -8,3 +12,4 @@ class Client(Elasticsearch):
         if (not has_scheme) and (not has_port):
             host += ':9200'
         super().__init__(hosts=host)
+        logger.warning(pformat(self.transport.hosts))

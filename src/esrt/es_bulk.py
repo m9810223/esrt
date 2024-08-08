@@ -1,5 +1,6 @@
 from contextlib import nullcontext
 from contextlib import redirect_stdout
+from pprint import pformat
 import sys
 import time
 import typing as t
@@ -10,6 +11,7 @@ from uvicorn.importer import import_from_string
 
 from . import cli_params
 from . import es
+from .logger import logger
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 
@@ -39,9 +41,9 @@ def es_bulk(
     #
     kwargs: t.Annotated[t.Optional[list[dict]], cli_params.kwargs] = None,
 ):
+    logger.debug(pformat(locals()))
     client = es.Client(host=host)
     with redirect_stdout(sys.stderr):
-        print(client)
         print('waiting for seconds to start', end=' ', flush=True)
         for i in range(5, -1, -1):
             print(i, end=' ', flush=True)
@@ -75,7 +77,7 @@ def es_bulk(
             if not ok:
                 failed += 1
                 with redirect_stdout(sys.stderr):
-                    print(f'Failed to index {item}')
+                    logger.warning(f'Failed to index {item}')
                 with redirect_stdout(sys.stderr):
                     output_file.write(json_obj_to_line(item))
             else:
@@ -84,6 +86,6 @@ def es_bulk(
                     with redirect_stdout(sys.stderr):
                         output_file.write(json_obj_to_line(item))
     with redirect_stdout(sys.stderr):
-        print()
-        print(f'{success = }')
-        print(f'{failed = }')
+        print()  # TODO
+        logger.warning(f'{success = }')
+        logger.warning(f'{failed = }')

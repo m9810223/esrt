@@ -1,6 +1,6 @@
 from contextlib import nullcontext
-from contextlib import redirect_stdout
 import json
+from pprint import pformat
 import sys
 import typing as t
 
@@ -9,6 +9,7 @@ import typer
 
 from . import cli_params
 from . import es
+from .logger import logger
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 
@@ -19,11 +20,10 @@ def es_scan(
     output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
     #
     progress: t.Annotated[bool, typer.Option()] = False,
-    verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
     #
     index: t.Annotated[t.Optional[str], cli_params.index] = None,
     doc_type: t.Annotated[t.Optional[str], cli_params.doc_type] = None,
-    params: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
+    query_param: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
     #
     scroll: t.Annotated[str, typer.Option('--scroll', metavar='TIME', help='Scroll duration')] = '5m',
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
@@ -35,24 +35,35 @@ def es_scan(
     kwargs: t.Annotated[t.Optional[list[dict]], cli_params.kwargs] = None,
 ):
     client = es.Client(host=host)
-    body = input_file and input_file.read().strip() or '{}'
-    _once_params = merge_dicts(params)
-    _once_params['size'] = '1'
-    _once = client.search(
+
+    _body = input_file and input_file.read().strip() or '{}'
+    body = _body and json.loads(_body)
+    logger.debug(f'body: {pformat(body)}')
+
+    # count
+    once_params = merge_dicts(query_param)
+    once_params['size'] = '1'
+    once_search = client.search(
         index=index,
         doc_type=doc_type,
-        body=body and json.loads(body),
-        params=_once_params,  # *
+        body=body,
+        params=once_params,  # *
     )
-    total = _once['hits']['total']
-    with redirect_stdout(sys.stderr):
-        print(f'{total = }')
-    _iterable = scan(
+    total = once_search['hits']['total']
+    logger.warning(f'{total = }')
+
+    params = merge_dicts(query_param)
+    logger.info(f'params: {pformat(params)}')
+
+    scroll_kwargs = merge_dicts(kwargs)
+    logger.info(f'scroll_kwargs: {pformat(scroll_kwargs)}')
+
+    iterable = scan(
         client=client,
         index=index,
         doc_type=doc_type,
-        query=body and json.loads(body),
-        params=merge_dicts(params),
+        query=body,
+        params=params,
         #
         scroll=scroll,
         raise_on_error=raise_on_error,
@@ -60,15 +71,13 @@ def es_scan(
         size=size,
         request_timeout=request_timeout,
         clear_scroll=clear_scroll,
-        # scroll_kwargs
-        **merge_dicts(kwargs),
+        #
+        **scroll_kwargs,
     )
-    context = nullcontext(_iterable)
+    context = nullcontext(iterable)
     if progress:
-        context = typer.progressbar(iterable=_iterable, label='scan', show_pos=True, file=sys.stderr)
+        context = typer.progressbar(iterable=iterable, label='scan', show_pos=True, file=sys.stderr)
     with context as hits:
         for hit in hits:
-            if verbose:
-                with redirect_stdout(sys.stderr):
-                    print(hit)
+            logger.info(hit)
             output_file.write(json_obj_to_line(hit))

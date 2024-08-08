@@ -24,6 +24,6 @@ def es_sql(
         output_file=output_file,
         method='POST',  # *
         url=api,  # *
-        params=params,
-        headers=headers,
+        query_param=params,
+        http_header=headers,
     )

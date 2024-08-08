@@ -1,4 +1,5 @@
 import sys
+import typing as t
 
 from elasticsearch import __versionstr__ as es_version
 import typer
@@ -15,6 +16,8 @@ from .es_scan import es_scan
 from .es_search import es_search
 from .es_sql import es_sql
 from .handlers import insert_cwd
+from .logger import logger
+from .logger import set_log_level
 
 
 class MyTyperGroup(AliasGroupMixin, OrderGroupMixin, TyperGroup):
@@ -43,9 +46,16 @@ app.command(name='t / transmit / bulk', no_args_is_help=True, short_help=Help.t_
 app.command(name='sql', no_args_is_help=True, short_help=Help.sql)(es_sql)
 
 
+@app.callback()
+def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'warn'):
+    set_log_level(log_level)
+    logger.info(f'Log level: {log_level}')
+
+
 def main():
     insert_cwd()
     try:
+        logger.info('CLI started')
         app()
     except exceptions.TransportError as e:
         print(typer.style(e.info, dim=True))  # long

@@ -4,6 +4,8 @@ from pathlib import Path
 import sys
 import typing as t
 
+from .logger import logger
+
 
 class BaseHandler:
     def __init__(self, actions: t.Iterable[str]):
@@ -27,6 +29,10 @@ class BaseHandler:
         with redirect_stdout(sys.stderr):
             print(*args, **kwargs)
 
+    @property
+    def logger(self):
+        return logger
+
 
 class DocHandler(BaseHandler):
     def handle_one(self, action: str):
@@ -34,4 +40,6 @@ class DocHandler(BaseHandler):
 
 
 def insert_cwd():
-    sys.path.insert(0, str(Path.cwd()))
+    cwd = str(Path.cwd())
+    logger.debug(f'Insert cwd: {cwd}')
+    sys.path.insert(0, cwd)
