@@ -2,6 +2,15 @@
 
 
 
+## v3.0.0 (2024-08-08)
+
+### Breaking
+
+* feat: refactor
+
+BREAKING CHANGE: refactor ([`6a37f37`](https://github.com/m9810223/esrt/commit/6a37f37eba02ba2b64aeee5447f1b7bcd6b77c35))
+
+
 ## v2.6.2 (2024-08-06)
 
 ### Chore
