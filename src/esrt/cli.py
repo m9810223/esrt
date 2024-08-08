@@ -1,3 +1,4 @@
+from contextlib import redirect_stdout
 import sys
 import typing as t
 
@@ -58,9 +59,11 @@ def main():
         logger.info('CLI started')
         app()
     except exceptions.TransportError as e:
-        print(typer.style(e.info, dim=True))  # long
-        print(typer.style(e, fg='yellow'))  # short
+        with redirect_stdout(sys.stderr):
+            print(typer.style(e.info, dim=True))  # long
+            print(typer.style(e, fg='yellow'))  # short
         sys.exit(1)
     except Exception as e:
-        print(e)
+        with redirect_stdout(sys.stderr):
+            print(e)
         sys.exit(1)
