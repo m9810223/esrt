@@ -2,6 +2,17 @@
 
 
 
+## v3.0.1 (2024-08-08)
+
+### Fix
+
+* fix: Annotated and Optional ([`91c6410`](https://github.com/m9810223/esrt/commit/91c64107b63519ccd61322417810342f3ab3576a))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`b5d3c83`](https://github.com/m9810223/esrt/commit/b5d3c83f8c9b0c91d89b7e92123a6a2844254c34))
+
+
 ## v3.0.0 (2024-08-08)
 
 ### Breaking
