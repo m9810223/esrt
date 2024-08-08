@@ -9,8 +9,8 @@ from .es_request import es_request
 
 def es_sql(
     host: t.Annotated[str, cli_params.host],
-    finput_body: t.Annotated[typer.FileText, cli_params.input_file],
-    foutput: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
+    input_file: t.Annotated[typer.FileText, cli_params.input_file],
+    output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
     params: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
     headers: t.Annotated[t.Optional[list[dict]], cli_params.http_header] = None,
     #
@@ -20,8 +20,8 @@ def es_sql(
         api = '/' + api
     return es_request(
         host=host,
-        finput_body=finput_body,
-        foutput=foutput,
+        input_file=input_file,
+        output_file=output_file,
         method='POST',  # *
         url=api,  # *
         params=params,

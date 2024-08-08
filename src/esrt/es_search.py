@@ -11,11 +11,11 @@ from .utils import merge_dicts
 
 def es_search(
     host: t.Annotated[str, cli_params.host],
-    finput_body: t.Optional[t.Annotated[typer.FileText, cli_params.input_file]] = None,
+    finput_body: t.Annotated[t.Optional[typer.FileText], cli_params.input_file] = None,
     foutput: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
     #
-    index: t.Optional[t.Annotated[str, cli_params.index]] = None,
-    doc_type: t.Optional[t.Annotated[str, cli_params.doc_type]] = None,
+    index: t.Annotated[t.Optional[str], cli_params.index] = None,
+    doc_type: t.Annotated[t.Optional[str], cli_params.doc_type] = None,
     params: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
 ):
     client = es.Client(host=host)

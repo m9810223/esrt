@@ -12,8 +12,8 @@ from .utils import merge_dicts
 
 def es_request(
     host: t.Annotated[str, cli_params.host],
-    finput_body: t.Optional[t.Annotated[typer.FileText, cli_params.input_file]] = None,
-    foutput: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
+    input_file: t.Annotated[t.Optional[typer.FileText], cli_params.input_file] = None,
+    output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
     params: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
     headers: t.Annotated[t.Optional[list[dict]], cli_params.http_header] = None,
     #
@@ -32,6 +32,6 @@ def es_request(
         url=url,
         headers=merge_dicts(headers),
         params=merge_dicts(params),
-        body=finput_body and finput_body.read(),
+        body=input_file and input_file.read(),
     )
-    foutput.write(json_obj_to_line(response))
+    output_file.write(json_obj_to_line(response))
