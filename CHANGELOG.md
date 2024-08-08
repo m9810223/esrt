@@ -2,6 +2,17 @@
 
 
 
+## v3.1.0 (2024-08-08)
+
+### Feature
+
+* feat: add logger ([`c3de237`](https://github.com/m9810223/esrt/commit/c3de237ff956f2f79ac54ead8789795314964c49))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`8590009`](https://github.com/m9810223/esrt/commit/85900097273689e59c3147039cd310d435ce8275))
+
+
 ## v3.0.1 (2024-08-08)
 
 ### Fix
