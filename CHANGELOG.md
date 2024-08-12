@@ -2,6 +2,13 @@
 
 
 
+## v3.3.0 (2024-08-12)
+
+### Feature
+
+* feat: set log level to error ([`eb18aa7`](https://github.com/m9810223/esrt/commit/eb18aa785ade2a3cc0adffa58dc11f3d508b29d1))
+
+
 ## v3.2.0 (2024-08-08)
 
 ### Chore
