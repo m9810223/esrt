@@ -48,7 +48,7 @@ app.command(name='sql', no_args_is_help=True, short_help=Help.sql)(es_sql)
 
 
 @app.callback()
-def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'warn'):
+def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'error'):
     set_log_level(log_level)
     logger.info(f'Log level: {log_level}')
 
