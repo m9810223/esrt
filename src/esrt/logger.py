@@ -1,7 +1,7 @@
 import logging
-import sys
 
-import typer
+from rich.console import Console
+from rich.logging import RichHandler
 
 
 logger = logging.getLogger('esrt')
@@ -9,9 +9,15 @@ logger = logging.getLogger('esrt')
 
 def set_log_level(level: str):
     logging.basicConfig(
-        format=typer.style('{levelname:<7} ' '[{asctime}] ' '{message} ', dim=True),
-        datefmt='%H:%M:%S',
+        format='{message}',
+        datefmt='%X.%f',
         style='{',
         level=level,
-        handlers=[logging.StreamHandler(sys.stderr)],
+        handlers=[
+            RichHandler(
+                console=Console(stderr=True),
+                omit_repeated_times=False,
+                show_path=False,
+            )
+        ],
     )

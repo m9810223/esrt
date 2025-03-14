@@ -2,21 +2,23 @@
 name = "esrt"
 version = "3.3.0"
 requires-python = ">=3.9"
-readme = "README.md"
 dependencies = [
     "elasticsearch==6.8.2",
     "typer-slim[standard]>=0.12.0",
     # uvicorn.importer.import_from_string
     "uvicorn>=0.2.14",
     "certifi>=2024.7.4",
+    "rich>=13.9.4",
+    "pydantic-settings>=2.8.1",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project.scripts]
 esrt = "esrt.__main__:main"
 
-
-[tool.pdm]
-distribution = true
 
 
 [tool.semantic_release]

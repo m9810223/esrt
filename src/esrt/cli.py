@@ -3,6 +3,14 @@ import sys
 import typing as t
 
 from elasticsearch import __versionstr__ as es_version
+from pydantic import AliasChoices
+from pydantic import Field
+from pydantic_settings import BaseSettings
+from pydantic_settings import CliApp
+from pydantic_settings import CliImplicitFlag
+from pydantic_settings import CliSubCommand
+from pydantic_settings import SettingsConfigDict
+from rich.console import Console
 import typer
 from typer.core import TyperGroup
 
@@ -19,6 +27,10 @@ from .es_sql import es_sql
 from .handlers import insert_cwd
 from .logger import logger
 from .logger import set_log_level
+
+
+console = Console()
+stderr_console = Console(stderr=True)
 
 
 class MyTyperGroup(AliasGroupMixin, OrderGroupMixin, TyperGroup):
@@ -48,15 +60,59 @@ app.command(name='sql', no_args_is_help=True, short_help=Help.sql)(es_sql)
 
 
 @app.callback()
-def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'error'):
+def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'warning'):
     set_log_level(log_level)
     logger.info(f'Log level: {log_level}')
+
+
+class SearchCmd(BaseSettings):
+    dry_run: CliImplicitFlag[bool] = Field(default=False)
+
+    def cli_cmd(self) -> None:
+        print(f'{self=}')
+
+
+class MainCmd(BaseSettings):
+    """
+    The help text from the class docstring.
+    """
+
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_prefix='ESRT_',
+        cli_prog_name='esrt',
+        cli_enforce_required=True,
+        cli_kebab_case=False,
+    )
+
+    version: CliImplicitFlag[bool] = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            'V',
+            'version',
+        ),
+    )
+
+    search: CliSubCommand[SearchCmd]
+
+    def print_version(self) -> None:
+        console.out(VERSION)
+
+    def cli_cmd(self) -> None:
+        logger.debug(self)
+
+        if self.version is True:
+            self.print_version()
+            return
+
+        CliApp.run_subcommand(self)
 
 
 def main():
     insert_cwd()
     try:
         logger.info('CLI started')
+        CliApp.run(MainCmd)
         app()
     except exceptions.TransportError as e:
         with redirect_stdout(sys.stderr):

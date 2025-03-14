@@ -79,5 +79,5 @@ def es_scan(
         context = typer.progressbar(iterable=iterable, label='scan', show_pos=True, file=sys.stderr)
     with context as hits:
         for hit in hits:
-            logger.info(hit)
+            logger.info(f'{hit = }')
             output_file.write(json_obj_to_line(hit))
