@@ -59,7 +59,7 @@ class BaseCmd(BaseSettings):
         default=False,
         validation_alias=AliasChoices(
             'n',
-            'dry-run',
+            'dry_run',
         ),
     )
     verbose: CliImplicitFlag[bool] = Field(
@@ -73,6 +73,7 @@ class BaseCmd(BaseSettings):
     client: t.Annotated[Client, BeforeValidator(Client)] = Field(
         default=t.cast('Client', '127.0.0.1:9200'),
         validation_alias=AliasChoices(
+            'H',
             'host',
         ),
     )
@@ -128,8 +129,7 @@ class DocTypeCmdMixin(BaseCmd):
     doc_type: t.Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices(
-            't',
-            'doc-type',
+            'doc_type',
         ),
         description=generate_rich_text(
             Text('A comma-separated list of document types to search;', style='blue b'),
@@ -139,7 +139,7 @@ class DocTypeCmdMixin(BaseCmd):
 
 
 class ParamsCmdMixin(BaseCmd):
-    params: dict[str, Json[JsonValue]] = Field(
+    params: dict[str, JsonValue] = Field(
         default_factory=dict,
         validation_alias=AliasChoices(
             'p',

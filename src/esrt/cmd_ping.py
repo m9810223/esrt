@@ -12,6 +12,7 @@ class PingCmd(BaseCmd):
     info: CliImplicitFlag[bool] = Field(
         default=True,
         validation_alias=AliasChoices(
+            'I',
             'info',
         ),
     )
