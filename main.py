@@ -1,4 +1,4 @@
-from esrt.cli import main
+from esrt.main import main
 
 
 if __name__ == '__main__':

@@ -1,71 +1,118 @@
+[build-system]
+build-backend = "hatchling.build"
+
+requires = [ "hatchling" ]
+
 [project]
 name = "esrt"
 version = "3.3.0"
 requires-python = ">=3.9"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
 dependencies = [
-    "elasticsearch==6.8.2",
-    "typer-slim[standard]>=0.12.0",
-    # uvicorn.importer.import_from_string
-    "uvicorn>=0.2.14",
-    "certifi>=2024.7.4",
-    "rich>=13.9.4",
-    "pydantic-settings>=2.8.1",
+  "certifi>=2024.7.4",
+  "elasticsearch==6.8.2",
+  "pydantic-settings>=2.8.1",
+  "rich>=13.9.4",
+  "typer-slim[standard]>=0.12",
+  # uvicorn.importer.import_from_string
+  "uvicorn>=0.2.14",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project.scripts]
-esrt = "esrt.__main__:main"
-
-
-
-[tool.semantic_release]
-# https://python-semantic-release.readthedocs.io/en/latest/configuration.html
-version_toml = ["pyproject.toml:project.version"]
-version_variables = ["src/esrt/__version__.py:VERSION"]
-# build_command = "pip install pdm && pdm build"
-
-[tool.black]
-# https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html
-line-length = 256
-skip-string-normalization = true
+scripts.esrt = "esrt.__main__:main"
 
 [tool.ruff]
-line-length = 256
+# https://docs.astral.sh/ruff/settings/
+line-length = 120
 fix = true
 show-fixes = true
 output-format = "full"
 
-[tool.ruff.format]
-quote-style = "single"
-
-[tool.ruff.lint]
-extend-select = [
-    "W",   # pycodestyle Warning
-    "I",   # isort
-    "N",   # pep8-naming
-    "S",   # flake8-bandit
-    "PTH", # flake8-use-pathlib
-    "PGH", # pygrep-hooks
-    "TRY", # tryceratops
+format.quote-style = "single"
+# https://docs.astral.sh/ruff/rules/
+lint.extend-select = [
+  "A",   # flake8-builtins
+  "AIR", # Airflow
+  # "ANN",   # flake8-annotations
+  "ANN001", # missing-type-function-argument
+  "ANN401", # any-type
+  # "ARG",    # flake8-unused-arguments
+  "ASYNC", # flake8-async
+  "B",     # flake8-bugbear
+  "BLE",   # flake8-blind-except
+  "C4",    # flake8-comprehensions
+  "C90",   # mccabe
+  "COM",   # flake8-commas
+  # "CPY",   # flake8-copyright
+  # "D",     # pydocstyle
+  "DJ", # flake8-django
+  # "DOC", # pydoclint
+  "DTZ", # flake8-datetimez
+  "E",   # pycodestyle Error
+  "EM",  # flake8-errmsg
+  # "ERA", # eradicate
+  "EXE", # flake8-executable
+  "F",   # Pyflakes
+  # "FA",   # flake8-future-annotations
+  "FAST", # FastAPI
+  "FBT",  # flake8-boolean-trap
+  # "FIX",  # flake8-fixme
+  "FLY",  # flynt
+  "FURB", # refurb
+  "G",    # flake8-logging-format
+  "I",    # isort
+  "ICN",  # flake8-import-conventions
+  # "INP",  # flake8-no-pep420
+  "INT", # flake8-gettext
+  "ISC", # flake8-implicit-str-concat
+  "LOG", # flake8-logging
+  "N",   # pep8-naming
+  "NPY", # NumPy-specific rules
+  "PD",  # pandas-vet
+  # "PERF", # Perflint
+  "PGH", # pygrep-hooks
+  "PIE", # flake8-pie
+  "PL",  # Pylint
+  "PT",  # flake8-pytest-style
+  "PTH", # flake8-use-pathlib
+  "PYI", # flake8-pyi
+  # "Q",   # flake8-quotes
+  "RET", # flake8-return
+  "RSE", # flake8-raise
+  "RUF", # Ruff-specific rules
+  "S",   # flake8-bandit
+  # "SIM",  # flake8-simplify
+  "SLF",  # flake8-self
+  "SLOT", # flake8-slots
+  "T10",  # flake8-debugger
+  # "T20",   # flake8-print
+  "TC", # flake8-type-checking
+  # "TD",  # flake8-todos
+  "TID", # flake8-tidy-imports
+  "TRY", # tryceratops
+  "UP",  # pyupgrade
+  "W",   # pycodestyle Warning
+  "YTT", # flake8-2020
 ]
-ignore = [
-    "S101",   # Use of `assert` detected
-    "TRY003",
-    "S311",
+lint.extend-ignore = [
+  "COM812",
+  "ISC001",
+  "RET504", # Unnecessary assignment before return statement
+  "S101",   # Use of `assert` detected
 ]
-
-[tool.ruff.lint.isort]
+lint.flake8-import-conventions.aliases.typing = "t"
+lint.flake8-import-conventions.banned-from = [ "typing" ]
+lint.isort.force-single-line = true
+lint.isort.force-sort-within-sections = true
+lint.isort.known-local-folder = [  ]
 # https://beta.ruff.rs/docs/settings/#isort
-lines-after-imports = 2
-force-single-line = true
-force-sort-within-sections = true
-known-local-folder = []
-
-[tool.mypy]
-ignore_missing_imports = true
+lint.isort.lines-after-imports = 2
 
 [tool.pytest.ini_options]
 # https://docs.pytest.org/en/stable/reference/reference.html
@@ -78,6 +125,15 @@ addopts = "--import-mode=importlib -r fEsxX --disable-warnings --showlocals --tb
 # pytest-xdist
 
 testpaths = [
-    #
-    "libs/logging_config",
+  #
+  "libs/logging_config",
 ]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.semantic_release]
+# https://python-semantic-release.readthedocs.io/en/latest/configuration.html
+version_toml = [ "pyproject.toml:project.version" ]
+version_variables = [ "src/esrt/__version__.py:VERSION" ]
+# build_command = "pip install pdm && pdm build"

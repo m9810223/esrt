@@ -5,24 +5,26 @@ from urllib.parse import quote
 
 import typer
 
-from . import cli_params
+from . import _cli_params
 from . import es
-from .logger import logger
+from .logging_ import logger
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 
 
 def es_request(
-    host: t.Annotated[str, cli_params.host],
-    input_file: t.Annotated[t.Optional[typer.FileText], cli_params.input_file] = None,
-    output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
-    query_param: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
-    http_header: t.Annotated[t.Optional[list[dict]], cli_params.http_header] = None,
-    #
-    method: t.Annotated[str, typer.Option('-X', '--request', '--method', metavar='HTTP_METHOD', parser=str.upper, help='HTTP method')] = 'GET',
+    host: t.Annotated[str, _cli_params.host],
+    input_file: t.Annotated[t.Optional[typer.FileText], _cli_params.input_file] = None,
+    output_file: t.Annotated[typer.FileTextWrite, _cli_params.output_file] = t.cast('typer.FileTextWrite', sys.stdout),
+    query_param: t.Annotated[t.Optional[list[dict]], _cli_params.query_param] = None,
+    http_header: t.Annotated[t.Optional[list[dict]], _cli_params.http_header] = None,
+    method: t.Annotated[
+        str, typer.Option('-X', '--request', '--method', metavar='HTTP_METHOD', parser=str.upper, help='HTTP method')
+    ] = 'GET',
     url: t.Annotated[str, typer.Argument(metavar='URL_PATH', help='HTTP path')] = '/',
-    quote_url: t.Annotated[bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote but keep `,` and `*`')] = False,
-    #
+    quote_url: t.Annotated[
+        bool, typer.Option('-Q', '--quote-url', help='Encode path with urllib.parse.quote but keep `,` and `*`')
+    ] = False,
 ):
     logger.info(f'{method = }')
 

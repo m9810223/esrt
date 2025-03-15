@@ -16,17 +16,17 @@ from typer.core import TyperGroup
 
 from . import exceptions
 from .__version__ import VERSION
-from .cli_help import Help
-from .cli_mixins import AliasGroupMixin
-from .cli_mixins import OrderGroupMixin
-from .es_bulk import es_bulk
-from .es_request import es_request
-from .es_scan import es_scan
-from .es_search import es_search
-from .es_sql import es_sql
+from ._cli_help import Help
+from ._cli_mixins import AliasGroupMixin
+from ._cli_mixins import OrderGroupMixin
+from ._es_bulk import es_bulk
+from ._es_request import es_request
+from ._es_scan import es_scan
+from ._es_search import es_search
+from ._es_sql import es_sql
 from .handlers import insert_cwd
-from .logger import logger
-from .logger import set_log_level
+from .logging_ import logger
+from .logging_ import set_log_level
 
 
 console = Console()
@@ -41,7 +41,6 @@ app = typer.Typer(
     cls=MyTyperGroup,
     add_completion=False,
     no_args_is_help=True,
-    #
     context_settings={'help_option_names': ['-h', '--help']},
     help=' '.join(
         [
@@ -49,7 +48,6 @@ app = typer.Typer(
             typer.style(f'CLI use Python Elasticsearch=={es_version}', fg=typer.colors.BLACK, bold=True),
         ]
     ),
-    #
     pretty_exceptions_enable=False,
 )
 app.command(name='e / search', no_args_is_help=True, short_help=Help.e_search)(es_search)
@@ -60,7 +58,18 @@ app.command(name='sql', no_args_is_help=True, short_help=Help.sql)(es_sql)
 
 
 @app.callback()
-def log_level_cb(log_level: t.Annotated[str, typer.Option('-l', '--log-level', envvar='ESRT_LOG_LEVEL', parser=str.upper, help='[ debug | info | warn | error | critical ]')] = 'warning'):
+def log_level_cb(
+    log_level: t.Annotated[
+        str,
+        typer.Option(
+            '-l',
+            '--log-level',
+            envvar='ESRT_LOG_LEVEL',
+            parser=str.upper,
+            help='[ debug | info | warn | error | critical ]',
+        ),
+    ] = 'warning',
+):
     set_log_level(log_level)
     logger.info(f'Log level: {log_level}')
 

@@ -2,7 +2,7 @@ from pprint import pformat
 
 from elasticsearch import Elasticsearch
 
-from .logger import logger
+from .logging_ import logger
 
 
 class Client(Elasticsearch):

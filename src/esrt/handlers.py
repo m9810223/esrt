@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import typing as t
 
-from .logger import logger
+from .logging_ import logger
 
 
 class BaseHandler:
@@ -21,7 +21,7 @@ class BaseHandler:
         for action in actions:
             yield self.handle_one(action)
 
-    def handle_one(self, action):
+    def handle_one(self, action):  # noqa: ANN001
         return action
 
     @staticmethod

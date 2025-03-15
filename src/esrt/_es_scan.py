@@ -7,24 +7,21 @@ import typing as t
 from elasticsearch.helpers import scan
 import typer
 
-from . import cli_params
+from . import _cli_params
 from . import es
-from .logger import logger
+from .logging_ import logger
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 
 
 def es_scan(
-    host: t.Annotated[str, cli_params.host],
-    input_file: t.Annotated[t.Optional[typer.FileText], cli_params.input_file] = None,
-    output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
-    #
+    host: t.Annotated[str, _cli_params.host],
+    input_file: t.Annotated[t.Optional[typer.FileText], _cli_params.input_file] = None,
+    output_file: t.Annotated[typer.FileTextWrite, _cli_params.output_file] = t.cast('typer.FileTextWrite', sys.stdout),
     progress: t.Annotated[bool, typer.Option()] = False,
-    #
-    index: t.Annotated[t.Optional[str], cli_params.index] = None,
-    doc_type: t.Annotated[t.Optional[str], cli_params.doc_type] = None,
-    query_param: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
-    #
+    index: t.Annotated[t.Optional[str], _cli_params.index] = None,
+    doc_type: t.Annotated[t.Optional[str], _cli_params.doc_type] = None,
+    query_param: t.Annotated[t.Optional[list[dict]], _cli_params.query_param] = None,
     scroll: t.Annotated[str, typer.Option('--scroll', metavar='TIME', help='Scroll duration')] = '5m',
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
     preserve_order: t.Annotated[bool, typer.Option('--preserve-order')] = False,
@@ -32,11 +29,11 @@ def es_scan(
     request_timeout: t.Annotated[t.Optional[int], typer.Option('--request-timeout')] = None,
     clear_scroll: t.Annotated[bool, typer.Option(' /--keep-scroll')] = True,
     # scroll_kwargs
-    kwargs: t.Annotated[t.Optional[list[dict]], cli_params.kwargs] = None,
+    kwargs: t.Annotated[t.Optional[list[dict]], _cli_params.kwargs] = None,
 ):
     client = es.Client(host=host)
 
-    _body = input_file and input_file.read().strip() or '{}'
+    _body = (input_file and input_file.read().strip()) or '{}'
     body = _body and json.loads(_body)
     logger.debug(f'body: {pformat(body)}')
 
@@ -64,14 +61,12 @@ def es_scan(
         doc_type=doc_type,
         query=body,
         params=params,
-        #
         scroll=scroll,
         raise_on_error=raise_on_error,
         preserve_order=preserve_order,
         size=size,
         request_timeout=request_timeout,
         clear_scroll=clear_scroll,
-        #
         **scroll_kwargs,
     )
     context = nullcontext(iterable)
