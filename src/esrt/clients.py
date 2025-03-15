@@ -16,6 +16,10 @@ class Client:
         return self._client.ping()  # type: ignore  # noqa: PGH003
 
     @validate_call(validate_return=True)
+    def info(self) -> JsonValue:
+        return self._client.info()
+
+    @validate_call(validate_return=True)
     def search(
         self,
         *,
