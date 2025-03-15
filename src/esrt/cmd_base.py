@@ -55,11 +55,11 @@ def generate_rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:
 
 
 class BaseCmd(BaseSettings):
-    dry_run: CliImplicitFlag[bool] = Field(
-        default=False,
+    client: t.Annotated[Client, BeforeValidator(Client)] = Field(
+        default=t.cast('Client', '127.0.0.1:9200'),
         validation_alias=AliasChoices(
-            'n',
-            'dry_run',
+            'H',
+            'host',
         ),
     )
     verbose: CliImplicitFlag[bool] = Field(
@@ -67,14 +67,6 @@ class BaseCmd(BaseSettings):
         validation_alias=AliasChoices(
             'v',
             'verbose',
-        ),
-    )
-
-    client: t.Annotated[Client, BeforeValidator(Client)] = Field(
-        default=t.cast('Client', '127.0.0.1:9200'),
-        validation_alias=AliasChoices(
-            'H',
-            'host',
         ),
     )
 
@@ -148,5 +140,15 @@ class ParamsCmdMixin(BaseCmd):
         description=generate_rich_text(
             Text("""example: '--param=size=10 --param=_source=false'""", style='yellow b'),
             Text('Additional parameters to pass to the query', style='blue b'),
+        ),
+    )
+
+
+class DryRunCmdMixin(BaseCmd):
+    dry_run: CliImplicitFlag[bool] = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            'n',
+            'dry_run',
         ),
     )
