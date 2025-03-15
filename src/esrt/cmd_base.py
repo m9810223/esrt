@@ -40,11 +40,11 @@ Input = t.Annotated[BodyT, PlainValidator(_validate_read)]
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-def _validate_write(file_or_to: t.Union[str, io.TextIOWrapper]) -> io.TextIOWrapper:
-    return Path(file_or_to).open('w') if isinstance(file_or_to, str) else file_or_to
+def _validate_write(file_or_to: t.Union[str, io.TextIOWrapper]) -> Console:
+    return Console(file=Path(file_or_to).open('w') if isinstance(file_or_to, str) else file_or_to)
 
 
-Output = t.Annotated[io.TextIOWrapper, PlainValidator(_validate_write)]
+Output = t.Annotated[Console, PlainValidator(_validate_write)]
 
 
 def generate_rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
@@ -79,7 +79,7 @@ class BaseCmd(BaseSettings):
 
     @staticmethod
     @validate_call(validate_return=True)
-    def _json_obj_to_line(obj: JsonValue, /) -> str:
+    def _to_line(obj: JsonValue, /) -> str:
         if isinstance(obj, str):
             result = obj
         else:

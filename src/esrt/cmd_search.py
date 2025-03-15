@@ -5,7 +5,6 @@ from .cmd_base import DocTypeCmdMixin
 from .cmd_base import FioCmdMixin
 from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
-from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
@@ -16,7 +15,11 @@ class SearchCmd(FioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, Bas
             stderr_dim_console.print(self)
 
         if self.verbose:
+            stderr_dim_console.out('>', end='')
             stderr_console.print_json(json.dumps(self.input_), ensure_ascii=True)
+
+        if self.verbose:
+            stderr_dim_console.out('<', end='')
 
         response = self.client.search(
             index=self.index,
@@ -25,8 +28,6 @@ class SearchCmd(FioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, Bas
             params=self.params,
         )
 
-        s = self._json_obj_to_line(response)
-        if self.output:
-            self.output.write(s)
-        else:
-            console.print(s)
+        line = self._to_line(response)
+
+        self.output.print_json(line)
