@@ -3,6 +3,7 @@
 exclude: |
   (?x)^(
     .*/migrations/.*|
+    examples/.*|
     src/esrt/_.*.py|
     CHANGELOG.md
   )$

@@ -32,7 +32,7 @@ body_ta = TypeAdapter[BodyT](Json[BodyT])
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
 def _validate_read(file: str) -> BodyT:
-    to = t.cast('io.TextIOWrapper', sys.stdin) if file == '-' else Path(file).open()
+    to = t.cast('io.TextIOWrapper', sys.stdin) if file == '-' else Path(file).open()  # noqa: SIM115
     return body_ta.validate_python(to.read())
 
 
@@ -59,7 +59,7 @@ class BaseCmd(BaseSettings):
         default=False,
         validation_alias=AliasChoices(
             'n',
-            'dry_run',
+            'dry-run',
         ),
     )
     verbose: CliImplicitFlag[bool] = Field(
@@ -79,16 +79,8 @@ class BaseCmd(BaseSettings):
 
     @staticmethod
     @validate_call(validate_return=True)
-    def _to_line(obj: JsonValue, /) -> str:
-        if isinstance(obj, str):
-            result = obj
-        else:
-            result = json.dumps(obj, ensure_ascii=False)
-
-        if not result.endswith('\n'):
-            return result + '\n'
-
-        return result
+    def _to_json_str(obj: JsonValue, /) -> str:
+        return json.dumps(obj)
 
 
 class FioCmdMixin(BaseCmd):
@@ -112,6 +104,10 @@ class FioCmdMixin(BaseCmd):
         ),
     )
 
+    @property
+    def is_output_stdout(self) -> bool:
+        return self.output.file == sys.stdout
+
 
 class IndexCmdMixin(BaseCmd):
     index: t.Optional[str] = Field(
@@ -134,7 +130,6 @@ class DocTypeCmdMixin(BaseCmd):
         validation_alias=AliasChoices(
             't',
             'doc-type',
-            'doc_type',
         ),
         description=generate_rich_text(
             Text('A comma-separated list of document types to search;', style='blue b'),
@@ -149,7 +144,6 @@ class ParamsCmdMixin(BaseCmd):
         validation_alias=AliasChoices(
             'p',
             'param',
-            'parameter',
         ),
         description=generate_rich_text(
             Text("""example: '--param=size=10 --param=_source=false'""", style='yellow b'),

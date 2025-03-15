@@ -7,7 +7,7 @@ from rich.logging import RichHandler
 logger = logging.getLogger('esrt')
 
 
-def set_log_level(level: str):
+def set_log_level(level: str) -> None:
     logging.basicConfig(
         format='{message}',
         datefmt='%X.%f',

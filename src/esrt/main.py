@@ -14,20 +14,22 @@ from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 from .cmd_ping import PingCmd
+from .cmd_scan import ScanCmd
 from .cmd_search import SearchCmd
 
 
 class MainCmd(BaseSettings):
+    # TODO: Add a description
     """
     The help text from the class docstring.
     """
 
     model_config = SettingsConfigDict(
         case_sensitive=True,
-        env_prefix='ESRT_',
+        env_prefix='ESRT_',  # ?
         cli_prog_name='esrt',
         cli_enforce_required=True,
-        cli_kebab_case=False,
+        cli_kebab_case=False,  # default is False
     )
 
     version: CliImplicitFlag[bool] = Field(
@@ -40,6 +42,7 @@ class MainCmd(BaseSettings):
 
     ping: CliSubCommand[PingCmd]
     search: CliSubCommand[SearchCmd]
+    scan: CliSubCommand[ScanCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:
@@ -49,7 +52,7 @@ class MainCmd(BaseSettings):
         CliApp.run_subcommand(self)
 
 
-def main():
+def main() -> None:
     try:
         CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001

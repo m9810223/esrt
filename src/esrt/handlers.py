@@ -8,38 +8,38 @@ from .logging_ import logger
 
 
 class BaseHandler:
-    def __init__(self, actions: t.Iterable[str]):
+    def __init__(self, actions: t.Iterable[str]) -> None:
         self._iter = iter(actions)
 
-    def __iter__(self):
+    def __iter__(self):  # noqa: ANN204
         return self.handle(self._iter)
 
-    def __next__(self):
+    def __next__(self):  # noqa: ANN204
         return next(self._iter)
 
-    def handle(self, actions: t.Iterable[str]):
+    def handle(self, actions: t.Iterable[str]):  # noqa: ANN201
         for action in actions:
             yield self.handle_one(action)
 
-    def handle_one(self, action):  # noqa: ANN001
+    def handle_one(self, action):  # noqa: ANN001, ANN201
         return action
 
     @staticmethod
-    def print(*args, **kwargs):
+    def print(*args, **kwargs) -> None:  # noqa: ANN002, ANN003
         with redirect_stdout(sys.stderr):
             print(*args, **kwargs)
 
     @property
-    def logger(self):
+    def logger(self):  # noqa: ANN201
         return logger
 
 
 class DocHandler(BaseHandler):
-    def handle_one(self, action: str):
+    def handle_one(self, action: str):  # noqa: ANN201
         return json.loads(action)
 
 
-def insert_cwd():
+def insert_cwd() -> None:
     cwd = str(Path.cwd())
     logger.debug(f'Insert cwd: {cwd}')
     sys.path.insert(0, cwd)
