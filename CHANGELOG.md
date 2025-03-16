@@ -2,6 +2,13 @@
 
 
 
+## v4.5.1 (2025-03-16)
+
+### Fix
+
+* fix: release ([`db2e87b`](https://github.com/m9810223/esrt/commit/db2e87bd4dce9565b8b503128c3d6d8b3a612f5a))
+
+
 ## v4.5.0 (2025-03-16)
 
 ### Feature
