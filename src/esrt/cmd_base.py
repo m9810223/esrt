@@ -117,7 +117,8 @@ class _BaseCmd(BaseSettings):
     def _to_json_str(obj: JsonValue, /) -> str:
         return json.dumps(obj)
 
-    def _tty_confirm(self, prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
+    @staticmethod
+    def _tty_confirm(prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
         tty = Path(os.ctermid())
         return Confirm.ask(
             prompt=prompt,
