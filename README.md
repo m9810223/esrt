@@ -3,18 +3,24 @@
 [![pypi](https://img.shields.io/pypi/v/esrt.svg)](https://pypi.python.org/pypi/esrt)
 
 ```sh
-pip install pipx
-pipx install esrt -f
-esrt --install-completion  # Install completion for the current shell.
+# use `pipx`
+pip install pipx # install pipx
+pipx run esrt==4.1.0 -V
+
+# or use `uv`
+pip install uv # install uv
+uvx esrt@4.1.0 -V
+
 ```
 
 ## Commands
 
-- `e`: search
-- `s`: scan / scroll
-- `r`: request / api / a
-- `t`: transmit / bulk / b
-- `sql`: sql / query / q
+- `search`
+- `scan`
+<!-- - `request` -->
+- `bulk`
+<!-- - `sql` -->
+- `ping`
 
 ---
 
@@ -23,16 +29,16 @@ esrt --install-completion  # Install completion for the current shell.
 You can start an es service with docker.
 
 ```sh
-esrt_es_name="esrt-es"
-docker run --name $esrt_es_name --rm -itd --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
+docker run --name "esrt-es" --rm -itd --platform=linux/amd64 -p 9200:9200 elasticsearch:5.6.9-alpine
 
 # install sql command and restart container:
-docker exec $esrt_es_name elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/5.6.9.0/elasticsearch-sql-5.6.9.0.zip
-docker restart $esrt_es_name
+docker exec "esrt-es" elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/5.6.9.0/elasticsearch-sql-5.6.9.0.zip
+docker restart "esrt-es"
 ```
 
 ---
 
+<!--
 ## `r` - Send a request
 
 Check server:
@@ -81,10 +87,9 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 #   }
 # ]
 ```
+--- -->
 
----
-
-## `t` - Transmit data (`streaming_bulk`)
+## `bulk` - Transmit data (`streaming_bulk`)
 
 Bulk with data from file `examples/bulk.ndjson`:
 
@@ -96,13 +101,8 @@ Bulk with data from file `examples/bulk.ndjson`:
 ```
 
 ```sh
-esrt t localhost -f examples/bulk.ndjson
-# ->
-# <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  4
-
-# success = 4
-# failed = 0
+uvx esrt@4.1.0 bulk --host localhost -f examples/bulk.ndjson --yes
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00   4/?
 ```
 
 ---
@@ -110,23 +110,18 @@ esrt t localhost -f examples/bulk.ndjson
 Read payload from `stdin`. And `-d` can be omitted.
 
 ```sh
-esrt t localhost <<EOF
+uvx esrt@4.1.0 bulk --host localhost --yes <<EOF
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
 EOF
-# ->
-# <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  3
-
-# success = 3
-# failed = 0
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00   3/?
 ```
 
 Piping `heredoc` also works.
 
 ```sh
-cat <<EOF | esrt t localhost
+cat <<EOF | uvx esrt@4.1.0 bulk --host localhost --yes
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -138,11 +133,12 @@ EOF
 Pipe `_search` result and update `_index` with `customized handler` to do more operations before bulk!
 
 ```sh
-alias jq_es_hits="jq '.hits.hits.[]'"
+alias jq_es_hits="jq '.hits.hits[]'"
 ```
 
+<!--
 ```sh
-esrt r localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt t localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
+esrt r localhost -X GET /my-index-2/_search | jq_es_hits -c | uvx esrt@4.1.0 bulk localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  3
@@ -158,7 +154,6 @@ import typing as t
 
 from esrt import DocHandler
 
-
 # function style
 def my_handler(actions: t.Iterable[str]):
     for action in actions:
@@ -167,7 +162,6 @@ def my_handler(actions: t.Iterable[str]):
         if not t.cast(str, obj['_index']).startswith(prefix):
             obj['_index'] = prefix + obj['_index']
         yield obj
-
 
 # class style
 class MyHandler(DocHandler):
@@ -182,13 +176,14 @@ class MyHandler(DocHandler):
             obj['_index'] = prefix + obj['_index']
         return obj
 ```
+-->
 
 ---
 
-## `e` Search docs
+## `search`
 
 ```sh
-esrt e localhost | jq_es_hits -c
+uvx esrt@4.1.0 search --host localhost | jq_es_hits -c
 # ->
 # {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 # {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
@@ -200,7 +195,7 @@ esrt e localhost | jq_es_hits -c
 ```
 
 ```sh
-esrt e localhost -f - <<EOF | jq_es_hits -c
+uvx esrt@4.1.0 search --host localhost -f - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -209,10 +204,10 @@ EOF
 # {"_index":"new-my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
 ```
 
-## `s` - Search and `Scroll`
+## `scan`
 
 ```sh
-esrt s localhost
+uvx esrt@4.1.0 scan --host localhost
 # ->
 # total = 7
 # {"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
@@ -225,7 +220,7 @@ esrt s localhost
 ```
 
 ```sh
-esrt s localhost -f - <<EOF
+uvx esrt@4.1.0 scan --host localhost -f - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
@@ -233,6 +228,7 @@ EOF
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 ```
 
+<!--
 ## `sql` - Elasticsearch SQL
 
 ```sh
@@ -249,6 +245,7 @@ EOF
 # {"_index":"new-my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
 # {"_index":"new-my-index-2","_type":"type1","_id":"3","_score":1.0,"_source":{"field1":"33"}}
 ```
+-->
 
 ---
 
@@ -272,7 +269,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | tee -a _.ndjson | esrt t localhost -c 10000
+python examples/create-massive-docs.py | tee -a _.ndjson | uvx esrt@4.1.0 bulk --host localhost -c 10000
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  654321
@@ -337,7 +334,7 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | esrt t localhost -w examples.copy-more-docs:handle
+python examples/copy-more-docs.py | uvx esrt@4.1.0 bulk --host localhost -w examples.copy-more-docs:handle
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  108642

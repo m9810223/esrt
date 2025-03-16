@@ -17,6 +17,7 @@ from .cmd_bulk import BulkCmd
 from .cmd_ping import PingCmd
 from .cmd_scan import ScanCmd
 from .cmd_search import SearchCmd
+from .handlers import add_cwd_to_sys_path
 
 
 class MainCmd(BaseSettings):
@@ -55,6 +56,7 @@ class MainCmd(BaseSettings):
 
 
 def main() -> None:
+    add_cwd_to_sys_path()
     try:
         with contextlib.suppress(KeyboardInterrupt):
             CliApp.run(MainCmd)

@@ -2,8 +2,8 @@ from collections import deque
 import typing as t
 
 from pydantic import AliasChoices
+from pydantic import BeforeValidator
 from pydantic import Field
-from pydantic import PlainValidator
 from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 from uvicorn.importer import import_from_string
@@ -21,7 +21,7 @@ from .cmd_base import stderr_dim_console
 from .typealiases import ActionT
 
 
-_HandlerT = t.Annotated[t.Callable[[t.Iterable[t.Any]], t.Iterable[ActionT]], PlainValidator(import_from_string)]
+_HandlerT = t.Annotated[t.Callable, BeforeValidator(import_from_string)]
 
 
 class BulkCmd(
@@ -127,7 +127,7 @@ class BulkCmd(
             stderr_console.print('Cannot connect to ES', style='red b')
             return
 
-        inputs = self.handler(self.input_)
+        inputs = t.cast('t.Callable[[t.Iterable[str]], t.Iterable[ActionT]]', self.handler)(self.input_)
 
         def generate_actions() -> t.Generator[ActionT, None, None]:
             with self._progress(console=stderr_console, title='bulk') as progress:
