@@ -7,15 +7,15 @@ from rich.text import Text
 
 from .cmd_base import BaseCmd
 from .cmd_base import DocTypeCmdMixin
-from .cmd_base import FioCmdMixin
 from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
+from .cmd_base import SearchFioCmdMixin
 from .cmd_base import generate_rich_text
 from .cmd_base import stderr_dim_console
 
 
 class ScanCmd(
-    FioCmdMixin,
+    SearchFioCmdMixin,
     IndexCmdMixin,
     DocTypeCmdMixin,
     ParamsCmdMixin,
@@ -31,7 +31,7 @@ class ScanCmd(
         ),
         description=generate_rich_text(
             Text(
-                'raises an exception if an error is encountered (some shards fail to execute).',
+                'Raises an exception if an error is encountered (some shards fail to execute).',
                 style='blue b',
             ),
         ),
@@ -44,7 +44,7 @@ class ScanCmd(
             'size',
         ),
         description=generate_rich_text(
-            Text('size (per shard) of the batch send at each iteration.', style='blue b'),
+            Text('Size (per shard) of the batch send at each iteration.', style='blue b'),
         ),
     )
     request_timeout: t.Optional[float] = Field(
@@ -54,7 +54,7 @@ class ScanCmd(
             'request_timeout',
         ),
         description=generate_rich_text(
-            Text('explicit timeout for each call to scan.', style='blue b'),
+            Text('Explicit timeout for each call to scan.', style='blue b'),
         ),
     )
     clear_scroll: t.ClassVar[bool] = True
@@ -65,7 +65,7 @@ class ScanCmd(
             'scroll_kwargs',
         ),
         description=generate_rich_text(
-            Text('additional kwargs to be passed to `Elasticsearch.scroll`', style='blue b'),
+            Text('Additional kwargs to be passed to `Elasticsearch.scroll`', style='blue b'),
         ),
     )
 

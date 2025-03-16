@@ -13,6 +13,7 @@ from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .cmd_bulk import BulkCmd
 from .cmd_ping import PingCmd
 from .cmd_scan import ScanCmd
 from .cmd_search import SearchCmd
@@ -43,6 +44,7 @@ class MainCmd(BaseSettings):
     ping: CliSubCommand[PingCmd]
     search: CliSubCommand[SearchCmd]
     scan: CliSubCommand[ScanCmd]
+    bulk: CliSubCommand[BulkCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:

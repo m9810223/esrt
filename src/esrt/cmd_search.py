@@ -4,14 +4,14 @@ from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseCmd
 from .cmd_base import DocTypeCmdMixin
-from .cmd_base import FioCmdMixin
 from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
+from .cmd_base import SearchFioCmdMixin
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
-class SearchCmd(FioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, BaseCmd):
+class SearchCmd(SearchFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, BaseCmd):
     pretty: CliImplicitFlag[bool] = False
 
     def cli_cmd(self) -> None:
