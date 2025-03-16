@@ -41,6 +41,7 @@ class ScanCmd(
     preserve_order: t.ClassVar[bool] = False
     size: int = Field(
         default=1000,
+        lt=10000,
         validation_alias=AliasChoices(
             'N',
             'size',

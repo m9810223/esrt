@@ -37,7 +37,7 @@ class BulkCmd(
     )
 
     chunk_size: int = Field(
-        default=500,
+        default=5000,
         validation_alias=AliasChoices(
             'c',
             'chunk_size',
@@ -67,7 +67,7 @@ class BulkCmd(
         ),
     )
     max_retries: int = Field(
-        default=0,
+        default=5,
         description=rich_text(
             Text(
                 'Maximum number of times a document will be retried when `429` is received, set to 0 for no retries on `429`',  # noqa: E501
@@ -76,7 +76,7 @@ class BulkCmd(
         ),
     )
     initial_backoff: int = Field(
-        default=2,
+        default=3,
         description=rich_text(
             Text(
                 'Number of seconds we should wait before the first retry. Any subsequent retries will be powers of `initial_backoff * 2**retry_number`',  # noqa: E501
