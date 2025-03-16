@@ -1,3 +1,4 @@
+import contextlib
 import sys
 import traceback
 
@@ -12,7 +13,6 @@ from pydantic_settings import SettingsConfigDict
 from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
-from .cmd_base import stderr_dim_console
 from .cmd_bulk import BulkCmd
 from .cmd_ping import PingCmd
 from .cmd_scan import ScanCmd
@@ -56,8 +56,9 @@ class MainCmd(BaseSettings):
 
 def main() -> None:
     try:
-        CliApp.run(MainCmd)
+        with contextlib.suppress(KeyboardInterrupt):
+            CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001
-        stderr_dim_console.out(traceback.format_exc())
+        stderr_console.out(traceback.format_exc())
         stderr_console.out('Error:', e)
         sys.exit(1)

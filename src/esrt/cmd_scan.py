@@ -11,7 +11,8 @@ from .cmd_base import DocTypeCmdMixin
 from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
 from .cmd_base import SearchFioCmdMixin
-from .cmd_base import generate_rich_text
+from .cmd_base import rich_text
+from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
@@ -30,7 +31,7 @@ class ScanCmd(
             'raise',
             'raise_on_error',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text(
                 'Raises an exception if an error is encountered (some shards fail to execute).',
                 style='blue b',
@@ -44,7 +45,7 @@ class ScanCmd(
             'N',
             'size',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text('Size (per shard) of the batch send at each iteration.', style='blue b'),
         ),
     )
@@ -54,7 +55,7 @@ class ScanCmd(
             't',
             'request_timeout',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text('Explicit timeout for each call to scan.', style='blue b'),
         ),
     )
@@ -65,7 +66,7 @@ class ScanCmd(
             'k',
             'scroll_kwargs',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text('Additional kwargs to be passed to `Elasticsearch.scroll`', style='blue b'),
         ),
     )
@@ -74,7 +75,7 @@ class ScanCmd(
         if self.verbose:
             stderr_dim_console.print(self)
 
-        for item in self.client.scan(
+        items = self.client.scan(
             query=self.input_,
             scroll=self.scroll,
             raise_on_error=self.raise_on_error,
@@ -87,10 +88,14 @@ class ScanCmd(
             index=self.index,
             doc_type=self.doc_type,
             params=self.params,
-        ):
-            line = self._to_json_str(item)
+        )
 
-            self.output.out(line)
+        with self._progress(console=stderr_console, title='bulk') as progress:
+            for item in progress.track(items):
+                line = self._to_json_str(item)
 
-            if not self.is_output_stdout:
-                stderr_dim_console.print(line)
+                self.output.out(line)
+                if not self.is_output_stdout:
+                    stderr_console.print(line)
+
+                progress.refresh()

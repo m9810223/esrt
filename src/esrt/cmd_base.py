@@ -1,5 +1,6 @@
 import io
 import json
+import os
 from pathlib import Path
 import sys
 import typing as t
@@ -24,6 +25,7 @@ from rich.progress import TaskProgressColumn
 from rich.progress import TextColumn
 from rich.progress import TimeElapsedColumn
 from rich.progress import TimeRemainingColumn
+from rich.prompt import Confirm
 from rich.text import Text
 
 from .clients import Client
@@ -65,7 +67,8 @@ def _validate_input_file(file_or_to: t.Union[str, io.TextIOWrapper]) -> io.TextI
 ReadFile = t.Annotated[io.TextIOWrapper, PlainValidator(_validate_input_file)]
 
 
-def generate_rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
+def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
+    """Return a string representation of the object, formatted with rich text."""
     file = io.StringIO()
     record_console = Console(file=file, record=True)
     record_console.print(*objects, sep=sep, end=end)
@@ -106,6 +109,15 @@ class BaseCmd(BaseSettings):
             console=console,
         )
 
+    def _tty_confirm(self, prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
+        tty = Path(os.ctermid())
+        return Confirm.ask(
+            prompt=prompt,
+            console=Console(file=tty.open('r+')),
+            default=t.cast('bool', default),  # ! type bug in rich
+            stream=tty.open('r'),
+        )
+
 
 class _FileOutputCmdMixin(BaseCmd):
     output: Output = Field(
@@ -118,7 +130,10 @@ class _FileOutputCmdMixin(BaseCmd):
 
     @property
     def is_output_stdout(self) -> bool:
-        return self.output.file == sys.stdout
+        return self.output.file in [
+            sys.stdout,
+            getattr(sys.stdout, 'rich_proxied_file', None),  # * rich.progress.Progress
+        ]
 
 
 class SearchFioCmdMixin(_FileOutputCmdMixin):
@@ -128,7 +143,7 @@ class SearchFioCmdMixin(_FileOutputCmdMixin):
             'f',
             'input',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text("""example: '-f my_query.json'.""", style='yellow b'),
             Text("""Or '-f -' for stdin.""", style='red b'),
             Text('A JSON file containing the search query.', style='blue b'),
@@ -143,7 +158,7 @@ class BulkFioCmdMixin(_FileOutputCmdMixin):
             'f',
             'input',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text("""example: '-f my_query.ndjson'.""", style='yellow b'),
             Text("""Or '-f -' for stdin.""", style='red b'),
             Text('A NDJSON (Newline delimited JSON) file containing the bulk request.', style='blue b'),
@@ -158,7 +173,7 @@ class IndexCmdMixin(BaseCmd):
             'i',
             'index',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text("""example: '--index=i01,i02'""", style='yellow b'),
             Text(
                 'A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices',  # noqa: E501
@@ -174,7 +189,7 @@ class DocTypeCmdMixin(BaseCmd):
         validation_alias=AliasChoices(
             'doc_type',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text(
                 'A comma-separated list of document types to search; leave empty to perform the operation on all types',
                 style='blue b',
@@ -190,7 +205,7 @@ class ParamsCmdMixin(BaseCmd):
             'p',
             'param',
         ),
-        description=generate_rich_text(
+        description=rich_text(
             Text("""example: '--param=size=10 --param=_source=false'""", style='yellow b'),
             Text('Additional parameters to pass to the query', style='blue b'),
         ),
@@ -205,3 +220,11 @@ class DryRunCmdMixin(BaseCmd):
             'dry_run',
         ),
     )
+
+
+class PrettyCmdMixin(BaseCmd):
+    pretty: CliImplicitFlag[bool] = True
+
+
+class NotPrettyCmdMixin(BaseCmd):
+    pretty: CliImplicitFlag[bool] = False
