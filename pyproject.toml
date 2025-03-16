@@ -17,12 +17,10 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "certifi>=2024.7.4",
   "elasticsearch==6.8.2",
   "pydantic>=2.10.6",
   "pydantic-settings>=2.8.1",
   "rich>=13.9.4",
-  "typer-slim[standard]>=0.12",
   # uvicorn.importer.import_from_string
   "uvicorn>=0.2.14",
 ]
