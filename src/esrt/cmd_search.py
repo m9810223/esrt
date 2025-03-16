@@ -1,5 +1,3 @@
-import json
-
 from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseCmd
@@ -20,7 +18,7 @@ class SearchCmd(SearchFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixi
 
         if self.verbose:
             stderr_dim_console.out('>', end='')
-            stderr_console.print_json(json.dumps(self.input_), ensure_ascii=True)
+            stderr_console.print_json(self._to_json_str(self.input_), ensure_ascii=True)
 
         if self.verbose:
             stderr_dim_console.out('<', end='')

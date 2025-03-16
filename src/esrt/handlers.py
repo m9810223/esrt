@@ -14,20 +14,17 @@ def add_cwd_to_sys_path() -> None:
 
 
 class BaseHandler:
-    def __init__(self, actions: t.Iterable[str]) -> None:
+    def __init__(self, actions: t.Iterable[t.Union[str, ActionT]]) -> None:
         self._iter = iter(actions)
 
-    def __iter__(self):  # noqa: ANN204
-        return self.handle(self._iter)
+    def __iter__(self) -> t.Iterator[t.Union[str, ActionT]]:
+        return map(self.handle_one, self._iter)
 
-    def __next__(self):  # noqa: ANN204
-        return next(self._iter)
+    def __next__(self) -> ActionT:
+        return next(self)
 
-    def handle(self, actions: t.Iterable[str]):  # noqa: ANN201
-        yield from map(self.handle_one, actions)
-
-    def handle_one(self, action):  # noqa: ANN001, ANN201
-        return action
+    def handle_one(self, action: t.Union[str, ActionT]) -> t.Union[str, ActionT]:
+        return t.cast('t.Union[str, ActionT]', action)
 
 
 class DocHandler(BaseHandler):

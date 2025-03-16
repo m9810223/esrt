@@ -1,15 +1,13 @@
 import typing as t
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import expand_action
 from elasticsearch.helpers import scan
 from elasticsearch.helpers import streaming_bulk
 from pydantic import JsonValue
 from pydantic import validate_call
 
 from .typealiases import BodyT
-
-
-_A = t.TypeVar('_A')
 
 
 class Client:
@@ -85,7 +83,7 @@ class Client:
     @validate_call(validate_return=True)
     def streaming_bulk(  # noqa: PLR0913
         self,
-        actions: t.Iterable[_A],
+        actions: t.Iterable[t.Union[str, bytes, dict[str, JsonValue]]],
         chunk_size: int,
         max_chunk_bytes: int,
         raise_on_error: bool,  # noqa: FBT001
@@ -106,6 +104,7 @@ class Client:
             max_chunk_bytes=max_chunk_bytes,
             raise_on_error=raise_on_error,
             raise_on_exception=raise_on_exception,
+            expand_action_callback=expand_action,
             max_retries=max_retries,
             initial_backoff=initial_backoff,
             max_backoff=max_backoff,

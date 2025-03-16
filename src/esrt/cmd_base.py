@@ -17,6 +17,7 @@ from pydantic_settings import BaseSettings
 from pydantic_settings import CliImplicitFlag
 from rich.console import Console
 from rich.progress import BarColumn
+from rich.progress import MofNCompleteColumn
 from rich.progress import Progress
 from rich.progress import SpinnerColumn
 from rich.progress import TaskProgressColumn
@@ -24,7 +25,6 @@ from rich.progress import TextColumn
 from rich.progress import TimeElapsedColumn
 from rich.progress import TimeRemainingColumn
 from rich.text import Text
-from uvicorn.importer import import_from_string
 
 from .clients import Client
 from .typealiases import BodyT
@@ -33,9 +33,6 @@ from .typealiases import BodyT
 console = Console()
 stderr_console = Console(stderr=True)
 stderr_dim_console = Console(stderr=True, style='dim')
-
-
-_T = t.TypeVar('_T')
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
@@ -68,17 +65,6 @@ def _validate_input_file(file_or_to: t.Union[str, io.TextIOWrapper]) -> io.TextI
 ReadFile = t.Annotated[io.TextIOWrapper, PlainValidator(_validate_input_file)]
 
 
-_HandlerT = t.Callable[[t.Iterable[str]], t.Iterable[str]]
-
-
-@validate_call(validate_return=True)
-def _validate_handler(import_str: str) -> _HandlerT:
-    return import_from_string(import_str)
-
-
-Handler = t.Annotated[_HandlerT, PlainValidator(_validate_handler)]
-
-
 def generate_rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
     file = io.StringIO()
     record_console = Console(file=file, record=True)
@@ -108,19 +94,17 @@ class BaseCmd(BaseSettings):
         return json.dumps(obj)
 
     @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-    def _with_progress(
-        self, iterable: t.Union[t.Iterable[_T], t.Sequence[_T]], /, *, console: Console, text: str
-    ) -> t.Generator[_T, None, None]:
-        with Progress(
+    def _progress(self, *, console: Console, title: str) -> Progress:
+        return Progress(
             SpinnerColumn(),
-            TextColumn(text_format=text),
+            TextColumn(text_format=title),
             BarColumn(),
+            TimeElapsedColumn(),
             TaskProgressColumn(),
             TimeRemainingColumn(),
-            TimeElapsedColumn(),
+            MofNCompleteColumn(),
             console=console,
-        ) as progress:
-            yield from progress.track(sequence=iterable)
+        )
 
 
 class _FileOutputCmdMixin(BaseCmd):
