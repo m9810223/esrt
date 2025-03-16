@@ -10,7 +10,7 @@ from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
 from .cmd_base import DefaultNoPrettyCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
-from .cmd_base import EsIndexCmdMixin
+from .cmd_base import EsIndexCmdMixin, DryRunCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import JsonInputCmdMixin
 from .cmd_base import rich_text
@@ -25,6 +25,7 @@ class ScanCmd(
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
+    DryRunCmdMixin,
     DefaultNoPrettyCmdMixin,
     BaseEsCmd,
 ):
@@ -100,8 +101,6 @@ class ScanCmd(
 
         query = self.read_json_input()
 
-        total = self._preview_total(query)
-
         items = self.client.scan(
             query=query,
             scroll=self.scroll,
@@ -116,6 +115,12 @@ class ScanCmd(
             doc_type=self.doc_type,
             params=self.params,
         )
+
+        total = self._preview_total(query)
+
+        if self.dry_run:
+            stderr_console.out('Total:', total, style='yellow b')
+            return
 
         if self.is_output_stdout:
             for item in items:
