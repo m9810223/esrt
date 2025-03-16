@@ -147,7 +147,7 @@ class BulkCmd(
         stderr_console.out('Dry run end', style='yellow b')
 
     def cli_cmd(self) -> None:
-        if not self.confirm():
+        if (not self.dry_run) and (not self.confirm()):
             return
 
         if not self._check():
