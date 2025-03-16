@@ -177,7 +177,7 @@ class BaseEsCmd(_BaseCmd):
     client: CliPositionalArg[t.Annotated[Client, BeforeValidator(Client)]] = Field(
         default=t.cast(Client, '127.0.0.1:9200'),
         validation_alias=AliasChoices(
-            'host',
+            'es_host',
         ),
     )
 
