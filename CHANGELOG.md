@@ -2,6 +2,21 @@
 
 
 
+## v4.3.0 (2025-03-16)
+
+### Feature
+
+* feat: release ([`974e80c`](https://github.com/m9810223/esrt/commit/974e80c82c323e583ed43d2a94546165a494ff6e))
+
+### Unknown
+
+* WIP ([`56925e3`](https://github.com/m9810223/esrt/commit/56925e3b248d3cd7cce2664808771e0deabc8b6d))
+
+* WIP ([`3936428`](https://github.com/m9810223/esrt/commit/3936428d8338f4fca7d4e721719a830613f9d38d))
+
+* WIP ([`d79a871`](https://github.com/m9810223/esrt/commit/d79a87147cedac0e7ca5f604ccc507734dac45de))
+
+
 ## v4.2.1 (2025-03-16)
 
 ### Fix
