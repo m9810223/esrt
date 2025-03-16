@@ -2,13 +2,13 @@ from pydantic import AliasChoices
 from pydantic import Field
 from pydantic_settings import CliImplicitFlag
 
-from .cmd_base import BaseCmd
+from .cmd_base import BaseEsCmd
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
-class PingCmd(BaseCmd):
+class PingCmd(BaseEsCmd):
     info: CliImplicitFlag[bool] = Field(
         default=True,
         validation_alias=AliasChoices(

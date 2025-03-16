@@ -88,14 +88,7 @@ class _TransferSpeedColumn(TransferSpeedColumn):
         return Text(f'{data_speed}/s', style='progress.data.speed')
 
 
-class BaseCmd(BaseSettings):
-    client: t.Annotated[Client, BeforeValidator(Client)] = Field(
-        default=t.cast('Client', '127.0.0.1:9200'),
-        validation_alias=AliasChoices(
-            'H',
-            'host',
-        ),
-    )
+class _BaseCmd(BaseSettings):
     verbose: CliImplicitFlag[bool] = Field(
         default=False,
         validation_alias=AliasChoices(
@@ -103,11 +96,6 @@ class BaseCmd(BaseSettings):
             'verbose',
         ),
     )
-
-    @staticmethod
-    @validate_call(validate_return=True)
-    def _to_json_str(obj: JsonValue, /) -> str:
-        return json.dumps(obj)
 
     @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
     def _progress(self, *, console: Console, title: str) -> Progress:
@@ -124,6 +112,11 @@ class BaseCmd(BaseSettings):
             console=console,
         )
 
+    @staticmethod
+    @validate_call(validate_return=True)
+    def _to_json_str(obj: JsonValue, /) -> str:
+        return json.dumps(obj)
+
     def _tty_confirm(self, prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
         tty = Path(os.ctermid())
         return Confirm.ask(
@@ -134,7 +127,17 @@ class BaseCmd(BaseSettings):
         )
 
 
-class _FileOutputCmdMixin(BaseCmd):
+class BaseEsCmd(_BaseCmd):
+    client: t.Annotated[Client, BeforeValidator(Client)] = Field(
+        default=t.cast('Client', '127.0.0.1:9200'),
+        validation_alias=AliasChoices(
+            'H',
+            'host',
+        ),
+    )
+
+
+class _OutputCmdMixin(BaseEsCmd):
     output: Output = Field(
         default=t.cast('Output', sys.stdout),
         validation_alias=AliasChoices(
@@ -151,7 +154,7 @@ class _FileOutputCmdMixin(BaseCmd):
         ]
 
 
-class SearchFioCmdMixin(_FileOutputCmdMixin):
+class JsonInputCmdMixin(_OutputCmdMixin):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -166,7 +169,7 @@ class SearchFioCmdMixin(_FileOutputCmdMixin):
     )
 
 
-class BulkFioCmdMixin(_FileOutputCmdMixin):
+class RequiredNdJsonInputCmdMixin(_OutputCmdMixin):
     input_: ReadFile = Field(
         default=t.cast('ReadFile', sys.stdin),
         validation_alias=AliasChoices(
@@ -181,7 +184,7 @@ class BulkFioCmdMixin(_FileOutputCmdMixin):
     )
 
 
-class IndexCmdMixin(BaseCmd):
+class EsIndexCmdMixin(BaseEsCmd):
     index: t.Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -198,7 +201,7 @@ class IndexCmdMixin(BaseCmd):
     )
 
 
-class DocTypeCmdMixin(BaseCmd):
+class EsDocTypeCmdMixin(BaseEsCmd):
     doc_type: t.Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -213,7 +216,7 @@ class DocTypeCmdMixin(BaseCmd):
     )
 
 
-class ParamsCmdMixin(BaseCmd):
+class EsParamsCmdMixin(BaseEsCmd):
     params: dict[str, JsonValue] = Field(
         default_factory=dict,
         validation_alias=AliasChoices(
@@ -227,7 +230,7 @@ class ParamsCmdMixin(BaseCmd):
     )
 
 
-class DryRunCmdMixin(BaseCmd):
+class DryRunCmdMixin(BaseEsCmd):
     dry_run: CliImplicitFlag[bool] = Field(
         default=False,
         validation_alias=AliasChoices(
@@ -237,9 +240,9 @@ class DryRunCmdMixin(BaseCmd):
     )
 
 
-class PrettyCmdMixin(BaseCmd):
+class DefaultPrettyCmdMixin(BaseEsCmd):
     pretty: CliImplicitFlag[bool] = True
 
 
-class NotPrettyCmdMixin(BaseCmd):
+class DefaultNoPrettyCmdMixin(BaseEsCmd):
     pretty: CliImplicitFlag[bool] = False

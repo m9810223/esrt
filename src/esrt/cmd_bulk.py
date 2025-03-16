@@ -8,13 +8,13 @@ from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 from uvicorn.importer import import_from_string
 
-from .cmd_base import BaseCmd
-from .cmd_base import BulkFioCmdMixin
-from .cmd_base import DocTypeCmdMixin
+from .cmd_base import BaseEsCmd
+from .cmd_base import DefaultNoPrettyCmdMixin
 from .cmd_base import DryRunCmdMixin
-from .cmd_base import IndexCmdMixin
-from .cmd_base import NotPrettyCmdMixin
-from .cmd_base import ParamsCmdMixin
+from .cmd_base import EsDocTypeCmdMixin
+from .cmd_base import EsIndexCmdMixin
+from .cmd_base import EsParamsCmdMixin
+from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -25,7 +25,13 @@ _HandlerT = t.Annotated[t.Callable, BeforeValidator(import_from_string)]
 
 
 class BulkCmd(
-    BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, DryRunCmdMixin, NotPrettyCmdMixin, BaseCmd
+    RequiredNdJsonInputCmdMixin,
+    EsIndexCmdMixin,
+    EsDocTypeCmdMixin,
+    EsParamsCmdMixin,
+    DryRunCmdMixin,
+    DefaultNoPrettyCmdMixin,
+    BaseEsCmd,
 ):
     handler: _HandlerT = Field(
         default=t.cast('_HandlerT', 'esrt:DocHandler'),

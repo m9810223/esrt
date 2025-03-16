@@ -15,6 +15,7 @@ from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_bulk import BulkCmd
 from .cmd_ping import PingCmd
+from .cmd_request import RequestCmd
 from .cmd_scan import ScanCmd
 from .cmd_search import SearchCmd
 from .handlers import add_cwd_to_sys_path
@@ -46,6 +47,7 @@ class MainCmd(BaseSettings):
     search: CliSubCommand[SearchCmd]
     scan: CliSubCommand[ScanCmd]
     bulk: CliSubCommand[BulkCmd]
+    request: CliSubCommand[RequestCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:
