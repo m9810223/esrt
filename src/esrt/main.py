@@ -62,5 +62,5 @@ def main() -> None:
             CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001
         stderr_console.out(traceback.format_exc())
-        stderr_console.out('Error:', e)
+        stderr_console.out('Error:', e, style='red b')
         sys.exit(1)
