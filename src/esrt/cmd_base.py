@@ -21,10 +21,13 @@ from rich.progress import BarColumn
 from rich.progress import MofNCompleteColumn
 from rich.progress import Progress
 from rich.progress import SpinnerColumn
+from rich.progress import Task
 from rich.progress import TaskProgressColumn
 from rich.progress import TextColumn
 from rich.progress import TimeElapsedColumn
 from rich.progress import TimeRemainingColumn
+from rich.progress import TotalFileSizeColumn
+from rich.progress import TransferSpeedColumn
 from rich.prompt import Confirm
 from rich.text import Text
 
@@ -75,6 +78,16 @@ def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa:
     return record_console.export_text(styles=True)
 
 
+class _TransferSpeedColumn(TransferSpeedColumn):
+    def render(self, task: 'Task') -> Text:
+        """Show data transfer speed."""
+        speed = task.finished_speed or task.speed
+        if speed is None:
+            return Text('?', style='progress.data.speed')
+        data_speed = int(speed)
+        return Text(f'{data_speed}/s', style='progress.data.speed')
+
+
 class BaseCmd(BaseSettings):
     client: t.Annotated[Client, BeforeValidator(Client)] = Field(
         default=t.cast('Client', '127.0.0.1:9200'),
@@ -105,7 +118,9 @@ class BaseCmd(BaseSettings):
             TimeElapsedColumn(),
             TaskProgressColumn(),
             TimeRemainingColumn(),
+            TotalFileSizeColumn(),
             MofNCompleteColumn(),
+            _TransferSpeedColumn(),
             console=console,
         )
 
