@@ -2,6 +2,33 @@
 
 
 
+## v4.2.0 (2025-03-16)
+
+### Feature
+
+* feat: release ([`06719d5`](https://github.com/m9810223/esrt/commit/06719d510994625fcbadb8ae37e3e4fb18a32f3f))
+
+### Unknown
+
+* WIP ([`a62ccb8`](https://github.com/m9810223/esrt/commit/a62ccb84b7aa7071a76d4e41ae6f805f114ca1f0))
+
+* WIP ([`e839869`](https://github.com/m9810223/esrt/commit/e8398696df99bef3bd27c372500cbe59e7915e5e))
+
+* WIP ([`606c4e5`](https://github.com/m9810223/esrt/commit/606c4e5c84ea830eebaab59da91a2ec79d4c0377))
+
+* WIP ([`655449f`](https://github.com/m9810223/esrt/commit/655449f4630dfcb176ae0fe30b4c2ca666804f87))
+
+* WIP ([`2a93058`](https://github.com/m9810223/esrt/commit/2a930584c6d24c1e5a634fa7a6970cb8cac3714f))
+
+* WIP ([`c125ab3`](https://github.com/m9810223/esrt/commit/c125ab3a8b79ff1a66c7c365dd815e3759a16ded))
+
+* WIP ([`e232fd0`](https://github.com/m9810223/esrt/commit/e232fd0ecd7652f06fe7e59d9fe827131e62acd7))
+
+* WIP ([`96b092f`](https://github.com/m9810223/esrt/commit/96b092f86ed6b3b117765bb1ea0950e07cfdda01))
+
+* WIP ([`fae072e`](https://github.com/m9810223/esrt/commit/fae072ee00f3b83be235d04076aaf1e6c0620dd2))
+
+
 ## v4.1.3 (2025-03-16)
 
 ### Fix
