@@ -1,14 +1,19 @@
-from pydantic import Field, AliasChoices
+from .cmd_base import stderr_dim_console
 import typing as t
+
+from pydantic import AliasChoices
+from pydantic_settings import CliImplicitFlag
+from pydantic import Field
 from rich.text import Text
 
 from .cmd_base import BaseCmd
 from .cmd_base import BulkFioCmdMixin
 from .cmd_base import DocTypeCmdMixin
+from .cmd_base import Handler
 from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
 from .cmd_base import generate_rich_text
-from .cmd_base import stderr_console, Handler
+from .cmd_base import stderr_console
 
 
 class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, BaseCmd):
@@ -29,7 +34,7 @@ class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, B
         default=100 * 1024 * 1024,
         description=generate_rich_text(Text('The maximum size of the request in bytes', style='blue b')),
     )
-    raise_on_error: bool = Field(
+    raise_on_error: CliImplicitFlag[bool] = Field(
         default=True,
         description=generate_rich_text(
             Text(
@@ -38,7 +43,7 @@ class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, B
             )
         ),
     )
-    raise_on_exception: bool = Field(
+    raise_on_exception: CliImplicitFlag[bool] = Field(
         default=True,
         description=generate_rich_text(
             Text(
@@ -74,7 +79,7 @@ class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, B
             )
         ),
     )
-    yield_ok: bool = Field(
+    yield_ok: CliImplicitFlag[bool] = Field(
         default=True,
         description=generate_rich_text(
             Text(
@@ -85,17 +90,19 @@ class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, B
     )
 
     def cli_cmd(self) -> None:
-        print(self)
+        if self.verbose:
+            stderr_dim_console.print(self)
 
-        return
+        if self.client.ping() is False:
+            stderr_console.print('Cannot connect to ES', style='red b')
+            return
 
-        for x in self._with_progress(
+        for _, item in self._with_progress(
             self.client.streaming_bulk(
-                actions=self.input_.read(),
+                actions=self.handler(self.input_),
                 chunk_size=self.chunk_size,
                 max_chunk_bytes=self.max_chunk_bytes,
                 raise_on_error=self.raise_on_error,
-                # expand_action_callback=self.expand_action_callback,
                 raise_on_exception=self.raise_on_exception,
                 max_retries=self.max_retries,
                 initial_backoff=self.initial_backoff,
@@ -108,8 +115,6 @@ class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, B
             console=stderr_console,
             text='Processing...',
         ):
-            print(x)
+            line = self._to_json_str(item)
 
-            import time
-
-            time.sleep(10)
+            self.output.out(line)

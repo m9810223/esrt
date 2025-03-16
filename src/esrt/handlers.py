@@ -1,10 +1,16 @@
-from contextlib import redirect_stdout
-import json
 from pathlib import Path
 import sys
 import typing as t
 
-from .logging_ import logger
+from pydantic import Json
+from pydantic import validate_call
+
+from .typealiases import ActionT
+
+
+def add_cwd_to_sys_path() -> None:
+    cwd = str(Path.cwd())
+    sys.path.insert(0, cwd)
 
 
 class BaseHandler:
@@ -18,28 +24,14 @@ class BaseHandler:
         return next(self._iter)
 
     def handle(self, actions: t.Iterable[str]):  # noqa: ANN201
-        for action in actions:
-            yield self.handle_one(action)
+        yield from map(self.handle_one, actions)
 
     def handle_one(self, action):  # noqa: ANN001, ANN201
         return action
 
-    @staticmethod
-    def print(*args, **kwargs) -> None:  # noqa: ANN002, ANN003
-        with redirect_stdout(sys.stderr):
-            print(*args, **kwargs)
-
-    @property
-    def logger(self):  # noqa: ANN201
-        return logger
-
 
 class DocHandler(BaseHandler):
-    def handle_one(self, action: str):  # noqa: ANN201
-        return json.loads(action)
-
-
-def insert_cwd() -> None:
-    cwd = str(Path.cwd())
-    logger.debug(f'Insert cwd: {cwd}')
-    sys.path.insert(0, cwd)
+    @validate_call(validate_return=True)
+    def handle_one(self, action: Json) -> ActionT:
+        """Use pydantic.validate_call to load JSON."""
+        return action

@@ -1,8 +1,8 @@
 import typing as t
 
 from pydantic import AliasChoices
-from pydantic import Field
-from pydantic import JsonValue
+from pydantic import Field, JsonValue
+from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 
 from .cmd_base import BaseCmd
@@ -22,7 +22,7 @@ class ScanCmd(
     BaseCmd,
 ):
     scroll: str = '5m'
-    raise_on_error: bool = Field(
+    raise_on_error: CliImplicitFlag[bool] = Field(
         default=True,
         validation_alias=AliasChoices(
             'e',
@@ -73,7 +73,7 @@ class ScanCmd(
         if self.verbose:
             stderr_dim_console.print(self)
 
-        for hit in self.client.scan(
+        for item in self.client.scan(
             query=self.input_,
             scroll=self.scroll,
             raise_on_error=self.raise_on_error,
@@ -87,7 +87,7 @@ class ScanCmd(
             doc_type=self.doc_type,
             params=self.params,
         ):
-            line = self._to_json_str(hit)
+            line = self._to_json_str(item)
 
             self.output.out(line)
 

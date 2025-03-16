@@ -1,7 +1,6 @@
 import typing as t
 
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import expand_action
 from elasticsearch.helpers import scan
 from elasticsearch.helpers import streaming_bulk
 from pydantic import JsonValue
@@ -89,13 +88,12 @@ class Client:
         actions: t.Iterable[_A],
         chunk_size: int,
         max_chunk_bytes: int,
-        raise_on_error: bool,
-        # expand_action_callback: t.Callable[[_A], tuple[ActionT, t.Optional[SourceT]]],
-        raise_on_exception: bool,
+        raise_on_error: bool,  # noqa: FBT001
+        raise_on_exception: bool,  # noqa: FBT001
         max_retries: int,
         initial_backoff: int,
         max_backoff: int,
-        yield_ok: bool,
+        yield_ok: bool,  # noqa: FBT001
         *,
         index: t.Optional[str],
         doc_type: t.Optional[str],
@@ -107,7 +105,6 @@ class Client:
             chunk_size=chunk_size,
             max_chunk_bytes=max_chunk_bytes,
             raise_on_error=raise_on_error,
-            expand_action_callback=expand_action,
             raise_on_exception=raise_on_exception,
             max_retries=max_retries,
             initial_backoff=initial_backoff,

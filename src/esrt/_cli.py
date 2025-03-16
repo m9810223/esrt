@@ -24,7 +24,7 @@ from ._es_request import es_request
 from ._es_scan import es_scan
 from ._es_search import es_search
 from ._es_sql import es_sql
-from .handlers import insert_cwd
+from .handlers import add_cwd_to_sys_path
 from .logging_ import logger
 from .logging_ import set_log_level
 
@@ -118,7 +118,7 @@ class MainCmd(BaseSettings):
 
 
 def main():
-    insert_cwd()
+    add_cwd_to_sys_path()
     try:
         logger.info('CLI started')
         CliApp.run(MainCmd)

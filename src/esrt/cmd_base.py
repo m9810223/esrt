@@ -1,4 +1,3 @@
-from uvicorn.importer import import_from_string
 import io
 import json
 from pathlib import Path
@@ -25,6 +24,7 @@ from rich.progress import TextColumn
 from rich.progress import TimeElapsedColumn
 from rich.progress import TimeRemainingColumn
 from rich.text import Text
+from uvicorn.importer import import_from_string
 
 from .clients import Client
 from .typealiases import BodyT
