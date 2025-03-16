@@ -103,7 +103,7 @@ Bulk with data from file `examples/bulk.ndjson`:
 ```
 
 ```sh
-uvx esrt@4.1.3 bulk --host localhost -f examples/bulk.ndjson --yes
+uvx esrt@4.1.3 bulk localhost -f examples/bulk.ndjson --yes
 # ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00   4/?
 ```
 
@@ -112,7 +112,7 @@ uvx esrt@4.1.3 bulk --host localhost -f examples/bulk.ndjson --yes
 Read payload from `stdin`. And `-d` can be omitted.
 
 ```sh
-uvx esrt@4.1.3 bulk --host localhost --yes <<EOF
+uvx esrt@4.1.3 bulk localhost --yes <<EOF
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -123,7 +123,7 @@ EOF
 Piping `heredoc` also works.
 
 ```sh
-cat <<EOF | uvx esrt@4.1.3 bulk --host localhost --yes
+cat <<EOF | uvx esrt@4.1.3 bulk localhost --yes
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -185,7 +185,7 @@ class MyHandler(DocHandler):
 ## `search`
 
 ```sh
-uvx esrt@4.1.3 search --host localhost | jq_es_hits -c
+uvx esrt@4.1.3 search localhost | jq_es_hits -c
 # ->
 # {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 # {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
@@ -197,7 +197,7 @@ uvx esrt@4.1.3 search --host localhost | jq_es_hits -c
 ```
 
 ```sh
-uvx esrt@4.1.3 search --host localhost -f - <<EOF | jq_es_hits -c
+uvx esrt@4.1.3 search localhost -f - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -209,7 +209,7 @@ EOF
 ## `scan`
 
 ```sh
-uvx esrt@4.1.3 scan --host localhost
+uvx esrt@4.1.3 scan localhost
 # ->
 # total = 7
 # {"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
@@ -222,7 +222,7 @@ uvx esrt@4.1.3 scan --host localhost
 ```
 
 ```sh
-uvx esrt@4.1.3 scan --host localhost -f - <<EOF
+uvx esrt@4.1.3 scan localhost -f - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
@@ -271,7 +271,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | tee -a _.ndjson | uvx esrt@4.1.3 bulk --host localhost -c 10000
+python examples/create-massive-docs.py | tee -a _.ndjson | uvx esrt@4.1.3 bulk localhost -c 10000
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  654321
@@ -336,7 +336,7 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | uvx esrt@4.1.3 bulk --host localhost -w examples.copy-more-docs:handle
+python examples/copy-more-docs.py | uvx esrt@4.1.3 bulk localhost -w examples.copy-more-docs:handle
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  108642

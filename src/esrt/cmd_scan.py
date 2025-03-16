@@ -7,6 +7,8 @@ from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 
 from .cmd_base import BaseEsCmd
+from .cmd_base import ConfirmCmdMixin
+from .cmd_base import DefaultNoPrettyCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
@@ -17,10 +19,12 @@ from .cmd_base import stderr_dim_console
 
 
 class ScanCmd(
+    ConfirmCmdMixin,
     JsonInputCmdMixin,
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
+    DefaultNoPrettyCmdMixin,
     BaseEsCmd,
 ):
     scroll: str = '5m'
@@ -73,11 +77,14 @@ class ScanCmd(
     )
 
     def cli_cmd(self) -> None:
+        if not self.confirm():
+            return
+
         if self.verbose:
             stderr_dim_console.print(self)
 
         items = self.client.scan(
-            query=self.input_,
+            query=self.read_json_input(),
             scroll=self.scroll,
             raise_on_error=self.raise_on_error,
             preserve_order=self.preserve_order,
@@ -94,13 +101,20 @@ class ScanCmd(
         if self.is_output_stdout:
             for item in items:
                 line = self._to_json_str(item)
-                self.output.out(line)
+
+                if self.pretty:
+                    self.output.print_json(line)
+                else:
+                    self.output.print_json(line, indent=None)
 
             return
 
-        with self._progress(console=stderr_console, title='bulk') as progress:
+        with self.progress(console=stderr_console, title='bulk') as progress:
             for item in progress.track(items):
                 line = self._to_json_str(item)
-                self.output.out(line)
+                self.output.print(line)
 
-                stderr_console.print(line)
+                if self.pretty:
+                    stderr_console.print_json(line)
+                else:
+                    stderr_console.print_json(line, indent=None)

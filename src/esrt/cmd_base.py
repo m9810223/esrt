@@ -16,6 +16,7 @@ from pydantic import TypeAdapter
 from pydantic import validate_call
 from pydantic_settings import BaseSettings
 from pydantic_settings import CliImplicitFlag
+from pydantic_settings import CliPositionalArg
 from rich.console import Console
 from rich.progress import BarColumn
 from rich.progress import MofNCompleteColumn
@@ -32,7 +33,7 @@ from rich.prompt import Confirm
 from rich.text import Text
 
 from .clients import Client
-from .typealiases import BodyT
+from .typealiases import JsonBodyT
 
 
 console = Console()
@@ -41,33 +42,38 @@ stderr_dim_console = Console(stderr=True, style='dim')
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-def _validate_output(file_or_to: t.Union[str, io.TextIOWrapper]) -> Console:
-    file = Path(file_or_to).open('w') if isinstance(file_or_to, str) else file_or_to  # noqa: SIM115
-    return Console(file=file)
+def _validate_output_console(file_or_tio: t.Union[str, io.TextIOWrapper]) -> Console:
+    tio = Path(file_or_tio).open('w') if isinstance(file_or_tio, str) else file_or_tio  # noqa: SIM115
+    return Console(file=tio)
 
 
-Output = t.Annotated[Console, PlainValidator(_validate_output)]
-
-
-_body_ta = TypeAdapter[BodyT](Json[BodyT])
+OutputConsole = t.Annotated[Console, PlainValidator(_validate_output_console)]
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-def _validate_input(file: str) -> BodyT:
-    tio = t.cast('io.TextIOWrapper', sys.stdin) if file == '-' else Path(file).open()  # noqa: SIM115
-    return _body_ta.validate_python(tio.read())
+def _validate_input_file(file_or_tio: t.Union[str, io.TextIOWrapper]) -> io.TextIOWrapper:
+    tio = (
+        (t.cast(io.TextIOWrapper, sys.stdin) if file_or_tio == '-' else Path(file_or_tio).open('r'))  # noqa: SIM115
+        if isinstance(file_or_tio, str)
+        else file_or_tio
+    )
+    return tio
 
 
-Input = t.Annotated[BodyT, PlainValidator(_validate_input)]
+Input = t.Annotated[io.TextIOWrapper, PlainValidator(_validate_input_file)]
+
+
+json_body_type_adapter = TypeAdapter[JsonBodyT](Json[JsonBodyT])
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-def _validate_input_file(file_or_to: t.Union[str, io.TextIOWrapper]) -> io.TextIOWrapper:
-    file = Path(file_or_to).open('r') if isinstance(file_or_to, str) else file_or_to  # noqa: SIM115
-    return file
+def _validate_json_input(file: str) -> t.Optional[JsonBodyT]:
+    tio = t.cast(io.TextIOWrapper, sys.stdin) if file == '-' else Path(file).open('r')  # noqa: SIM115
+    s = tio.read().strip() or None
+    return None if s is None else json_body_type_adapter.validate_python(s)
 
 
-ReadFile = t.Annotated[io.TextIOWrapper, PlainValidator(_validate_input_file)]
+JsonInput = t.Annotated[JsonBodyT, PlainValidator(_validate_json_input)]
 
 
 def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
@@ -97,8 +103,23 @@ class _BaseCmd(BaseSettings):
         ),
     )
 
+    output: OutputConsole = Field(
+        default=t.cast(OutputConsole, sys.stdout),
+        validation_alias=AliasChoices(
+            'o',
+            'output',
+        ),
+    )
+
+    @property
+    def is_output_stdout(self) -> bool:
+        return self.output.file in [
+            sys.stdout,
+            getattr(sys.stdout, 'rich_proxied_file', None),  # * rich.progress.Progress
+        ]
+
     @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
-    def _progress(self, *, console: Console, title: str) -> Progress:
+    def progress(self, *, console: Console, title: str) -> Progress:
         return Progress(
             SpinnerColumn(),
             TextColumn(text_format=title),
@@ -118,44 +139,71 @@ class _BaseCmd(BaseSettings):
         return json.dumps(obj)
 
     @staticmethod
-    def _tty_confirm(prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
+    def tty_confirm(prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
         tty = Path(os.ctermid())
         return Confirm.ask(
             prompt=prompt,
             console=Console(file=tty.open('r+')),
-            default=t.cast('bool', default),  # ! type bug in rich
+            default=t.cast(bool, default),  # ! type bug in rich
             stream=tty.open('r'),
         )
 
 
-class BaseEsCmd(_BaseCmd):
-    client: t.Annotated[Client, BeforeValidator(Client)] = Field(
-        default=t.cast('Client', '127.0.0.1:9200'),
+class ConfirmCmdMixin(_BaseCmd):
+    yes: CliImplicitFlag[bool] = Field(
+        default=False,
         validation_alias=AliasChoices(
-            'H',
+            'y',
+            'yes',
+        ),
+        description=rich_text(Text('Do not ask for confirmation', style='blue b')),
+    )
+
+    def confirm(self) -> bool:
+        if self.yes is True:
+            stderr_dim_console.print(self)
+            return True
+
+        confirm = self.tty_confirm(rich_text(self, 'Continue?', end=''))
+        if confirm is True:
+            return True
+
+        stderr_console.print('Aborted!', style='red b')
+        return False
+
+
+class BaseEsCmd(_BaseCmd):
+    client: CliPositionalArg[t.Annotated[Client, BeforeValidator(Client)]] = Field(
+        default=t.cast(Client, '127.0.0.1:9200'),
+        validation_alias=AliasChoices(
             'host',
         ),
     )
 
 
-class _OutputCmdMixin(BaseEsCmd):
-    output: Output = Field(
-        default=t.cast('Output', sys.stdout),
+class BaseInputCmdMixin(_BaseCmd):
+    input_: t.Optional[Input] = Field(
+        default=None,
         validation_alias=AliasChoices(
-            'o',
-            'output',
+            'f',
+            'input',
+        ),
+        description=rich_text(
+            Text("""example: '-f my_query.txt'.""", style='yellow b'),
+            Text("""Or '-f -' for stdin.""", style='red b'),
         ),
     )
 
     @property
-    def is_output_stdout(self) -> bool:
-        return self.output.file in [
-            sys.stdout,
-            getattr(sys.stdout, 'rich_proxied_file', None),  # * rich.progress.Progress
-        ]
+    def is_input_stdin(self) -> bool:
+        return self.input_ == sys.stdin
+
+    def read_input(self) -> t.Optional[str]:
+        s = None if self.input_ is None else self.input_.read()
+        return s
 
 
-class JsonInputCmdMixin(_OutputCmdMixin):
+class JsonInputCmdMixin(BaseInputCmdMixin):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -169,10 +217,15 @@ class JsonInputCmdMixin(_OutputCmdMixin):
         ),
     )
 
+    def read_json_input(self) -> t.Optional[JsonBodyT]:
+        s = super().read_input() or None
+        j = None if s is None else json_body_type_adapter.validate_python(s)
+        return j
 
-class RequiredNdJsonInputCmdMixin(_OutputCmdMixin):
-    input_: ReadFile = Field(
-        default=t.cast('ReadFile', sys.stdin),
+
+class RequiredNdJsonInputCmdMixin(BaseInputCmdMixin):
+    input_: Input = Field(
+        default=t.cast(Input, sys.stdin),
         validation_alias=AliasChoices(
             'f',
             'input',
@@ -217,6 +270,20 @@ class EsDocTypeCmdMixin(BaseEsCmd):
     )
 
 
+class EsHeadersCmdMixin(BaseEsCmd):
+    headers: dict[str, JsonValue] = Field(
+        default_factory=dict,
+        validation_alias=AliasChoices(
+            'H',
+            'header',
+        ),
+        description=rich_text(
+            Text("""example: '--header a=1 --header b=false'""", style='yellow b'),
+            Text('Additional parameters to pass to the query', style='blue b'),
+        ),
+    )
+
+
 class EsParamsCmdMixin(BaseEsCmd):
     params: dict[str, JsonValue] = Field(
         default_factory=dict,
@@ -225,7 +292,7 @@ class EsParamsCmdMixin(BaseEsCmd):
             'param',
         ),
         description=rich_text(
-            Text("""example: '--param=size=10 --param=_source=false'""", style='yellow b'),
+            Text("""example: '--param a=1 --param b=false'""", style='yellow b'),
             Text('Additional parameters to pass to the query', style='blue b'),
         ),
     )

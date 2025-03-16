@@ -23,7 +23,7 @@ def parse_header(x: str, /) -> dict[str, str]:
 
 
 def merge_dicts(dicts: t.Optional[t.Iterable[dict[str, str]]], /):  # noqa: ANN201
-    return reduce(lambda acc, x: {**acc, **x}, dicts or [], t.cast('dict[str, str]', {}))
+    return reduce(lambda acc, x: {**acc, **x}, dicts or [], t.cast(dict[str, str], {}))
 
 
 def json_obj_to_line(obj: t.Any, /):  # noqa: ANN201, ANN401

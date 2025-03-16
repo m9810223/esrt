@@ -118,6 +118,7 @@ lint.extend-ignore = [
   "RUF002",
   "S101",
   "T201",
+  "TC006",
   "TD002",
   "TD003",
 ]

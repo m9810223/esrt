@@ -5,7 +5,7 @@ import typing as t
 from pydantic import Json
 from pydantic import validate_call
 
-from .typealiases import ActionT
+from .typealiases import JsonActionT
 
 
 def add_cwd_to_sys_path() -> None:
@@ -14,21 +14,21 @@ def add_cwd_to_sys_path() -> None:
 
 
 class BaseHandler:
-    def __init__(self, actions: t.Iterable[t.Union[str, ActionT]]) -> None:
+    def __init__(self, actions: t.Iterable[t.Union[str, JsonActionT]]) -> None:
         self._iter = iter(actions)
 
-    def __iter__(self) -> t.Iterator[t.Union[str, ActionT]]:
+    def __iter__(self) -> t.Iterator[t.Union[str, JsonActionT]]:
         return map(self.handle_one, self._iter)
 
-    def __next__(self) -> ActionT:
+    def __next__(self) -> JsonActionT:
         return next(self)
 
-    def handle_one(self, action: t.Union[str, ActionT]) -> t.Union[str, ActionT]:
-        return t.cast('t.Union[str, ActionT]', action)
+    def handle_one(self, action: t.Union[str, JsonActionT]) -> t.Union[str, JsonActionT]:
+        return t.cast(t.Union[str, JsonActionT], action)
 
 
 class DocHandler(BaseHandler):
     @validate_call(validate_return=True)
-    def handle_one(self, action: Json) -> ActionT:
+    def handle_one(self, action: Json) -> JsonActionT:
         """Use pydantic.validate_call to load JSON."""
         return action

@@ -105,7 +105,7 @@ class MainCmd(BaseSettings):
     search: CliSubCommand[SearchCmd]
 
     def print_version(self) -> None:
-        console.out(VERSION)
+        console.print(VERSION)
 
     def cli_cmd(self) -> None:
         logger.debug(self)

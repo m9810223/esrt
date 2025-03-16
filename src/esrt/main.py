@@ -51,7 +51,7 @@ class MainCmd(BaseSettings):
 
     def cli_cmd(self) -> None:
         if self.version is True:
-            console.out(VERSION)
+            console.print(VERSION)
             return
 
         CliApp.run_subcommand(self)
@@ -63,6 +63,6 @@ def main() -> None:
         with contextlib.suppress(KeyboardInterrupt):
             CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001
-        stderr_console.out(traceback.format_exc())
-        stderr_console.out('Error:', e, style='red b')
+        stderr_console.print(traceback.format_exc(), style='black i', highlight=False)
+        stderr_console.print('Error:', e, style='red b', highlight=False)
         sys.exit(1)

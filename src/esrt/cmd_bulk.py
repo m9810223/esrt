@@ -9,6 +9,7 @@ from rich.text import Text
 from uvicorn.importer import import_from_string
 
 from .cmd_base import BaseEsCmd
+from .cmd_base import ConfirmCmdMixin
 from .cmd_base import DefaultNoPrettyCmdMixin
 from .cmd_base import DryRunCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
@@ -18,13 +19,14 @@ from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
-from .typealiases import ActionT
+from .typealiases import JsonActionT
 
 
 _HandlerT = t.Annotated[t.Callable, BeforeValidator(import_from_string)]
 
 
 class BulkCmd(
+    ConfirmCmdMixin,
     RequiredNdJsonInputCmdMixin,
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
@@ -34,7 +36,7 @@ class BulkCmd(
     BaseEsCmd,
 ):
     handler: _HandlerT = Field(
-        default=t.cast('_HandlerT', 'esrt:DocHandler'),
+        default=t.cast(_HandlerT, 'esrt:DocHandler'),
         validation_alias=AliasChoices(
             'w',
             'handler',
@@ -100,7 +102,7 @@ class BulkCmd(
         ),
     )
     yield_ok: CliImplicitFlag[bool] = Field(
-        default=False,
+        default=True,
         description=rich_text(
             Text(
                 'If set to False will skip successful documents in the output',
@@ -108,58 +110,50 @@ class BulkCmd(
             )
         ),
     )
-    yes: CliImplicitFlag[bool] = Field(
-        default=False,
-        validation_alias=AliasChoices(
-            'y',
-            'yes',
-        ),
-        description=rich_text(
-            Text(
-                'Do not ask for confirmation',
-                style='blue b',
-            )
-        ),
-    )
 
-    def cli_cmd(self) -> None:  # noqa: C901
-        if not self.yes:
-            confirm = self._tty_confirm(rich_text(self, 'Continue?', end=''))
-            if not confirm:
-                stderr_console.print('Aborted', style='red b')
-                return
+    def _check(self) -> bool:
+        if self.client.ping() is True:
+            return True
 
-        if self.client.ping() is False:
-            stderr_console.print('Cannot connect to ES', style='red b')
+        stderr_console.print('Cannot connect to ES', style='red b')
+        return False
+
+    def _generate_actions(self) -> t.Generator[JsonActionT, None, None]:
+        inputs = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[JsonActionT]], self.handler)(self.input_)
+        with self.progress(console=stderr_console, title='bulk') as progress:
+            for action in progress.track(inputs):
+                if isinstance(action, dict):
+                    action.pop('_score', None)
+                    action.pop('sort', None)
+                yield action
+
+                if self.verbose:
+                    line = self._to_json_str(action)
+                    if self.pretty:
+                        self.output.print_json(line)
+                    else:
+                        self.output.print_json(line, indent=None)
+                    progress.refresh()
+
+    def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
+        stderr_console.print('Dry run', style='yellow b')
+        deque(actions, maxlen=0)
+        stderr_console.print('Dry run end', style='yellow b')
+
+    def cli_cmd(self) -> None:
+        if not self.confirm():
             return
 
-        inputs = t.cast('t.Callable[[t.Iterable[str]], t.Iterable[ActionT]]', self.handler)(self.input_)
+        if not self._check():
+            return
 
-        def generate_actions() -> t.Generator[ActionT, None, None]:
-            with self._progress(console=stderr_console, title='bulk') as progress:
-                for action in progress.track(inputs):
-                    if isinstance(action, dict):
-                        action.pop('_score', None)
-                        action.pop('sort', None)
-                    yield action
-
-                    if self.verbose:
-                        line = self._to_json_str(action)
-                        if self.pretty:
-                            self.output.print_json(line)
-                        else:
-                            self.output.out(action)
-                        progress.refresh()
-
-        actions = generate_actions()
+        actions = self._generate_actions()
 
         if self.dry_run:
-            stderr_console.print('Dry run', style='yellow b')
-            deque(actions, maxlen=0)
-            stderr_console.print('Dry run end', style='yellow b')
+            self._simulate(actions=actions)
             return
 
-        pairs = self.client.streaming_bulk(
+        for _, item in self.client.streaming_bulk(
             actions=actions,
             chunk_size=self.chunk_size,
             max_chunk_bytes=self.max_chunk_bytes,
@@ -172,8 +166,10 @@ class BulkCmd(
             index=self.index,
             doc_type=self.doc_type,
             params=self.params,
-        )
-
-        for _, item in pairs:
+        ):
             line = self._to_json_str(item)
-            stderr_dim_console.out(line)
+
+            if self.pretty:
+                stderr_dim_console.print_json(line)
+            else:
+                stderr_dim_console.print_json(line, indent=None)

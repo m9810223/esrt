@@ -9,7 +9,7 @@ def my_handler(actions: t.Iterable[str]):
     for action in actions:
         obj = json.loads(action)
         prefix = 'new-'
-        if not t.cast('str', obj['_index']).startswith(prefix):
+        if not t.cast(str, obj['_index']).startswith(prefix):
             obj['_index'] = prefix + obj['_index']
         yield obj
 
@@ -23,6 +23,6 @@ class MyHandler(DocHandler):
     def handle_one(self, action: str):
         obj = json.loads(action)
         prefix = 'new-'
-        if not t.cast('str', obj['_index']).startswith(prefix):
+        if not t.cast(str, obj['_index']).startswith(prefix):
             obj['_index'] = prefix + obj['_index']
         return obj
