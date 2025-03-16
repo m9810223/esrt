@@ -21,7 +21,6 @@ from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 from .handlers import HandlerT
-from .handlers import handle_str
 from .typealiases import JsonActionT
 
 
@@ -36,7 +35,7 @@ class BulkCmd(
     BaseEsCmd,
 ):
     handler: t.Annotated[HandlerT, BeforeValidator(import_from_string)] = Field(
-        default=t.cast(HandlerT, 'esrt:handle_str'),
+        default=t.cast(HandlerT, 'esrt:handle_json_str'),
         validation_alias=AliasChoices(
             'w',
             'handler',
@@ -115,7 +114,7 @@ class BulkCmd(
         if self.client.ping() is True:
             return True
 
-        stderr_console.print('Cannot connect to ES', style='red b')
+        stderr_console.out('Cannot connect to ES', style='red b')
         return False
 
     @validate_call(validate_return=True)
@@ -124,9 +123,8 @@ class BulkCmd(
 
         with self.progress(console=stderr_console, title='bulk') as progress:
             for action in progress.track(iterator):
-                if isinstance(action, dict):
-                    action.pop('_score', None)
-                    action.pop('sort', None)
+                action.pop('_score', None)
+                action.pop('sort', None)
                 yield action
 
                 if self.verbose:
@@ -138,9 +136,9 @@ class BulkCmd(
                     progress.refresh()
 
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
-        stderr_console.print('Dry run', style='yellow b')
+        stderr_console.out('Dry run', style='yellow b')
         deque(actions, maxlen=0)
-        stderr_console.print('Dry run end', style='yellow b')
+        stderr_console.out('Dry run end', style='yellow b')
 
     def cli_cmd(self) -> None:
         if not self.confirm():

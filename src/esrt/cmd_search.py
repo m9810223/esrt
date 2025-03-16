@@ -13,10 +13,10 @@ class SearchCmd(
 ):
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_console.print(self)
+            stderr_console.out(self)
 
         if self.verbose:
-            stderr_dim_console.print('>', end='')
+            stderr_dim_console.out('>', end='')
 
         body = self.read_json_input()
 
@@ -25,7 +25,7 @@ class SearchCmd(
             stderr_console.print_json(s)
 
         if self.verbose:
-            stderr_dim_console.print('<', end='')
+            stderr_dim_console.out('<', end='')
 
         response = self.client.search(
             index=self.index,
@@ -33,10 +33,6 @@ class SearchCmd(
             body=body,
             params=self.params,
         )
-
-        if isinstance(response, str):
-            self.output.out(response)
-            return
 
         s = self.json_to_str(response)
 

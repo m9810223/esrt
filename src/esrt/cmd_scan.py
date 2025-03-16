@@ -81,7 +81,7 @@ class ScanCmd(
             return
 
         if self.verbose:
-            stderr_dim_console.print(self)
+            stderr_dim_console.out(self)
 
         items = self.client.scan(
             query=self.read_json_input(),

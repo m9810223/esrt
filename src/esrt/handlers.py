@@ -16,13 +16,10 @@ if t.TYPE_CHECKING:
     ]
 else:
     HandlerT = t.Callable
+    handle_json_str: HandlerT
 
 
-handle_str: HandlerT
-
-
-@validate_call(validate_return=True)
-def handle_str(actions: t.Iterable[str], /) -> t.Iterable[JsonActionT]:
+def handle_json_str(actions: t.Iterable[str], /) -> t.Iterable[JsonActionT]:
     return map(json.loads, actions)
 
 

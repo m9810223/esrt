@@ -37,7 +37,7 @@ class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, Default
 
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_console.print(self)
+            stderr_console.out(self)
 
         response = self.client.request(
             method=self.method,

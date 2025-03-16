@@ -80,7 +80,7 @@ def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa:
     """Return a string representation of the object, formatted with rich text."""
     file = io.StringIO()
     record_console = Console(file=file, record=True)
-    record_console.print(*objects, sep=sep, end=end)
+    record_console.out(*objects, sep=sep, end=end)
     return record_console.export_text(styles=True)
 
 
@@ -161,14 +161,14 @@ class ConfirmCmdMixin(_BaseCmd):
 
     def confirm(self) -> bool:
         if self.yes is True:
-            stderr_dim_console.print(self)
+            stderr_dim_console.out(self)
             return True
 
         confirm = self.tty_confirm(rich_text(self, 'Continue?', end=''))
         if confirm is True:
             return True
 
-        stderr_console.print('Aborted!', style='red b')
+        stderr_console.out('Aborted!', style='red b')
         return False
 
 
