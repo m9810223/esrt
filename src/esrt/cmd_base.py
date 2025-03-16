@@ -314,8 +314,12 @@ class DryRunCmdMixin(BaseEsCmd):
 
 
 class DefaultPrettyCmdMixin(BaseEsCmd):
-    pretty: CliImplicitFlag[bool] = True
+    pretty: CliImplicitFlag[bool] = Field(
+        default=True,
+    )
 
 
 class DefaultNoPrettyCmdMixin(BaseEsCmd):
-    pretty: CliImplicitFlag[bool] = False
+    pretty: CliImplicitFlag[bool] = Field(
+        default=False,
+    )
