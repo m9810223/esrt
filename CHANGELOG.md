@@ -2,6 +2,21 @@
 
 
 
+## v4.2.1 (2025-03-16)
+
+### Fix
+
+* fix: release ([`a89ebb6`](https://github.com/m9810223/esrt/commit/a89ebb61d2d7555d0ea2a3bf1ea1aee06f7bce75))
+
+### Unknown
+
+* WIP ([`525ced9`](https://github.com/m9810223/esrt/commit/525ced97881449b705e9c97f6c3a65c0b44b572d))
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`934c3c0`](https://github.com/m9810223/esrt/commit/934c3c0f17535757277d80939a463be779787f9f))
+
+* WIP ([`9df443d`](https://github.com/m9810223/esrt/commit/9df443d0968d5e0e536a8c60151725f420011887))
+
+
 ## v4.2.0 (2025-03-16)
 
 ### Feature
