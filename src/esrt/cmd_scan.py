@@ -16,6 +16,7 @@ from .cmd_base import JsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .typealiases import JsonBodyT
 
 
 class ScanCmd(
@@ -76,6 +77,16 @@ class ScanCmd(
         ),
     )
 
+    def _preview_total(self, query: t.Optional[JsonBodyT], /) -> int:
+        search_once = self.client.search(
+            index=self.index,
+            doc_type=self.doc_type,
+            body=query,
+            params={**self.params, 'size': 0},
+        )
+        total = t.cast(dict, search_once)['hits']['total']
+        return total
+
     def cli_cmd(self) -> None:
         if not self.confirm():
             return
@@ -83,8 +94,12 @@ class ScanCmd(
         if self.verbose:
             stderr_dim_console.out(self)
 
+        query = self.read_json_input()
+
+        total = self._preview_total(query)
+
         items = self.client.scan(
-            query=self.read_json_input(),
+            query=query,
             scroll=self.scroll,
             raise_on_error=self.raise_on_error,
             preserve_order=self.preserve_order,
@@ -110,7 +125,7 @@ class ScanCmd(
             return
 
         with self.progress(console=stderr_console, title='bulk') as progress:
-            for item in progress.track(items):
+            for item in progress.track(items, total=total):
                 s = self.json_to_str(item)
 
                 self.output.out(s)

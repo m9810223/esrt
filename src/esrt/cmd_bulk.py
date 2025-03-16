@@ -35,7 +35,7 @@ class BulkCmd(
     BaseEsCmd,
 ):
     handler: t.Annotated[HandlerT, BeforeValidator(import_from_string)] = Field(
-        default=t.cast(HandlerT, 'esrt:handle_json_str'),
+        default=t.cast(HandlerT, 'esrt:doc_handler'),
         validation_alias=AliasChoices(
             'w',
             'handler',
@@ -101,7 +101,7 @@ class BulkCmd(
         ),
     )
     yield_ok: CliImplicitFlag[bool] = Field(
-        default=True,
+        default=False,
         description=rich_text(
             Text(
                 'If set to False will skip successful documents in the output',
@@ -133,6 +133,7 @@ class BulkCmd(
                         self.output.print_json(s)
                     else:
                         self.output.print_json(s, indent=None)
+
                     progress.refresh()
 
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:

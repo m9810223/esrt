@@ -5,21 +5,22 @@
 ```sh
 # use `pipx`
 pip install pipx # install pipx
-pipx run esrt==4.1.3 -V
+alias esrt='pipx run esrt==4.1.3'
+esrt -V
 ```
 
 ```sh
 # or use `uv`
 pip install uv # install uv
-uvx esrt@4.1.3 -V
-
+alias esrt='uvx esrt@4.1.3'
+esrt -V
 ```
 
 ## Commands
 
 - `search`
 - `scan`
-<!-- - `request` -->
+- `request`
 - `bulk`
 <!-- - `sql` -->
 - `ping`
@@ -40,13 +41,12 @@ docker restart "esrt-es"
 
 ---
 
-<!--
-## `r` - Send a request
+## `request`
 
 Check server:
 
 ```sh
-esrt r localhost -X HEAD
+esrt request localhost -X HEAD
 # ->
 # true
 ```
@@ -54,9 +54,13 @@ esrt r localhost -X HEAD
 Create a index:
 
 ```sh
-esrt r localhost -X PUT /my-index
+esrt request localhost -X PUT -u /my-index
 # ->
-# {"acknowledged": true, "shards_acknowledged": true, "index": "my-index"}
+# {
+#   "acknowledged": true,
+#   "shards_acknowledged": true,
+#   "index": "my-index"
+# }
 ```
 
 *If you want to `esrt` quote url path for you, add flag: `-Q`(`--quote-url`)*
@@ -64,22 +68,23 @@ esrt r localhost -X PUT /my-index
 Cat it:
 
 ```sh
-esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index'
+esrt request localhost -X GET -u _cat/indices
 # ->
-# [{"health": "yellow", "status": "open", "index": "my-index", "uuid": "avrhX1hzQLyfEGvXsA96NA", "pri": "5", "rep": "1", "docs.count": "0", "docs.deleted": "0", "store.size": "324b", "pri.store.size": "324b"}]
-```
+# yellow open my-index Ya31jYWMQVW0o_-IosLoNQ 5 1 0 0 810b 810b
 
-*`esrt` doesn't keep `-p pretty` format, but you can use `jq`.*
+esrt request localhost -X GET -u _cat/indices -p v=
+# ->
+# health status index    uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+# yellow open   my-index Ya31jYWMQVW0o_-IosLoNQ   5   1          0            0       810b           810b
 
-```sh
-esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
+esrt request localhost -X GET -u _cat/indices -p v= -p format=json
 # ->
 # [
 #   {
 #     "health": "yellow",
 #     "status": "open",
 #     "index": "my-index",
-#     "uuid": "avrhX1hzQLyfEGvXsA96NA",
+#     "uuid": "Ya31jYWMQVW0o_-IosLoNQ",
 #     "pri": "5",
 #     "rep": "1",
 #     "docs.count": "0",
@@ -89,7 +94,8 @@ esrt r localhost -X GET _cat/indices -p 'v&format=json' -p 's=index' | jq
 #   }
 # ]
 ```
---- -->
+
+---
 
 ## `bulk` - Transmit data (`streaming_bulk`)
 
@@ -103,8 +109,14 @@ Bulk with data from file `examples/bulk.ndjson`:
 ```
 
 ```sh
-uvx esrt@4.1.3 bulk localhost -f examples/bulk.ndjson --yes
-# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00   4/?
+esrt bulk localhost -f examples/bulk.ndjson -y
+# ->
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False dry_run=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='examples/bulk.ndjson' mode='r' encoding='UTF-8'> yes=True handler=<function doc_handler at 0x104397c10> chunk_size=5000 max_chunk_bytes=104857600 raise_on_error=True raise_on_exception=True max_retries=5 initial_backoff=3 max_backoff=600 yield_ok=True
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    4/? ?
+# {"index": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 1, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
+# {"delete": {"found": true, "_index": "my-index", "_type": "type1", "_id": "1", "_version": 2, "result": "deleted", "_shards": {"total": 2, "successful": 1, "failed": 0}, "status": 200}}
+# {"create": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 3, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
+# {"update": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 4, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "status": 200}}
 ```
 
 ---
@@ -112,22 +124,34 @@ uvx esrt@4.1.3 bulk localhost -f examples/bulk.ndjson --yes
 Read payload from `stdin`. And `-d` can be omitted.
 
 ```sh
-uvx esrt@4.1.3 bulk localhost --yes <<EOF
+esrt bulk localhost -y <<EOF
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
 EOF
-# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00   3/?
+# ->
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False dry_run=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'> yes=True handler=<function doc_handler at 0x1042bfc10> chunk_size=5000 max_chunk_bytes=104857600 raise_on_error=True raise_on_exception=True max_retries=5 initial_backoff=3 max_backoff=600 yield_ok=True
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "1", "_version": 1, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "2", "_version": 1, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "3", "_version": 1, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
+
 ```
 
 Piping `heredoc` also works.
 
 ```sh
-cat <<EOF | uvx esrt@4.1.3 bulk localhost --yes
+cat <<EOF | esrt bulk localhost -y
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
 EOF
+# ->
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False dry_run=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'> yes=True handler=<function doc_handler at 0x102c1bc10> chunk_size=5000 max_chunk_bytes=104857600 raise_on_error=True raise_on_exception=True max_retries=5 initial_backoff=3 max_backoff=600 yield_ok=True
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "1", "_version": 2, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "2", "_version": 2, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
+# {"index": {"_index": "my-index-2", "_type": "type1", "_id": "3", "_version": 2, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
 ```
 
 ---
@@ -138,15 +162,14 @@ Pipe `_search` result and update `_index` with `customized handler` to do more o
 alias jq_es_hits="jq '.hits.hits[]'"
 ```
 
-<!--
 ```sh
-esrt r localhost -X GET /my-index-2/_search | jq_es_hits -c | uvx esrt@4.1.3 bulk localhost -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
+esrt request localhost -X GET -u my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
 # ->
-# <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  3
-
-# success = 3
-# failed = 0
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False dry_run=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'> yes=True handler=<class 'examples.my-handlers.MyHandler'> chunk_size=5000 max_chunk_bytes=104857600 raise_on_error=True raise_on_exception=True max_retries=5 initial_backoff=3 max_backoff=600 yield_ok=True
+# ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
+# {"index": {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_version": 6, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
+# {"index": {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_version": 6, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
+# {"index": {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_version": 6, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
 ```
 
 ```py
@@ -155,6 +178,7 @@ import json
 import typing as t
 
 from esrt import DocHandler
+
 
 # function style
 def my_handler(actions: t.Iterable[str]):
@@ -165,6 +189,7 @@ def my_handler(actions: t.Iterable[str]):
             obj['_index'] = prefix + obj['_index']
         yield obj
 
+
 # class style
 class MyHandler(DocHandler):
     def handle(self, actions: t.Iterable[str]):
@@ -172,20 +197,20 @@ class MyHandler(DocHandler):
             yield self.handle_one(action)
 
     def handle_one(self, action: str):
-        obj = json.loads(action)
+        obj = super().handle_one(action)
         prefix = 'new-'
         if not t.cast(str, obj['_index']).startswith(prefix):
             obj['_index'] = prefix + obj['_index']
         return obj
+
 ```
--->
 
 ---
 
 ## `search`
 
 ```sh
-uvx esrt@4.1.3 search localhost | jq_es_hits -c
+esrt search localhost | jq_es_hits -c
 # ->
 # {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 # {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
@@ -197,7 +222,7 @@ uvx esrt@4.1.3 search localhost | jq_es_hits -c
 ```
 
 ```sh
-uvx esrt@4.1.3 search localhost -f - <<EOF | jq_es_hits -c
+esrt search localhost -f - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -209,9 +234,9 @@ EOF
 ## `scan`
 
 ```sh
-uvx esrt@4.1.3 scan localhost
+esrt scan localhost -y
 # ->
-# total = 7
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False params={} doc_type=None index=None input_=None yes=True scroll='5m' raise_on_error=True size=1000 request_timeout=None scroll_kwargs={}
 # {"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 # {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
@@ -222,12 +247,13 @@ uvx esrt@4.1.3 scan localhost
 ```
 
 ```sh
-uvx esrt@4.1.3 scan localhost -f - <<EOF
+esrt scan localhost -y -f - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
-# total = 1
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'> yes=True scroll='5m' raise_on_error=True size=1000 request_timeout=None scroll_kwargs={}
 # {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+
 ```
 
 <!--
@@ -271,7 +297,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | tee -a _.ndjson | uvx esrt@4.1.3 bulk localhost -c 10000
+python examples/create-massive-docs.py | tee -a _.ndjson | esrt bulk localhost -y -c 10000
 # ->
 # <Client([{'host': 'localhost', 'port': 9200}])>
 # streaming_bulk  [####################################]  654321
@@ -336,11 +362,8 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | uvx esrt@4.1.3 bulk localhost -w examples.copy-more-docs:handle
+python examples/copy-more-docs.py | esrt bulk localhost -y -w examples.copy-more-docs:handle
 # ->
-# <Client([{'host': 'localhost', 'port': 9200}])>
-# streaming_bulk  [####################################]  108642
-
-# success = 108642
-# failed = 0
+# verbose=False output=<console width=227 ColorSystem.TRUECOLOR> client=<Client([{'host': 'localhost'}])> pretty=False dry_run=False params={} doc_type=None index=None input_=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'> yes=True handler=<function handle at 0x1037fe160> chunk_size=5000 max_chunk_bytes=104857600 raise_on_error=True raise_on_exception=True max_retries=5 initial_backoff=3 max_backoff=600 yield_ok=False
+# ⠸ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:03    108642/? 30680/s
 ```

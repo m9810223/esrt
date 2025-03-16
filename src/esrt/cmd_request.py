@@ -1,5 +1,6 @@
 import typing as t
 
+from pydantic import AfterValidator
 from pydantic import AliasChoices
 from pydantic import BeforeValidator
 from pydantic import Field
@@ -15,6 +16,12 @@ from .cmd_base import stderr_console
 from .typealiases import HttpMethod
 
 
+def _validate_url(value: str) -> str:
+    if not value.startswith('/'):
+        value = f'/{value}'
+    return value
+
+
 class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, DefaultPrettyCmdMixin, BaseEsCmd):
     method: t.Annotated[HttpMethod, BeforeValidator(str.upper)] = Field(
         default='GET',
@@ -24,7 +31,7 @@ class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, Default
             'request',
         ),
     )
-    url: str = Field(
+    url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
         default='/',
         validation_alias=AliasChoices(
             'u',

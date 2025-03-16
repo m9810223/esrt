@@ -21,7 +21,7 @@ class MyHandler(DocHandler):
             yield self.handle_one(action)
 
     def handle_one(self, action: str):
-        obj = json.loads(action)
+        obj = super().handle_one(action)
         prefix = 'new-'
         if not t.cast(str, obj['_index']).startswith(prefix):
             obj['_index'] = prefix + obj['_index']

@@ -161,7 +161,8 @@ class ConfirmCmdMixin(_BaseCmd):
 
     def confirm(self) -> bool:
         if self.yes is True:
-            stderr_dim_console.out(self)
+            if self.verbose is True:
+                stderr_dim_console.out(self)
             return True
 
         confirm = self.tty_confirm(rich_text(self, 'Continue?', end=''))
