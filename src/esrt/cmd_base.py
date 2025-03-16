@@ -178,6 +178,7 @@ class BaseEsCmd(_BaseCmd):
         default=t.cast(Client, '127.0.0.1:9200'),
         validation_alias=AliasChoices(
             'es_host',
+            'host',
         ),
     )
 
