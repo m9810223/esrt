@@ -46,13 +46,16 @@ class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, Default
         if self.verbose:
             stderr_console.out(self)
 
-        response = self.client.request(
-            method=self.method,
-            url=self.url,
-            headers=self.headers,
-            params=self.params,
-            body=self.read_json_input(),
-        )
+        with stderr_console.status('Request ...') as status:
+            status.update(spinner='bouncingBall')
+
+            response = self.client.request(
+                method=self.method,
+                url=self.url,
+                headers=self.headers,
+                params=self.params,
+                body=self.read_json_input(),
+            )
 
         if isinstance(response, str):
             self.output.out(response)

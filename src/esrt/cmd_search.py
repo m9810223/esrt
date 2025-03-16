@@ -27,12 +27,15 @@ class SearchCmd(
         if self.verbose:
             stderr_dim_console.out('<', end='')
 
-        response = self.client.search(
-            index=self.index,
-            doc_type=self.doc_type,
-            body=body,
-            params=self.params,
-        )
+        with stderr_console.status('Search ...') as status:
+            status.update(spinner='bouncingBall')
+
+            response = self.client.search(
+                index=self.index,
+                doc_type=self.doc_type,
+                body=body,
+                params=self.params,
+            )
 
         s = self.json_to_str(response)
 

@@ -78,12 +78,16 @@ class ScanCmd(
     )
 
     def _preview_total(self, query: t.Optional[JsonBodyT], /) -> int:
-        search_once = self.client.search(
-            index=self.index,
-            doc_type=self.doc_type,
-            body=query,
-            params={**self.params, 'size': 0},
-        )
+        with stderr_console.status('Search ... (total)') as status:
+            status.update(spinner='bouncingBall')
+
+            search_once = self.client.search(
+                index=self.index,
+                doc_type=self.doc_type,
+                body=query,
+                params={**self.params, 'size': 0},
+            )
+
         total = t.cast(dict, search_once)['hits']['total']
         return total
 

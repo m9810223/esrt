@@ -111,7 +111,12 @@ class BulkCmd(
     )
 
     def _check(self) -> bool:
-        if self.client.ping() is True:
+        with stderr_console.status('Ping ...') as status:
+            status.update(spinner='bouncingBall')
+
+            p = self.client.ping()
+
+        if p is True:
             return True
 
         stderr_console.out('Cannot connect to ES', style='red b')

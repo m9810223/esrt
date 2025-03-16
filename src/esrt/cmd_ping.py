@@ -21,11 +21,21 @@ class PingCmd(BaseEsCmd):
         if self.verbose:
             stderr_dim_console.out(f'Ping {self.client.hosts}')
 
-        if not self.client.ping():
+        with stderr_console.status('Ping ...') as status:
+            status.update(spinner='bouncingBall')
+
+            p = self.client.ping()
+
+        if p is False:
             stderr_console.out('Ping failed', style='red b')
             return
 
         stderr_console.out('Ping ok', style='green b')
         if self.info:
-            s = self.json_to_str(self.client.info())
+            with stderr_console.status('Info ...') as status:
+                status.update(spinner='bouncingBall')
+
+                i = self.client.info()
+
+            s = self.json_to_str(i)
             console.print_json(s)
