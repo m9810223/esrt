@@ -90,12 +90,16 @@ class ScanCmd(
             params=self.params,
         )
 
+        if self.is_output_stdout:
+            for item in items:
+                line = self._to_json_str(item)
+                self.output.out(line)
+
+            return
+
         with self._progress(console=stderr_console, title='bulk') as progress:
             for item in progress.track(items):
                 line = self._to_json_str(item)
-
                 self.output.out(line)
-                if not self.is_output_stdout:
-                    stderr_console.print(line)
 
-                progress.refresh()
+                stderr_console.print(line)
