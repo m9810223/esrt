@@ -2,6 +2,24 @@
 
 
 
+## v4.0.0 (2025-03-16)
+
+### Breaking
+
+* refactor: migrate from PDM to UV and restructure CLI
+
+BREAKING CHANGE:
+- Replaced PDM with UV as the package manager (`pdm.lock` removed, `uv.lock` added).
+- Changed CLI entry point structure, renaming and reorganizing modules.
+- Renamed workflow from `_pdm-publish.yml` to `_pypi-publish.yml` and updated publish steps to use `uv`.
+- Updated pre-commit hooks (removed `black`, `pyupgrade`, and `typos`; added `pyproject-fmt`).
+- Removed `main.py` as an entry point and adjusted imports accordingly. ([`5c03561`](https://github.com/m9810223/esrt/commit/5c035612b7cc47b1963659416393ebdd355158a9))
+
+### Unknown
+
+* v4 ([`9e35836`](https://github.com/m9810223/esrt/commit/9e3583654ef66ad562277660d97a7d3cd1c186ae))
+
+
 ## v3.3.0 (2024-08-12)
 
 ### Feature
