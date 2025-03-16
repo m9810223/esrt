@@ -1,45 +1,34 @@
-from contextlib import redirect_stdout
-import json
 from pathlib import Path
 import sys
 import typing as t
 
-from .logger import logger
+from pydantic import Json
+from pydantic import validate_call
+
+from .typealiases import ActionT
+
+
+def add_cwd_to_sys_path() -> None:
+    cwd = str(Path.cwd())
+    sys.path.insert(0, cwd)
 
 
 class BaseHandler:
-    def __init__(self, actions: t.Iterable[str]):
+    def __init__(self, actions: t.Iterable[t.Union[str, ActionT]]) -> None:
         self._iter = iter(actions)
 
-    def __iter__(self):
-        return self.handle(self._iter)
+    def __iter__(self) -> t.Iterator[t.Union[str, ActionT]]:
+        return map(self.handle_one, self._iter)
 
-    def __next__(self):
-        return next(self._iter)
+    def __next__(self) -> ActionT:
+        return next(self)
 
-    def handle(self, actions: t.Iterable[str]):
-        for action in actions:
-            yield self.handle_one(action)
-
-    def handle_one(self, action):
-        return action
-
-    @staticmethod
-    def print(*args, **kwargs):
-        with redirect_stdout(sys.stderr):
-            print(*args, **kwargs)
-
-    @property
-    def logger(self):
-        return logger
+    def handle_one(self, action: t.Union[str, ActionT]) -> t.Union[str, ActionT]:
+        return t.cast('t.Union[str, ActionT]', action)
 
 
 class DocHandler(BaseHandler):
-    def handle_one(self, action: str):
-        return json.loads(action)
-
-
-def insert_cwd():
-    cwd = str(Path.cwd())
-    logger.debug(f'Insert cwd: {cwd}')
-    sys.path.insert(0, cwd)
+    @validate_call(validate_return=True)
+    def handle_one(self, action: Json) -> ActionT:
+        """Use pydantic.validate_call to load JSON."""
+        return action

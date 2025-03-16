@@ -13,9 +13,12 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v3
-      - uses: pdm-project/setup-pdm@v4
+
+      - uses: astral-sh/setup-uv@v5
         with:
+          version: "0.6.3"
           python-version: ${{ matrix.py_ver }}
-          cache: true
-          cache-dependency-path: "**/pdm.lock"
-      - run: pdm publish -v -u "__token__" -P "${{ secrets.PYPI_API_TOKEN }}"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - run: uv publish --verbose --username "__token__" --password "${{ secrets.PYPI_API_TOKEN }}"

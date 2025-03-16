@@ -1,1 +1,6 @@
-from elasticsearch.exceptions import TransportError as TransportError
+from elasticsearch.exceptions import TransportError
+
+
+__all__ = [
+    'TransportError',
+]

@@ -3,6 +3,8 @@
 exclude: |
   (?x)^(
     .*/migrations/.*|
+    examples/.*|
+    src/esrt/_.*.py|
     CHANGELOG.md
   )$
 
@@ -22,28 +24,13 @@ repos:
 
   ### PYTHON
 
-  - repo: https://github.com/psf/black
-    rev: 552baf822992936134cbd31a38f69c8cfe7c0f05  # frozen: 24.3.0
-    hooks: # https://black.readthedocs.io/en/stable/integrations/source_version_control.html
-      - id: black
-
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 1986670a8c4578a526ad3dddee3b35d9cfb9d7be  # frozen: v0.3.4
+    rev: 99abe27a5a16f301d9e0a3828181399dfbf54ebd # frozen: v0.11.0
     hooks: # https://beta.ruff.rs/docs/installation-and-usage/#usage
       - id: ruff
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "9db9854e3041219b1eb619872a2dfaf58adfb20b"  # frozen: v1.9.0
-    hooks:
-      - id: mypy
-        additional_dependencies: [types-all]
         args:
-          - --explicit-package-bases
-
-  - repo: https://github.com/asottile/pyupgrade
-    rev: df17dfa3911b81b4a27190b0eea5b1debc7ffa0a # frozen: v3.15.1
-    hooks:
-      - id: pyupgrade
+          - --fix
+      - id: ruff-format
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: 3a6eb0fadf60b3cccfd80bad9dbb6fae7e47b316 # frozen: v1.10.0
@@ -54,15 +41,22 @@ repos:
       - id: python-use-type-annotations
       - id: text-unicode-replacement-char
 
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: "57b6ff7bf72affdd12c7f3fd6de761ba18a33b3a" # frozen: v2.5.1
+    hooks:
+      - id: pyproject-fmt
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "f40886d54c729f533f864ed6ce584e920feb0af7" # frozen: v1.15.0
+    hooks:
+      - id: mypy
+        args:
+          - --explicit-package-bases
+
   ### MISC
 
-  - repo: https://github.com/crate-ci/typos
-    rev: 68c7289a620636165869822d2d233e785272935b  # frozen: v1.19.0
-    hooks:
-      - id: typos
-
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: 0afbc519ee4aa0a1eb0f7dd78876c8de46d4cf08 # frozen: v2.12.0
+    rev: a6273196190bb0f68caf1dc68073cf62c719f725 # frozen: v2.14.0
     hooks:
       - id: pretty-format-yaml
         args:
@@ -71,7 +65,7 @@ repos:
           - --autofix
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: c4a0b883114b00d8d76b479c820ce7950211c99b # frozen: v4.5.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b # frozen: v5.0.0
     hooks: # https://pre-commit.com/hooks.html
       # `(\S) - ` -> `$1 # `
       - id: check-added-large-files # prevents giant files from being committed.

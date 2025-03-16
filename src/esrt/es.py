@@ -2,11 +2,11 @@ from pprint import pformat
 
 from elasticsearch import Elasticsearch
 
-from .logger import logger
+from .logging_ import logger
 
 
 class Client(Elasticsearch):
-    def __init__(self, *, host: str):
+    def __init__(self, *, host: str) -> None:
         has_scheme = '://' in host
         has_port = ':' in host.split('://')[-1].split('@')[-1]
         if (not has_scheme) and (not has_port):

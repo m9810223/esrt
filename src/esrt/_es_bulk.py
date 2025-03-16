@@ -9,28 +9,31 @@ from elasticsearch.helpers import streaming_bulk
 import typer
 from uvicorn.importer import import_from_string
 
-from . import cli_params
+from . import _cli_params
 from . import es
-from .logger import logger
+from .logging_ import logger
 from .utils import json_obj_to_line
 from .utils import merge_dicts
 
 
 def es_bulk(
-    host: t.Annotated[str, cli_params.host],
-    input_file: t.Annotated[typer.FileText, cli_params.input_file] = t.cast(typer.FileText, sys.stdin),
-    output_file: t.Annotated[typer.FileTextWrite, cli_params.output_file] = t.cast(typer.FileTextWrite, sys.stdout),
-    #
+    host: t.Annotated[str, _cli_params.host],
+    input_file: t.Annotated[typer.FileText, _cli_params.input_file] = t.cast('typer.FileText', sys.stdin),
+    output_file: t.Annotated[typer.FileTextWrite, _cli_params.output_file] = t.cast('typer.FileTextWrite', sys.stdout),
     progress: t.Annotated[bool, typer.Option(' /-S', ' /--no-progress')] = True,
     verbose: t.Annotated[bool, typer.Option('-v', '--verbose')] = False,
-    #
-    index: t.Annotated[t.Optional[str], cli_params.index] = None,
-    params: t.Annotated[t.Optional[list[dict]], cli_params.query_param] = None,
-    handler: t.Annotated[t.Callable[[t.Iterable[str]], t.Iterable[str]], typer.Option('-w', '--handler', parser=import_from_string, help='A callable handle actions. e.g. --handler esrt:DocHandler')] = t.cast(
-        t.Callable[[t.Iterable[str]], t.Iterable[str]], 'esrt:DocHandler'
-    ),
-    doc_type: t.Annotated[t.Optional[str], cli_params.doc_type] = None,
-    #
+    index: t.Annotated[t.Optional[str], _cli_params.index] = None,
+    params: t.Annotated[t.Optional[list[dict]], _cli_params.query_param] = None,
+    handler: t.Annotated[
+        t.Callable[[t.Iterable[str]], t.Iterable[str]],
+        typer.Option(
+            '-w',
+            '--handler',
+            parser=import_from_string,
+            help='A callable handle actions. e.g. --handler esrt:DocHandler',
+        ),
+    ] = t.cast('t.Callable[[t.Iterable[str]], t.Iterable[str]]', 'esrt:DocHandler'),
+    doc_type: t.Annotated[t.Optional[str], _cli_params.doc_type] = None,
     chunk_size: t.Annotated[int, typer.Option('-c', '--chunk-size')] = 500,
     max_chunk_bytes: t.Annotated[int, typer.Option('--max-chunk-bytes')] = 100 * 1024 * 1024,
     raise_on_error: t.Annotated[bool, typer.Option(' /--no-raise-on-error')] = True,
@@ -38,8 +41,7 @@ def es_bulk(
     max_retries: t.Annotated[int, typer.Option('--max-retries')] = 3,
     initial_backoff: t.Annotated[int, typer.Option('--initial-backoff')] = 2,
     max_backoff: t.Annotated[int, typer.Option('--max-backoff')] = 600,
-    #
-    kwargs: t.Annotated[t.Optional[list[dict]], cli_params.kwargs] = None,
+    kwargs: t.Annotated[t.Optional[list[dict]], _cli_params.kwargs] = None,
 ):
     logger.debug(pformat(locals()))
     client = es.Client(host=host)
@@ -51,7 +53,6 @@ def es_bulk(
     _iterable = streaming_bulk(
         client=client,
         actions=handler(input_file),
-        #
         chunk_size=chunk_size,
         max_chunk_bytes=max_chunk_bytes,
         raise_on_error=raise_on_error,
@@ -61,11 +62,9 @@ def es_bulk(
         initial_backoff=initial_backoff,
         max_backoff=max_backoff,
         yield_ok=True,  # *
-        #
         index=index,
         doc_type=doc_type,
         params=merge_dicts(params),
-        #
         **merge_dicts(kwargs),
     )
     context = nullcontext(_iterable)
