@@ -2,6 +2,17 @@
 
 
 
+## v4.1.3 (2025-03-16)
+
+### Fix
+
+* fix: release ([`74821ed`](https://github.com/m9810223/esrt/commit/74821ed9bf6eb25cbca6ba14b59b19623e6b21b0))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`6556aad`](https://github.com/m9810223/esrt/commit/6556aad13f4b752ac6818fd9bb93d7915af6ce01))
+
+
 ## v4.1.2 (2025-03-16)
 
 ### Fix
