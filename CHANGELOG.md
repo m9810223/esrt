@@ -2,6 +2,17 @@
 
 
 
+## v4.1.1 (2025-03-16)
+
+### Fix
+
+* fix: release ([`b9b8c05`](https://github.com/m9810223/esrt/commit/b9b8c057d2679bacc7c72a32c4470a93600826d6))
+
+### Unknown
+
+* WIP ([`1a87b39`](https://github.com/m9810223/esrt/commit/1a87b39bc2fa2c9870a8e4a6f29182a369048e37))
+
+
 ## v4.1.0 (2025-03-16)
 
 ### Feature
