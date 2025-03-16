@@ -1,21 +1,22 @@
 import typing as t
 
-from pydantic import AfterValidator
 from pydantic import AliasChoices
+from pydantic import BeforeValidator
 from pydantic import Field
 from rich.text import Text
 
 from .cmd_base import BaseEsCmd
-from .cmd_base import BaseInputCmdMixin
+from .cmd_base import DefaultPrettyCmdMixin
 from .cmd_base import EsHeadersCmdMixin
 from .cmd_base import EsParamsCmdMixin
-from .cmd_base import json_body_type_adapter
+from .cmd_base import JsonInputCmdMixin
 from .cmd_base import rich_text
+from .cmd_base import stderr_console
 from .typealiases import HttpMethod
 
 
-class RequestCmd(BaseInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, BaseEsCmd):
-    method: t.Annotated[HttpMethod, AfterValidator(str.upper)] = Field(
+class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, DefaultPrettyCmdMixin, BaseEsCmd):
+    method: t.Annotated[HttpMethod, BeforeValidator(str.upper)] = Field(
         default='GET',
         validation_alias=AliasChoices(
             'X',
@@ -24,6 +25,7 @@ class RequestCmd(BaseInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, BaseEsC
         ),
     )
     url: str = Field(
+        default='/',
         validation_alias=AliasChoices(
             'u',
             'url',
@@ -34,13 +36,24 @@ class RequestCmd(BaseInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, BaseEsC
     )
 
     def cli_cmd(self) -> None:
-        s = None if self.input_ is None else (self.input_.read().strip() or None)
-        body = None if s is None else json_body_type_adapter.validate_python(s)
+        if self.verbose:
+            stderr_console.print(self)
+
         response = self.client.request(
             method=self.method,
             url=self.url,
             headers=self.headers,
             params=self.params,
-            body=body,
+            body=self.read_json_input(),
         )
-        print(response)
+
+        if isinstance(response, str):
+            self.output.out(response)
+            return
+
+        s = self.json_to_str(response)
+
+        if self.pretty:
+            self.output.print_json(s)
+        else:
+            self.output.print_json(s, indent=None)

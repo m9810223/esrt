@@ -4,6 +4,7 @@ import typing as t
 from pydantic import AliasChoices
 from pydantic import BeforeValidator
 from pydantic import Field
+from pydantic import validate_call
 from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 from uvicorn.importer import import_from_string
@@ -19,10 +20,9 @@ from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .handlers import HandlerT
+from .handlers import handle_str
 from .typealiases import JsonActionT
-
-
-_HandlerT = t.Annotated[t.Callable, BeforeValidator(import_from_string)]
 
 
 class BulkCmd(
@@ -35,8 +35,8 @@ class BulkCmd(
     DefaultNoPrettyCmdMixin,
     BaseEsCmd,
 ):
-    handler: _HandlerT = Field(
-        default=t.cast(_HandlerT, 'esrt:DocHandler'),
+    handler: t.Annotated[HandlerT, BeforeValidator(import_from_string)] = Field(
+        default=t.cast(HandlerT, 'esrt:handle_str'),
         validation_alias=AliasChoices(
             'w',
             'handler',
@@ -118,21 +118,23 @@ class BulkCmd(
         stderr_console.print('Cannot connect to ES', style='red b')
         return False
 
+    @validate_call(validate_return=True)
     def _generate_actions(self) -> t.Generator[JsonActionT, None, None]:
-        inputs = t.cast(t.Callable[[t.Iterable[str]], t.Iterable[JsonActionT]], self.handler)(self.input_)
+        iterator = self.handler(self.read_iterator_input())
+
         with self.progress(console=stderr_console, title='bulk') as progress:
-            for action in progress.track(inputs):
+            for action in progress.track(iterator):
                 if isinstance(action, dict):
                     action.pop('_score', None)
                     action.pop('sort', None)
                 yield action
 
                 if self.verbose:
-                    line = self._to_json_str(action)
+                    s = self.json_to_str(action)
                     if self.pretty:
-                        self.output.print_json(line)
+                        self.output.print_json(s)
                     else:
-                        self.output.print_json(line, indent=None)
+                        self.output.print_json(s, indent=None)
                     progress.refresh()
 
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
@@ -167,9 +169,9 @@ class BulkCmd(
             doc_type=self.doc_type,
             params=self.params,
         ):
-            line = self._to_json_str(item)
+            s = self.json_to_str(item)
 
             if self.pretty:
-                stderr_dim_console.print_json(line)
+                stderr_dim_console.print_json(s)
             else:
-                stderr_dim_console.print_json(line, indent=None)
+                stderr_dim_console.print_json(s, indent=None)

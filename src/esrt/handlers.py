@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import sys
 import typing as t
@@ -6,6 +7,23 @@ from pydantic import Json
 from pydantic import validate_call
 
 from .typealiases import JsonActionT
+
+
+if t.TYPE_CHECKING:
+    HandlerT = t.Callable[
+        [t.Iterable[str]],
+        t.Iterable[JsonActionT],
+    ]
+else:
+    HandlerT = t.Callable
+
+
+handle_str: HandlerT
+
+
+@validate_call(validate_return=True)
+def handle_str(actions: t.Iterable[str], /) -> t.Iterable[JsonActionT]:
+    return map(json.loads, actions)
 
 
 def add_cwd_to_sys_path() -> None:

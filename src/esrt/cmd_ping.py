@@ -27,5 +27,5 @@ class PingCmd(BaseEsCmd):
 
         stderr_console.print('Ping ok', style='green b')
         if self.info:
-            line = self._to_json_str(self.client.info())
-            console.print_json(line)
+            s = self.json_to_str(self.client.info())
+            console.print_json(s)

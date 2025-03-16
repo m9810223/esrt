@@ -124,9 +124,7 @@ class Client:
         headers: dict,
         params: dict,
         body: t.Optional[JsonBodyT],
-    ):
-        print(f'{body=}')
-        print(self._client.transport.serializer)
+    ) -> JsonValue:
         return self._client.transport.perform_request(
             method=method,
             url=url,

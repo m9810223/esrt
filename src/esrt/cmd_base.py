@@ -135,7 +135,7 @@ class _BaseCmd(BaseSettings):
 
     @staticmethod
     @validate_call(validate_return=True)
-    def _to_json_str(obj: JsonValue, /) -> str:
+    def json_to_str(obj: JsonValue, /) -> str:
         return json.dumps(obj)
 
     @staticmethod
@@ -181,7 +181,7 @@ class BaseEsCmd(_BaseCmd):
     )
 
 
-class BaseInputCmdMixin(_BaseCmd):
+class _BaseInputCmdMixin(_BaseCmd):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -203,7 +203,7 @@ class BaseInputCmdMixin(_BaseCmd):
         return s
 
 
-class JsonInputCmdMixin(BaseInputCmdMixin):
+class JsonInputCmdMixin(_BaseInputCmdMixin):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -223,7 +223,7 @@ class JsonInputCmdMixin(BaseInputCmdMixin):
         return j
 
 
-class RequiredNdJsonInputCmdMixin(BaseInputCmdMixin):
+class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
     input_: Input = Field(
         default=t.cast(Input, sys.stdin),
         validation_alias=AliasChoices(
@@ -236,6 +236,10 @@ class RequiredNdJsonInputCmdMixin(BaseInputCmdMixin):
             Text('A NDJSON (Newline delimited JSON) file containing the bulk request.', style='blue b'),
         ),
     )
+
+    def read_iterator_input(self) -> t.Iterator[str]:
+        it = self.input_
+        return it
 
 
 class EsIndexCmdMixin(BaseEsCmd):
