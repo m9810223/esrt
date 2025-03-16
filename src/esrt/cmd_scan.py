@@ -1,7 +1,8 @@
 import typing as t
 
 from pydantic import AliasChoices
-from pydantic import Field, JsonValue
+from pydantic import Field
+from pydantic import JsonValue
 from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 

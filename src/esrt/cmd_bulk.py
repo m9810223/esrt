@@ -1,9 +1,8 @@
-from .cmd_base import stderr_dim_console
 import typing as t
 
 from pydantic import AliasChoices
-from pydantic_settings import CliImplicitFlag
 from pydantic import Field
+from pydantic_settings import CliImplicitFlag
 from rich.text import Text
 
 from .cmd_base import BaseCmd
@@ -14,6 +13,7 @@ from .cmd_base import IndexCmdMixin
 from .cmd_base import ParamsCmdMixin
 from .cmd_base import generate_rich_text
 from .cmd_base import stderr_console
+from .cmd_base import stderr_dim_console
 
 
 class BulkCmd(BulkFioCmdMixin, IndexCmdMixin, DocTypeCmdMixin, ParamsCmdMixin, BaseCmd):
