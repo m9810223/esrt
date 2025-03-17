@@ -4,7 +4,7 @@ default:
     just --list --unsorted
 
 ES_NAME := "esrt-es"
-ES_PORT := "9201"
+ES_PORT := "9200"
 
 [group('Elasticsearch')]
 start-test_es:
