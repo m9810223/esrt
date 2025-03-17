@@ -138,10 +138,11 @@ class ScanCmd(
             for item in progress.track(items, total=total):
                 self.output.out(self.json_to_str(item))
 
-                if self.pretty:
-                    stderr_console.print_json(data=item)
-                else:
-                    stderr_console.print_json(data=item, indent=None)
+                if self.verbose:
+                    if self.pretty:
+                        stderr_console.print_json(data=item)
+                    else:
+                        stderr_console.print_json(data=item, indent=None)
 
         if self.ipython:
             self.start_ipython()
