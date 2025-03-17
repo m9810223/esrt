@@ -135,11 +135,10 @@ class BulkCmd(
                 yield action
 
                 if self.verbose:
-                    s = self.json_to_str(action)
                     if self.pretty:
-                        self.output.print_json(s)
+                        self.output.print_json(data=action)
                     else:
-                        self.output.print_json(s, indent=None)
+                        self.output.print_json(data=action, indent=None)
 
                     progress.refresh()
 
@@ -180,12 +179,10 @@ class BulkCmd(
             doc_type=self.doc_type,
             params=self.params,
         ):
-            s = self.json_to_str(item)
-
             if self.pretty:
-                stderr_dim_console.print_json(s)
+                stderr_dim_console.print_json(data=item)
             else:
-                stderr_dim_console.print_json(s, indent=None)
+                stderr_dim_console.print_json(data=item, indent=None)
 
         if self.ipython:
             self.start_ipython()

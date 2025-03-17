@@ -28,8 +28,7 @@ class SearchCmd(
         body = self.read_json_input()
 
         if self.verbose and not self.is_input_stdin:
-            s = self.json_to_str(body)
-            stderr_console.print_json(s)
+            stderr_console.print_json(data=body)
 
         if self.verbose:
             stderr_dim_console.print('<', end='')
@@ -44,12 +43,10 @@ class SearchCmd(
                 params=self.params,
             )
 
-        s = self.json_to_str(response)
-
         if self.pretty:
-            self.output.print_json(s)
+            self.output.print_json(data=response)
         else:
-            self.output.print_json(s, indent=None)
+            self.output.print_json(data=response, indent=None)
 
         if self.ipython:
             self.start_ipython()

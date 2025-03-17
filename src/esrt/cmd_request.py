@@ -69,12 +69,10 @@ class RequestCmd(
             self.output.out(response)
             return
 
-        s = self.json_to_str(response)
-
         if self.pretty:
-            self.output.print_json(s)
+            self.output.print_json(data=response)
         else:
-            self.output.print_json(s, indent=None)
+            self.output.print_json(data=response, indent=None)
 
         if self.ipython:
             self.start_ipython()

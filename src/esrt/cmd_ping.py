@@ -41,8 +41,7 @@ class PingCmd(
 
                 i = self.client.info()
 
-            s = self.json_to_str(i)
-            console.print_json(s)
+            console.print_json(data=i)
 
         if self.ipython:
             self.start_ipython()
