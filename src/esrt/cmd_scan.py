@@ -136,7 +136,7 @@ class ScanCmd(
 
             return
 
-        with self.progress(console=stderr_console, title='bulk') as progress:
+        with self.progress(console=stderr_console, title='scan') as progress:
             for item in progress.track(items, total=total):
                 s = self.json_to_str(item)
 
