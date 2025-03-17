@@ -140,9 +140,11 @@ class ScanCmd(
 
                 if self.verbose:
                     if self.pretty:
-                        stderr_console.print_json(data=item)
+                        stderr_dim_console.print_json(data=item)
                     else:
-                        stderr_console.print_json(data=item, indent=None)
+                        stderr_dim_console.print_json(data=item, indent=None)
+
+                    progress.refresh()
 
         if self.ipython:
             self.start_ipython()
