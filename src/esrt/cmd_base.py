@@ -1,3 +1,4 @@
+import inspect
 import io
 import json
 import os
@@ -5,6 +6,7 @@ from pathlib import Path
 import sys
 import typing as t
 
+import IPython
 from pydantic import AliasChoices
 from pydantic import BeforeValidator
 from pydantic import ConfigDict
@@ -171,6 +173,34 @@ class ConfirmCmdMixin(_BaseCmd):
 
         stderr_console.out('Aborted!', style='red b')
         return False
+
+
+class IpythonCmdMixin(_BaseCmd):
+    ipython: CliImplicitFlag[bool] = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            'ipy',
+            'ipython',
+        ),
+    )
+
+    def start_ipython(self) -> None:
+        curr_frame = inspect.currentframe()
+        assert curr_frame is not None
+
+        target_frame = curr_frame.f_back
+        assert target_frame is not None
+
+        target_ns = target_frame.f_locals
+
+        stderr_console.print()
+        stderr_console.print('locals variables:')
+        for v in target_ns:
+            if v.startswith('__'):
+                continue
+            stderr_console.print(f'* {v}', style='cyan b')
+
+        IPython.start_ipython(argv=[], user_ns=target_ns)
 
 
 class BaseEsCmd(_BaseCmd):

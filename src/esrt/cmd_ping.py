@@ -3,12 +3,16 @@ from pydantic import Field
 from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseEsCmd
+from .cmd_base import IpythonCmdMixin
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
-class PingCmd(BaseEsCmd):
+class PingCmd(
+    IpythonCmdMixin,
+    BaseEsCmd,
+):
     info: CliImplicitFlag[bool] = Field(
         default=True,
         validation_alias=AliasChoices(
@@ -39,3 +43,6 @@ class PingCmd(BaseEsCmd):
 
             s = self.json_to_str(i)
             console.print_json(s)
+
+        if self.ipython:
+            self.start_ipython()

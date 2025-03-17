@@ -3,13 +3,20 @@ from .cmd_base import DefaultPrettyCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
+from .cmd_base import IpythonCmdMixin
 from .cmd_base import JsonInputCmdMixin
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
 class SearchCmd(
-    JsonInputCmdMixin, EsIndexCmdMixin, EsDocTypeCmdMixin, EsParamsCmdMixin, DefaultPrettyCmdMixin, BaseEsCmd
+    IpythonCmdMixin,
+    JsonInputCmdMixin,
+    EsIndexCmdMixin,
+    EsDocTypeCmdMixin,
+    EsParamsCmdMixin,
+    DefaultPrettyCmdMixin,
+    BaseEsCmd,
 ):
     def cli_cmd(self) -> None:
         if self.verbose:
@@ -43,3 +50,6 @@ class SearchCmd(
             self.output.print_json(s)
         else:
             self.output.print_json(s, indent=None)
+
+        if self.ipython:
+            self.start_ipython()

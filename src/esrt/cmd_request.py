@@ -10,6 +10,7 @@ from .cmd_base import BaseEsCmd
 from .cmd_base import DefaultPrettyCmdMixin
 from .cmd_base import EsHeadersCmdMixin
 from .cmd_base import EsParamsCmdMixin
+from .cmd_base import IpythonCmdMixin
 from .cmd_base import JsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
@@ -22,7 +23,14 @@ def _validate_url(value: str) -> str:
     return value
 
 
-class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, DefaultPrettyCmdMixin, BaseEsCmd):
+class RequestCmd(
+    IpythonCmdMixin,
+    JsonInputCmdMixin,
+    EsHeadersCmdMixin,
+    EsParamsCmdMixin,
+    DefaultPrettyCmdMixin,
+    BaseEsCmd,
+):
     method: t.Annotated[HttpMethod, BeforeValidator(str.upper)] = Field(
         default='GET',
         validation_alias=AliasChoices(
@@ -67,3 +75,6 @@ class RequestCmd(JsonInputCmdMixin, EsHeadersCmdMixin, EsParamsCmdMixin, Default
             self.output.print_json(s)
         else:
             self.output.print_json(s, indent=None)
+
+        if self.ipython:
+            self.start_ipython()

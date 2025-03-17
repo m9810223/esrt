@@ -16,6 +16,7 @@ from .cmd_base import DryRunCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
+from .cmd_base import IpythonCmdMixin
 from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
@@ -25,6 +26,7 @@ from .typealiases import JsonActionT
 
 
 class BulkCmd(
+    IpythonCmdMixin,
     ConfirmCmdMixin,
     RequiredNdJsonInputCmdMixin,
     EsIndexCmdMixin,
@@ -179,3 +181,6 @@ class BulkCmd(
                 stderr_dim_console.print_json(s)
             else:
                 stderr_dim_console.print_json(s, indent=None)
+
+        if self.ipython:
+            self.start_ipython()

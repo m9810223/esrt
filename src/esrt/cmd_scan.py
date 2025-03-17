@@ -9,9 +9,11 @@ from rich.text import Text
 from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
 from .cmd_base import DefaultNoPrettyCmdMixin
+from .cmd_base import DryRunCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
-from .cmd_base import EsIndexCmdMixin, DryRunCmdMixin
+from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
+from .cmd_base import IpythonCmdMixin
 from .cmd_base import JsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
@@ -20,6 +22,7 @@ from .typealiases import JsonBodyT
 
 
 class ScanCmd(
+    IpythonCmdMixin,
     ConfirmCmdMixin,
     JsonInputCmdMixin,
     EsIndexCmdMixin,
@@ -143,3 +146,6 @@ class ScanCmd(
                     stderr_console.print_json(s)
                 else:
                     stderr_console.print_json(s, indent=None)
+
+        if self.ipython:
+            self.start_ipython()
