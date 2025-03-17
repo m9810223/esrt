@@ -197,7 +197,7 @@ class IpythonCmdMixin(_BaseCmd):
     @property
     def _stdin_is_a_tty(self) -> bool:
         """
-        -f- (GOOD)
+        -f - (GOOD)
             sys.stdin.isatty() = True
             sys.stdin.seekable() = True
             color OK!
@@ -205,7 +205,7 @@ class IpythonCmdMixin(_BaseCmd):
             sys.stdin.isatty() = False
             sys.stdin.seekable() = False
             color GG!
-        -f- <<<
+        -f - <<<
             sys.stdin.isatty() = False
             sys.stdin.seekable() = True
             color GG!
@@ -248,14 +248,6 @@ class BaseEsCmd(_BaseCmd):
 
 
 class _BaseInputCmdMixin(_BaseCmd):
-    @model_validator(mode='after')
-    def _validate_input(self) -> Self:
-        if (self.input_ is not None) and (self.data is not None):
-            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
-            raise ValueError(message)
-
-        return self
-
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -296,6 +288,14 @@ class _BaseInputCmdMixin(_BaseCmd):
 
 
 class JsonInputCmdMixin(_BaseInputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -329,9 +329,20 @@ class JsonInputCmdMixin(_BaseInputCmdMixin):
         return json_body_type_adapter.validate_python(x)
 
 
-class NdJsonInputCmdMixin(_BaseInputCmdMixin):
+class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is None) and (self.data is None):
+            self.input_ = t.cast(Input, sys.stdin)
+
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     input_: t.Optional[Input] = Field(
-        default=t.cast(Input, sys.stdin),
+        default=None,
         validation_alias=AliasChoices(
             'f',
             'input',
@@ -345,14 +356,14 @@ class NdJsonInputCmdMixin(_BaseInputCmdMixin):
 
     def read_iterator_input(self) -> t.Iterable[str]:
         if self.data is not None:
-            return self.data.splitlines(keepends=True)
+            return self.data.strip().splitlines(keepends=True)
 
         assert self.input_ is not None
 
         if self.input_.seekable():
             self.input_.seek(0)
 
-        return self.input_
+        return (x for x in self.input_ if x.strip())
 
 
 class EsIndexCmdMixin(BaseEsCmd):

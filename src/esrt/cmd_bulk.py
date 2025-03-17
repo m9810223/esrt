@@ -17,7 +17,7 @@ from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
-from .cmd_base import NdJsonInputCmdMixin
+from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -28,7 +28,7 @@ from .typealiases import JsonActionT
 class BulkCmd(
     IpythonCmdMixin,
     ConfirmCmdMixin,
-    NdJsonInputCmdMixin,
+    RequiredNdJsonInputCmdMixin,
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
