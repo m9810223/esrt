@@ -5,14 +5,14 @@
 ```sh
 # use `pipx`
 pip install pipx # install pipx
-alias esrt='pipx run esrt==4.5.1'
+alias esrt='pipx run esrt==4.6.0'
 esrt -V
 ```
 
 ```sh
 # or use `uv`
 pip install uv # install uv
-alias esrt='uvx esrt@4.5.1'
+alias esrt='uvx esrt@4.6.0'
 esrt -V
 ```
 
