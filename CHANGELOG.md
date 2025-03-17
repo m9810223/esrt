@@ -2,6 +2,15 @@
 
 
 
+## v4.6.0 (2025-03-17)
+
+### Feature
+
+* feat: release ([`f417bb4`](https://github.com/m9810223/esrt/commit/f417bb4e13e87fd8e1593a4819a7f66fa5ba30c8))
+
+* feat: release ([`96a6b47`](https://github.com/m9810223/esrt/commit/96a6b4777663bf2e309aa6ed7615ec96ee0abc47))
+
+
 ## v4.5.1 (2025-03-16)
 
 ### Fix
