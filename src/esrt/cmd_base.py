@@ -247,7 +247,15 @@ class BaseEsCmd(_BaseCmd):
     )
 
 
-class _BaseInputCmdMixin(_BaseCmd):
+class JsonInputCmdMixin(_BaseCmd):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -255,10 +263,9 @@ class _BaseInputCmdMixin(_BaseCmd):
             'input',
         ),
         description=rich_text(
-            Text('A file containing the search query.', style='blue b'),
-            Text("""example: '-f my_query.txt'.""", style='yellow b'),
-            Text("""Or '-f -' for stdin.""", style='yellow b'),
-            Text('Exclusive with -d/--data.', style='red b'),
+            Text("""example: '-f my_query.json'.""", style='yellow b'),
+            Text("""Or '-f -' for stdin.""", style='red b'),
+            Text('A JSON file containing the search query.', style='blue b'),
         ),
     )
     data: t.Optional[str] = Field(
@@ -286,29 +293,6 @@ class _BaseInputCmdMixin(_BaseCmd):
 
         return self.input_.read()
 
-
-class JsonInputCmdMixin(_BaseInputCmdMixin):
-    @model_validator(mode='after')
-    def _validate_input(self) -> Self:
-        if (self.input_ is not None) and (self.data is not None):
-            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
-            raise ValueError(message)
-
-        return self
-
-    input_: t.Optional[Input] = Field(
-        default=None,
-        validation_alias=AliasChoices(
-            'f',
-            'input',
-        ),
-        description=rich_text(
-            Text("""example: '-f my_query.json'.""", style='yellow b'),
-            Text("""Or '-f -' for stdin.""", style='red b'),
-            Text('A JSON file containing the search query.', style='blue b'),
-        ),
-    )
-
     def read_json_input(self) -> t.Optional[JsonBodyT]:
         if self.data is not None:
             if self.data == '':
@@ -329,12 +313,9 @@ class JsonInputCmdMixin(_BaseInputCmdMixin):
         return json_body_type_adapter.validate_python(x)
 
 
-class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
+class RequiredNdJsonInputCmdMixin(_BaseCmd):
     @model_validator(mode='after')
     def _validate_input(self) -> Self:
-        if (self.input_ is None) and (self.data is None):
-            self.input_ = t.cast(Input, sys.stdin)
-
         if (self.input_ is not None) and (self.data is not None):
             message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
             raise ValueError(message)
@@ -353,6 +334,30 @@ class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
             Text('A NDJSON (Newline delimited JSON) file containing the bulk request.', style='blue b'),
         ),
     )
+    data: t.Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            'd',
+            'data',
+        ),
+        description=rich_text(
+            Text('A string containing the search query.', style='blue b'),
+            Text('Exclusive with -f/--input.', style='red b'),
+        ),
+    )
+
+    @property
+    def is_input_stdin(self) -> bool:
+        return self.input_ == sys.stdin
+
+    def read_input(self) -> t.Optional[str]:
+        if self.data is not None:
+            return self.data
+
+        if self.input_ is None:
+            return None
+
+        return self.input_.read()
 
     def read_iterator_input(self) -> t.Iterable[str]:
         if self.data is not None:

@@ -22,6 +22,11 @@ ES_HOST := "localhost:" + ES_PORT
 JQ_ES_HITS := "jq '.hits.hits[]'"
 
 [group('esrt')]
+test-ping:
+    #!/usr/bin/env bash -eux
+    {{ ESRT }} ping {{ ES_HOST }}
+
+[group('esrt')]
 test-request:
     #!/usr/bin/env bash -eux
 
@@ -43,7 +48,7 @@ test-bulk:
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
-    ' | {{ ESRT }} bulk {{ ES_HOST }} -y
+    ' | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
 
     echo '
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
@@ -69,7 +74,7 @@ test-bulk:
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} request {{ ES_HOST }} -u my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -w examples.my-handlers:handle
+    {{ ESRT }} request {{ ES_HOST }} -u my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
 
 [group('esrt')]
 test-search:
@@ -129,8 +134,8 @@ test-scan:
 
 [group('esrt')]
 test-others:
-    python examples/create-massive-docs.py | tee -a _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y
-    python examples/copy-more-docs.py | {{ ESRT }} bulk {{ ES_HOST }} -y -w examples.copy-more-docs:handle
+    python examples/create-massive-docs.py | tee -a _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
+    python examples/copy-more-docs.py | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.copy-more-docs:handle
 
 [group('esrt')]
-test: test-request test-bulk test-search test-scan test-others
+test: restart-test_es test-ping test-request test-bulk test-search test-scan test-others
