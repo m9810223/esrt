@@ -20,10 +20,10 @@ class SearchCmd(
 ):
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_console.out(self)
+            stderr_console.print(self)
 
         if self.verbose:
-            stderr_dim_console.out('>', end='')
+            stderr_dim_console.print('>', end='')
 
         body = self.read_json_input()
 
@@ -32,7 +32,7 @@ class SearchCmd(
             stderr_console.print_json(s)
 
         if self.verbose:
-            stderr_dim_console.out('<', end='')
+            stderr_dim_console.print('<', end='')
 
         with stderr_console.status('Search ...') as status:
             status.update(spinner='bouncingBall')

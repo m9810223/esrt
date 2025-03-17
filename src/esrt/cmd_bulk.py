@@ -17,7 +17,7 @@ from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
-from .cmd_base import RequiredNdJsonInputCmdMixin
+from .cmd_base import NdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -28,7 +28,7 @@ from .typealiases import JsonActionT
 class BulkCmd(
     IpythonCmdMixin,
     ConfirmCmdMixin,
-    RequiredNdJsonInputCmdMixin,
+    NdJsonInputCmdMixin,
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
@@ -121,7 +121,7 @@ class BulkCmd(
         if p is True:
             return True
 
-        stderr_console.out('Cannot connect to ES', style='red b')
+        stderr_console.print('Cannot connect to ES', style='red b')
         return False
 
     @validate_call(validate_return=True)
@@ -144,9 +144,9 @@ class BulkCmd(
                     progress.refresh()
 
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
-        stderr_console.out('Dry run', style='yellow b')
+        stderr_console.print('Dry run', style='yellow b')
         deque(actions, maxlen=0)
-        stderr_console.out('Dry run end', style='yellow b')
+        stderr_console.print('Dry run end', style='yellow b')
 
     def cli_cmd(self) -> None:
         if (not self.dry_run) and (not self.confirm()):
@@ -155,14 +155,14 @@ class BulkCmd(
         if not self._check():
             return
 
-        actions = self._generate_actions()
+        _actions = self._generate_actions()
 
         if self.dry_run:
-            self._simulate(actions=actions)
+            self._simulate(actions=_actions)
             return
 
         for _, item in self.client.streaming_bulk(
-            actions=actions,
+            actions=_actions,
             chunk_size=self.chunk_size,
             max_chunk_bytes=self.max_chunk_bytes,
             raise_on_error=self.raise_on_error,

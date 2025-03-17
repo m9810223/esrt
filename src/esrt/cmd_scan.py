@@ -100,7 +100,7 @@ class ScanCmd(
             return
 
         if self.verbose:
-            stderr_dim_console.out(self)
+            stderr_dim_console.print(self)
 
         query = self.read_json_input()
 
@@ -122,7 +122,7 @@ class ScanCmd(
         total = self._preview_total(query)
 
         if self.dry_run:
-            stderr_console.out('Total:', total, style='yellow b')
+            stderr_console.print('Total:', total, style='yellow b')
             return
 
         if self.is_output_stdout:

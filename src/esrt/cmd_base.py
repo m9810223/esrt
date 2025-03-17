@@ -15,6 +15,7 @@ from pydantic import Json
 from pydantic import JsonValue
 from pydantic import PlainValidator
 from pydantic import TypeAdapter
+from pydantic import model_validator
 from pydantic import validate_call
 from pydantic_settings import BaseSettings
 from pydantic_settings import CliImplicitFlag
@@ -33,6 +34,7 @@ from rich.progress import TotalFileSizeColumn
 from rich.progress import TransferSpeedColumn
 from rich.prompt import Confirm
 from rich.text import Text
+from typing_extensions import Self
 
 from .clients import Client
 from .typealiases import JsonBodyT
@@ -82,7 +84,7 @@ def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa:
     """Return a string representation of the object, formatted with rich text."""
     file = io.StringIO()
     record_console = Console(file=file, record=True)
-    record_console.out(*objects, sep=sep, end=end)
+    record_console.print(*objects, sep=sep, end=end)  # color
     return record_console.export_text(styles=True)
 
 
@@ -141,7 +143,7 @@ class _BaseCmd(BaseSettings):
         return json.dumps(obj)
 
     @staticmethod
-    def tty_confirm(prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
+    def _tty_confirm(prompt: str, /, *, default: t.Optional[bool] = None) -> bool:
         tty = Path(os.ctermid())
         return Confirm.ask(
             prompt=prompt,
@@ -164,14 +166,14 @@ class ConfirmCmdMixin(_BaseCmd):
     def confirm(self) -> bool:
         if self.yes is True:
             if self.verbose is True:
-                stderr_dim_console.out(self)
+                stderr_dim_console.print(self)
             return True
 
-        confirm = self.tty_confirm(rich_text(self, 'Continue?', end=''))
+        confirm = self._tty_confirm(rich_text(self, 'Continue?', end=''))
         if confirm is True:
             return True
 
-        stderr_console.out('Aborted!', style='red b')
+        stderr_console.print('Aborted!', style='red b')
         return False
 
 
@@ -184,7 +186,43 @@ class IpythonCmdMixin(_BaseCmd):
         ),
     )
 
+    def _print_user_ns(self, target_ns: dict[str, t.Any], /) -> None:
+        stderr_console.print()
+        stderr_console.print('variables:')
+        for v in target_ns:
+            if v.startswith('_'):
+                continue
+            stderr_console.print(f'* {v}', style='cyan b')
+
+    @property
+    def _stdin_is_a_tty(self) -> bool:
+        """
+        -f- (GOOD)
+            sys.stdin.isatty() = True
+            sys.stdin.seekable() = True
+            color OK!
+        |
+            sys.stdin.isatty() = False
+            sys.stdin.seekable() = False
+            color GG!
+        -f- <<<
+            sys.stdin.isatty() = False
+            sys.stdin.seekable() = True
+            color GG!
+        """
+        if 0:
+            stderr_console.print(f'{sys.stdin.isatty() = }')
+            stderr_console.print(f'{sys.stdin.seekable() = }')
+        return sys.stdin.isatty()
+
+    def _replace_stdin(self) -> None:
+        tty = Path(os.ctermid())
+        sys.stdin = tty.open('r')
+
     def start_ipython(self) -> None:
+        """
+        Maybe replace sys.stdin with a tty file.
+        """
         curr_frame = inspect.currentframe()
         assert curr_frame is not None
 
@@ -192,13 +230,10 @@ class IpythonCmdMixin(_BaseCmd):
         assert target_frame is not None
 
         target_ns = target_frame.f_locals
+        self._print_user_ns(target_ns)
 
-        stderr_console.print()
-        stderr_console.print('locals variables:')
-        for v in target_ns:
-            if v.startswith('__'):
-                continue
-            stderr_console.print(f'* {v}', style='cyan b')
+        if not self._stdin_is_a_tty:
+            self._replace_stdin()
 
         IPython.start_ipython(argv=[], user_ns=target_ns)
 
@@ -213,6 +248,14 @@ class BaseEsCmd(_BaseCmd):
 
 
 class _BaseInputCmdMixin(_BaseCmd):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -220,8 +263,21 @@ class _BaseInputCmdMixin(_BaseCmd):
             'input',
         ),
         description=rich_text(
+            Text('A file containing the search query.', style='blue b'),
             Text("""example: '-f my_query.txt'.""", style='yellow b'),
-            Text("""Or '-f -' for stdin.""", style='red b'),
+            Text("""Or '-f -' for stdin.""", style='yellow b'),
+            Text('Exclusive with -d/--data.', style='red b'),
+        ),
+    )
+    data: t.Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            'd',
+            'data',
+        ),
+        description=rich_text(
+            Text('A string containing the search query.', style='blue b'),
+            Text('Exclusive with -f/--input.', style='red b'),
         ),
     )
 
@@ -230,8 +286,13 @@ class _BaseInputCmdMixin(_BaseCmd):
         return self.input_ == sys.stdin
 
     def read_input(self) -> t.Optional[str]:
-        s = None if self.input_ is None else self.input_.read()
-        return s
+        if self.data is not None:
+            return self.data
+
+        if self.input_ is None:
+            return None
+
+        return self.input_.read()
 
 
 class JsonInputCmdMixin(_BaseInputCmdMixin):
@@ -249,13 +310,27 @@ class JsonInputCmdMixin(_BaseInputCmdMixin):
     )
 
     def read_json_input(self) -> t.Optional[JsonBodyT]:
-        s = super().read_input() or None
-        j = None if s is None else json_body_type_adapter.validate_python(s)
-        return j
+        if self.data is not None:
+            if self.data == '':
+                return None
+
+            return json_body_type_adapter.validate_python(self.data)
+
+        if self.input_ is None:
+            return None
+
+        if self.input_.seekable():
+            self.input_.seek(0)
+
+        x = self.input_.read()
+        if x == '':
+            return None
+
+        return json_body_type_adapter.validate_python(x)
 
 
-class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
-    input_: Input = Field(
+class NdJsonInputCmdMixin(_BaseInputCmdMixin):
+    input_: t.Optional[Input] = Field(
         default=t.cast(Input, sys.stdin),
         validation_alias=AliasChoices(
             'f',
@@ -268,9 +343,16 @@ class RequiredNdJsonInputCmdMixin(_BaseInputCmdMixin):
         ),
     )
 
-    def read_iterator_input(self) -> t.Iterator[str]:
-        it = self.input_
-        return it
+    def read_iterator_input(self) -> t.Iterable[str]:
+        if self.data is not None:
+            return self.data.splitlines(keepends=True)
+
+        assert self.input_ is not None
+
+        if self.input_.seekable():
+            self.input_.seek(0)
+
+        return self.input_
 
 
 class EsIndexCmdMixin(BaseEsCmd):

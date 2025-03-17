@@ -23,7 +23,7 @@ class PingCmd(
 
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_dim_console.out(f'Ping {self.client.hosts}')
+            stderr_dim_console.print(f'Ping {self.client.hosts}')
 
         with stderr_console.status('Ping ...') as status:
             status.update(spinner='bouncingBall')
@@ -31,10 +31,10 @@ class PingCmd(
             p = self.client.ping()
 
         if p is False:
-            stderr_console.out('Ping failed', style='red b')
+            stderr_console.print('Ping failed', style='red b')
             return
 
-        stderr_console.out('Ping ok', style='green b')
+        stderr_console.print('Ping ok', style='green b')
         if self.info:
             with stderr_console.status('Info ...') as status:
                 status.update(spinner='bouncingBall')

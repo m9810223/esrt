@@ -52,7 +52,7 @@ class RequestCmd(
 
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_console.out(self)
+            stderr_console.print(self)
 
         with stderr_console.status('Request ...') as status:
             status.update(spinner='bouncingBall')
