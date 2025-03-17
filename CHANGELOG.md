@@ -2,6 +2,21 @@
 
 
 
+## v4.11.0 (2025-03-17)
+
+### Feature
+
+* feat: release ([`2dc36a3`](https://github.com/m9810223/esrt/commit/2dc36a3e053bcfd4c218654b2d1a0954661f8f29))
+
+### Unknown
+
+* WIP ([`06a382e`](https://github.com/m9810223/esrt/commit/06a382e7398547baa6818f0624c90c83c9999a30))
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`5c41b0e`](https://github.com/m9810223/esrt/commit/5c41b0e8720b3a6c45bf795bc58b1b6c74a0ad51))
+
+* WIP ([`ac8ba8d`](https://github.com/m9810223/esrt/commit/ac8ba8d41cd83616b61ea6f1bd589cb946c846d6))
+
+
 ## v4.10.0 (2025-03-17)
 
 ### Feature
