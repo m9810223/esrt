@@ -30,7 +30,6 @@ from rich.progress import TaskProgressColumn
 from rich.progress import TextColumn
 from rich.progress import TimeElapsedColumn
 from rich.progress import TimeRemainingColumn
-from rich.progress import TotalFileSizeColumn
 from rich.progress import TransferSpeedColumn
 from rich.prompt import Confirm
 from rich.text import Text
@@ -128,12 +127,14 @@ class _BaseCmd(BaseSettings):
             SpinnerColumn(),
             TextColumn(text_format=title),
             BarColumn(),
-            TimeElapsedColumn(),
-            TaskProgressColumn(),
-            TimeRemainingColumn(),
-            TotalFileSizeColumn(),
-            MofNCompleteColumn(),
+            #
             _TransferSpeedColumn(),
+            #
+            TaskProgressColumn(),
+            #
+            TimeElapsedColumn(),
+            MofNCompleteColumn(),
+            TimeRemainingColumn(),
             console=console,
         )
 
