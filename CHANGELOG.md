@@ -2,6 +2,19 @@
 
 
 
+## v4.10.0 (2025-03-17)
+
+### Feature
+
+* feat: release ([`4abc536`](https://github.com/m9810223/esrt/commit/4abc5366524ed90886cc0009460996313c41d7f3))
+
+### Unknown
+
+* WIP ([`fecd5b0`](https://github.com/m9810223/esrt/commit/fecd5b04e41d54560b731a7ad0ab5f95888a0a5c))
+
+* WIP ([`2a919b3`](https://github.com/m9810223/esrt/commit/2a919b3ab5b69b8628cc671d80332ecdc8deb198))
+
+
 ## v4.9.0 (2025-03-17)
 
 ### Feature
