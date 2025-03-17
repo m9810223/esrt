@@ -1,4 +1,3 @@
-from copy import deepcopy
 import json
 import typing as t
 import uuid
@@ -19,7 +18,6 @@ def handle(actions: t.Iterable[str]):
     for action in actions:
         d: dict[str, t.Any] = json.loads(action)
         yield d
-        d2 = deepcopy(d)
-        d2['_source']['field1'] += '!!!'
-        d2['_source']['field2'] = str(uuid.uuid4())
-        yield d2
+        d['_source']['field1'] += '!!!'
+        d['_source']['field2'] = str(uuid.uuid4())
+        yield d

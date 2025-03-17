@@ -69,7 +69,7 @@ test-bulk:
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} request {{ ES_HOST }} -u my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
+    {{ ESRT }} request {{ ES_HOST }} -u my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -w examples.my-handlers:handle
 
 [group('esrt')]
 test-search:
@@ -129,7 +129,7 @@ test-scan:
 
 [group('esrt')]
 test-others:
-    python examples/create-massive-docs.py | tee -a _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y -c 10000
+    python examples/create-massive-docs.py | tee -a _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y
     python examples/copy-more-docs.py | {{ ESRT }} bulk {{ ES_HOST }} -y -w examples.copy-more-docs:handle
 
 [group('esrt')]

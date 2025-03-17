@@ -37,7 +37,7 @@ class BulkCmd(
     BaseEsCmd,
 ):
     handler: t.Annotated[HandlerT, BeforeValidator(import_from_string)] = Field(
-        default=t.cast(HandlerT, 'esrt:doc_handler'),
+        default=t.cast(HandlerT, 'esrt:handle'),
         validation_alias=AliasChoices(
             'w',
             'handler',
@@ -46,7 +46,7 @@ class BulkCmd(
     )
 
     chunk_size: int = Field(
-        default=5000,
+        default=2000,
         validation_alias=AliasChoices(
             'c',
             'chunk_size',
@@ -160,6 +160,11 @@ class BulkCmd(
         if self.dry_run:
             self._simulate(actions=_actions)
             return
+
+        if not self.params:
+            self.params = {
+                'timeout': '1s',
+            }
 
         for _, item in self.client.streaming_bulk(
             actions=_actions,

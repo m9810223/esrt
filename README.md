@@ -149,7 +149,7 @@ alias jq_es_hits="jq '.hits.hits[]'"
 ```
 
 ```sh
-esrt request localhost -X GET -u my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:MyHandler  # <- `examples/my-handlers.py`
+esrt request localhost -X GET -u my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:handle  # <- `examples/my-handlers.py`
 # ->
 # ⠹ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
 ```

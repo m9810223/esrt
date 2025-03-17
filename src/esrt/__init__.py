@@ -1,7 +1,6 @@
-from .handlers import DocHandler, doc_handler
+from .handlers import  handle
 
 
 __all__ = [
-    'DocHandler',
-    'doc_handler',
+    'handle',
 ]
