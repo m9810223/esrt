@@ -46,7 +46,7 @@ class BulkCmd(
     )
 
     chunk_size: int = Field(
-        default=500,  # 500
+        default=2000,  # 500
         validation_alias=AliasChoices(
             'c',
             'chunk_size',
@@ -58,7 +58,7 @@ class BulkCmd(
         description=rich_text('[b blue]The maximum size of the request in bytes'),
     )
     raise_on_error: CliImplicitFlag[bool] = Field(
-        default=True,  # True
+        default=False,  # True
         description=rich_text(
             '[b blue]Raise `BulkIndexError` containing errors from the execution of the last chunk when some occur.'
         ),
@@ -70,7 +70,7 @@ class BulkCmd(
         ),
     )
     max_retries: int = Field(
-        default=0,  # 0
+        default=3,  # 0
         description=rich_text(
             '[b blue]Maximum number of times a document will be retried when `429` is received, set to 0 for no retries on `429`'  # noqa: E501
         ),
