@@ -170,7 +170,7 @@ class ConfirmCmdMixin(_BaseCmd):
                 stderr_dim_console.print(self)
             return True
 
-        confirm = self._tty_confirm(rich_text(self, 'Continue?', end=''))
+        confirm = self._tty_confirm(rich_text(self, 'Continue?'))
         if confirm is True:
             return True
 
