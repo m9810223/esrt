@@ -1,8 +1,9 @@
 import typing as t
 
 from pydantic import AliasChoices
-from pydantic import Field, validate_call
+from pydantic import Field
 from pydantic import JsonValue
+from pydantic import validate_call
 from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseEsCmd

@@ -8,7 +8,8 @@ from pydantic import JsonValue
 from pydantic import validate_call
 
 from .typealiases import HttpMethod
-from .typealiases import JsonBodyT, JsonActionT
+from .typealiases import JsonActionT
+from .typealiases import JsonBodyT
 
 
 class Client:
