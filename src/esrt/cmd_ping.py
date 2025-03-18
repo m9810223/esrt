@@ -31,10 +31,10 @@ class PingCmd(
             p = self.client.ping()
 
         if p is False:
-            stderr_console.print('Ping failed', style='red b')
+            stderr_console.print('Ping failed', style='b red')
             return
 
-        stderr_console.print('Ping ok', style='green b')
+        stderr_console.print('Ping ok', style='b green')
         if self.info:
             with stderr_console.status('Info ...') as status:
                 status.update(spinner='bouncingBall')

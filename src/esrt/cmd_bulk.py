@@ -6,7 +6,6 @@ from pydantic import BeforeValidator
 from pydantic import Field
 from pydantic import validate_call
 from pydantic_settings import CliImplicitFlag
-from rich.text import Text
 from uvicorn.importer import import_from_string
 
 from .cmd_base import BaseEsCmd
@@ -43,84 +42,57 @@ class BulkCmd(
             'w',
             'handler',
         ),
-        description=rich_text(Text('A callable handles actions.', style='blue b')),
+        description=rich_text('[b blue]A callable handles actions.'),
     )
 
     chunk_size: int = Field(
-        default=500,
+        default=500,  # 500
         validation_alias=AliasChoices(
             'c',
             'chunk_size',
         ),
-        description=rich_text(Text('Number of docs in one chunk sent to es', style='blue b')),
+        description=rich_text('[b blue]Number of docs in one chunk sent to es'),
     )
     max_chunk_bytes: int = Field(
-        default=100 * 1024 * 1024,
-        description=rich_text(Text('The maximum size of the request in bytes', style='blue b')),
+        default=100 * 1024 * 1024,  # 100 * 1024 * 1024
+        description=rich_text('[b blue]The maximum size of the request in bytes'),
     )
     raise_on_error: CliImplicitFlag[bool] = Field(
-        default=True,
+        default=True,  # True
         description=rich_text(
-            Text(
-                """Raise `BulkIndexError` containing errors from the execution of the last chunk when some occur.""",
-                style='blue b',
-            )
+            '[b blue]Raise `BulkIndexError` containing errors from the execution of the last chunk when some occur.'
         ),
     )
     raise_on_exception: CliImplicitFlag[bool] = Field(
-        default=True,
+        default=True,  # True
         description=rich_text(
-            Text(
-                """If `False` then don't propagate exceptions from call to `bulk` and just report the items that failed as failed.""",  # noqa: E501
-                style='blue b',
-            )
+            "[b blue]If `False` then don't propagate exceptions from call to `bulk` and just report the items that failed as failed."  # noqa: E501
         ),
     )
     max_retries: int = Field(
-        default=5,
+        default=0,  # 0
         description=rich_text(
-            Text(
-                'Maximum number of times a document will be retried when `429` is received, set to 0 for no retries on `429`',  # noqa: E501
-                style='blue b',
-            )
+            '[b blue]Maximum number of times a document will be retried when `429` is received, set to 0 for no retries on `429`'  # noqa: E501
         ),
     )
     initial_backoff: int = Field(
-        default=3,
+        default=2,  # 2
         description=rich_text(
-            Text(
-                'Number of seconds we should wait before the first retry. Any subsequent retries will be powers of `initial_backoff * 2**retry_number`',  # noqa: E501
-                style='blue b',
-            )
+            '[b blue]Number of seconds we should wait before the first retry. Any subsequent retries will be powers of `initial_backoff * 2**retry_number`'  # noqa: E501
         ),
     )
     max_backoff: int = Field(
-        default=600,
-        description=rich_text(
-            Text(
-                'Maximum number of seconds a retry will wait',
-                style='blue b',
-            )
-        ),
+        default=600,  # 600
+        description=rich_text('[b blue]Maximum number of seconds a retry will wait'),
     )
     yield_ok: CliImplicitFlag[bool] = Field(
-        default=False,
-        description=rich_text(
-            Text(
-                'If set to False will skip successful documents in the output',
-                style='blue b',
-            )
-        ),
+        default=False,  # True
+        description=rich_text('[b blue]If set to False will skip successful documents in the output'),
     )
 
     request_timeout: float = Field(
         default=10,
-        description=rich_text(
-            Text(
-                'Amount of time to wait for responses from the cluster',
-                style='blue b',
-            )
-        ),
+        description=rich_text('[b blue]Amount of time to wait for responses from the cluster'),
     )
 
     def _check(self) -> bool:
@@ -132,7 +104,7 @@ class BulkCmd(
         if p is True:
             return True
 
-        stderr_console.print('Cannot connect to ES', style='red b')
+        stderr_console.print('Cannot connect to ES', style='b red')
         return False
 
     @validate_call(validate_return=True)
@@ -154,9 +126,9 @@ class BulkCmd(
                     progress.refresh()
 
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
-        stderr_console.print('Dry run', style='yellow b')
+        stderr_console.print('Dry run', style='b yellow')
         deque(actions, maxlen=0)
-        stderr_console.print('Dry run end', style='yellow b')
+        stderr_console.print('Dry run end', style='b yellow')
 
     def cli_cmd(self) -> None:
         if (not self.dry_run) and (not self.confirm()):
@@ -191,10 +163,23 @@ class BulkCmd(
                     stderr_dim_console.print_json(data=item)
                 else:
                     stderr_dim_console.print_json(data=item, indent=None)
+
         except BulkIndexError:
-            stderr_console.rule(style='yellow b')
             stderr_console.print(
-                f'BulkIndexError, please decrease chunk_size (currently {self.chunk_size})', style='red b'
+                '\n[b red]BulkIndexError: ',
+                'You can ',
+                '[b yellow]increase `--max_retries` ',
+                'and ',
+                '[b yellow]set `--no-raise_on_error` ',
+                'to retry failed documents.\n',
+                sep='',
+            )
+            stderr_console.print(
+                'Current settings:',
+                f'  * max_retries:    {self.max_retries} -> {"good" if self.max_retries else "bad"}!',
+                f'  * raise_on_error: {self.raise_on_error} -> {"good" if self.raise_on_error else "bad"}!',
+                '',
+                sep='\n',
             )
 
         if self.ipython:

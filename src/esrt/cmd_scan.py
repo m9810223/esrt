@@ -4,7 +4,6 @@ from pydantic import AliasChoices
 from pydantic import Field
 from pydantic import JsonValue
 from pydantic_settings import CliImplicitFlag
-from rich.text import Text
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
@@ -40,12 +39,7 @@ class ScanCmd(
             'raise',
             'raise_on_error',
         ),
-        description=rich_text(
-            Text(
-                'Raises an exception if an error is encountered (some shards fail to execute).',
-                style='blue b',
-            ),
-        ),
+        description=rich_text('[b blue]Raises an exception if an error is encountered (some shards fail to execute).'),
     )
     preserve_order: t.ClassVar[bool] = False
     size: int = Field(
@@ -55,9 +49,7 @@ class ScanCmd(
             'N',
             'size',
         ),
-        description=rich_text(
-            Text('Size (per shard) of the batch send at each iteration.', style='blue b'),
-        ),
+        description=rich_text('[b blue]Size (per shard) of the batch send at each iteration.'),
     )
     request_timeout: t.Optional[float] = Field(
         default=None,
@@ -65,9 +57,7 @@ class ScanCmd(
             't',
             'request_timeout',
         ),
-        description=rich_text(
-            Text('Explicit timeout for each call to scan.', style='blue b'),
-        ),
+        description=rich_text('[b blue]Explicit timeout for each call to scan.'),
     )
     clear_scroll: t.ClassVar[bool] = True
     scroll_kwargs: dict[str, JsonValue] = Field(
@@ -76,9 +66,7 @@ class ScanCmd(
             'k',
             'scroll_kwargs',
         ),
-        description=rich_text(
-            Text('Additional kwargs to be passed to `Elasticsearch.scroll`', style='blue b'),
-        ),
+        description=rich_text('[b blue]Additional kwargs to be passed to `Elasticsearch.scroll`'),
     )
 
     def _preview_total(self, query: t.Optional[JsonBodyT], /) -> int:
@@ -122,7 +110,7 @@ class ScanCmd(
         total = self._preview_total(query)
 
         if self.dry_run:
-            stderr_console.print('Total:', total, style='yellow b')
+            stderr_console.print('Total:', total, style='b yellow')
             return
 
         if self.is_output_stdout:

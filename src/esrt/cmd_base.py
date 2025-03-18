@@ -161,7 +161,7 @@ class ConfirmCmdMixin(_BaseCmd):
             'y',
             'yes',
         ),
-        description=rich_text(Text('Do not ask for confirmation', style='blue b')),
+        description=rich_text('[b blue]Do not ask for confirmation'),
     )
 
     def confirm(self) -> bool:
@@ -174,7 +174,7 @@ class ConfirmCmdMixin(_BaseCmd):
         if confirm is True:
             return True
 
-        stderr_console.print('Aborted!', style='red b')
+        stderr_console.print('Aborted!', style='b red')
         return False
 
 
@@ -193,7 +193,7 @@ class IpythonCmdMixin(_BaseCmd):
         for v in target_ns:
             if v.startswith('_'):
                 continue
-            stderr_console.print(f'* {v}', style='cyan b')
+            stderr_console.print(f'* {v}', style='b cyan')
 
     @property
     def _stdin_is_a_tty(self) -> bool:
@@ -264,9 +264,9 @@ class JsonInputCmdMixin(_BaseCmd):
             'input',
         ),
         description=rich_text(
-            Text("""example: '-f my_query.json'.""", style='yellow b'),
-            Text("""Or '-f -' for stdin.""", style='red b'),
-            Text('A JSON file containing the search query.', style='blue b'),
+            """[b yellow]example: '-f my_query.json'.""",
+            """[b red]Or '-f -' for stdin.""",
+            """[b blue]A JSON file containing the search query.""",
         ),
     )
     data: t.Optional[str] = Field(
@@ -276,8 +276,8 @@ class JsonInputCmdMixin(_BaseCmd):
             'data',
         ),
         description=rich_text(
-            Text('A string containing the search query.', style='blue b'),
-            Text('Exclusive with -f/--input.', style='red b'),
+            '[b blue]A string containing the search query.',
+            '[b red]Exclusive with -f/--input.',
         ),
     )
 
@@ -330,9 +330,9 @@ class RequiredNdJsonInputCmdMixin(_BaseCmd):
             'input',
         ),
         description=rich_text(
-            Text("""example: '-f my_query.ndjson'.""", style='yellow b'),
-            Text("""Or '-f -' for stdin.""", style='red b'),
-            Text('A NDJSON (Newline delimited JSON) file containing the bulk request.', style='blue b'),
+            Text("""example: '-f my_query.ndjson'.""", style='b yellow'),
+            Text("""Or '-f -' for stdin.""", style='b red'),
+            Text('A NDJSON (Newline delimited JSON) file containing the bulk request.', style='b blue'),
         ),
     )
     data: t.Optional[str] = Field(
@@ -342,8 +342,8 @@ class RequiredNdJsonInputCmdMixin(_BaseCmd):
             'data',
         ),
         description=rich_text(
-            Text('A string containing the search query.', style='blue b'),
-            Text('Exclusive with -f/--input.', style='red b'),
+            Text('A string containing the search query.', style='b blue'),
+            Text('Exclusive with -f/--input.', style='b red'),
         ),
     )
 
@@ -380,11 +380,8 @@ class EsIndexCmdMixin(BaseEsCmd):
             'index',
         ),
         description=rich_text(
-            Text("""example: '--index=i01,i02'""", style='yellow b'),
-            Text(
-                'A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices',  # noqa: E501
-                style='blue b',
-            ),
+            """[b yellow]example: '--index=i01,i02'""",
+            """[b blue]A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices""",  # noqa: E501
         ),
     )
 
@@ -396,10 +393,7 @@ class EsDocTypeCmdMixin(BaseEsCmd):
             'doc_type',
         ),
         description=rich_text(
-            Text(
-                'A comma-separated list of document types to search; leave empty to perform the operation on all types',
-                style='blue b',
-            ),
+            '[b blue]A comma-separated list of document types to search; leave empty to perform the operation on all types'  # noqa: E501
         ),
     )
 
@@ -412,8 +406,8 @@ class EsHeadersCmdMixin(BaseEsCmd):
             'header',
         ),
         description=rich_text(
-            Text("""example: '--header a=1 --header b=false'""", style='yellow b'),
-            Text('Additional parameters to pass to the query', style='blue b'),
+            """[b yellow]example: '--header a=1 --header b=false'""",
+            """[b blue]Additional parameters to pass to the query""",
         ),
     )
 
@@ -426,8 +420,8 @@ class EsParamsCmdMixin(BaseEsCmd):
             'param',
         ),
         description=rich_text(
-            Text("""example: '--param a=1 --param b=false'""", style='yellow b'),
-            Text('Additional parameters to pass to the query', style='blue b'),
+            """[b yellow]example: '--param a=1 --param b=false'""",
+            """[b blue]Additional parameters to pass to the query""",
         ),
     )
 

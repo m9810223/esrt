@@ -63,9 +63,9 @@ def main() -> None:
         with contextlib.suppress(KeyboardInterrupt):
             CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001
-        stderr_console.rule(style='yellow b')
+        stderr_console.rule('exc_info', style='b yellow')
         stderr_console.out(traceback.format_exc().strip(), style='b i')
-        stderr_console.rule(style='red b')
-        stderr_console.print('Error:', e, style='red b')
+        stderr_console.rule('Exception', style='b red')
+        stderr_console.print(e, style='b red')
 
         sys.exit(1)

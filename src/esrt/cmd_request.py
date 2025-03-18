@@ -4,7 +4,6 @@ from pydantic import AfterValidator
 from pydantic import AliasChoices
 from pydantic import BeforeValidator
 from pydantic import Field
-from rich.text import Text
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import DefaultPrettyCmdMixin
@@ -45,9 +44,7 @@ class RequestCmd(
             'u',
             'url',
         ),
-        description=rich_text(
-            Text('Absolute url (without host) to target', style='blue b'),
-        ),
+        description=rich_text('[b blue]Absolute url (without host) to target'),
     )
 
     def cli_cmd(self) -> None:
