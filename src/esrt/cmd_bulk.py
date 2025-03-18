@@ -1,7 +1,7 @@
 from collections import deque
 import typing as t
 
-from pydantic import AliasChoices
+from pydantic import AliasChoices, JsonValue
 from pydantic import BeforeValidator
 from pydantic import Field
 from pydantic import validate_call
@@ -96,8 +96,8 @@ class BulkCmd(
     )
 
     def _check(self) -> bool:
-        with stderr_console.status('Ping ...') as status:
-            status.update(spinner='bouncingBall')
+        with stderr_console.status('Ping ...') as _status:
+            _status.update(spinner='bouncingBall')
 
             p = self.client.ping()
 
@@ -107,45 +107,36 @@ class BulkCmd(
         stderr_console.print('Cannot connect to ES', style='b red')
         return False
 
-    @validate_call(validate_return=True)
-    def _generate_actions(self) -> t.Generator[JsonActionT, None, None]:
-        iterator = self.handler(self.read_iterator_input())
-
-        with self.progress(console=stderr_console, title='bulk') as progress:
-            for action in progress.track(iterator):
-                action.pop('_score', None)
-                action.pop('sort', None)
-                yield action
-
-                if self.verbose:
-                    if self.pretty:
-                        self.output.print_json(data=action)
-                    else:
-                        self.output.print_json(data=action, indent=None)
-
-                    progress.refresh()
-
     def _simulate(self, *, actions: t.Iterable[JsonActionT]) -> None:
         stderr_console.print('Dry run', style='b yellow')
         deque(actions, maxlen=0)
         stderr_console.print('Dry run end', style='b yellow')
 
-    def cli_cmd(self) -> None:
-        if (not self.dry_run) and (not self.confirm()):
-            return
+    def cli_cmd(self) -> None:  # noqa: C901
+        @validate_call(validate_return=True)
+        def generate_actions() -> t.Generator[JsonActionT, None, None]:
+            iterator = self.handler(self.read_iterator_input())
 
-        if not self._check():
-            return
+            with self.progress(console=stderr_console, title='bulk') as progress:
+                for action in progress.track(iterator):
+                    action.pop('_score', None)
+                    action.pop('sort', None)
+                    yield action
 
-        _actions = self._generate_actions()
+                    if self.verbose:
+                        if self.pretty:
+                            self.output.print_json(data=action)
+                        else:
+                            self.output.print_json(data=action, indent=None)
 
-        if self.dry_run:
-            self._simulate(actions=_actions)
-            return
+                        progress.refresh()
 
-        try:
-            for _, item in self.client.streaming_bulk(  # elasticsearch.helpers.errors.BulkIndexError
-                actions=_actions,
+        @validate_call(validate_return=True)
+        def bulk(
+            actions: t.Generator[JsonActionT, None, None],
+        ) -> t.Generator[tuple[bool, dict[str, JsonValue]], None, None]:
+            return self.client.streaming_bulk(  # elasticsearch.helpers.errors.BulkIndexError
+                actions=actions,
                 chunk_size=self.chunk_size,
                 max_chunk_bytes=self.max_chunk_bytes,
                 raise_on_error=self.raise_on_error,
@@ -158,11 +149,28 @@ class BulkCmd(
                 doc_type=self.doc_type,
                 params=self.params,
                 request_timeout=self.request_timeout,
-            ):
+            )
+
+        @validate_call(validate_return=True)
+        def generate_bulk() -> t.Generator[tuple[bool, dict[str, JsonValue]], None, None]:
+            return bulk(generate_actions())
+
+        if (not self.dry_run) and (not self.confirm()):
+            return self.start_ipython_if_need()
+
+        if not self._check():
+            return self.start_ipython_if_need()
+
+        if self.dry_run:
+            self._simulate(actions=generate_actions())
+            return self.start_ipython_if_need()
+
+        try:
+            for _, _item in generate_bulk():
                 if self.pretty:
-                    stderr_dim_console.print_json(data=item)
+                    stderr_dim_console.print_json(data=_item)
                 else:
-                    stderr_dim_console.print_json(data=item, indent=None)
+                    stderr_dim_console.print_json(data=_item, indent=None)
 
         except BulkIndexError:
             stderr_console.print(
@@ -182,5 +190,4 @@ class BulkCmd(
                 sep='\n',
             )
 
-        if self.ipython:
-            self.start_ipython()
+        return self.start_ipython_if_need()

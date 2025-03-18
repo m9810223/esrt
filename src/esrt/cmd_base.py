@@ -220,10 +220,14 @@ class IpythonCmdMixin(_BaseCmd):
         tty = Path(os.ctermid())
         sys.stdin = tty.open('r')
 
-    def start_ipython(self) -> None:
+    def start_ipython_if_need(self) -> None:
         """
         Maybe replace sys.stdin with a tty file.
         """
+
+        if not self.ipython:
+            return
+
         curr_frame = inspect.currentframe()
         assert curr_frame is not None
 

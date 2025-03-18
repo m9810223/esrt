@@ -1,7 +1,7 @@
 import typing as t
 
 from pydantic import AliasChoices
-from pydantic import Field
+from pydantic import Field, validate_call
 from pydantic import JsonValue
 from pydantic_settings import CliImplicitFlag
 
@@ -70,8 +70,8 @@ class ScanCmd(
     )
 
     def _preview_total(self, query: t.Optional[JsonBodyT], /) -> int:
-        with stderr_console.status('Search ... (total)') as status:
-            status.update(spinner='bouncingBall')
+        with stderr_console.status('Search ... (total)') as _status:
+            _status.update(spinner='bouncingBall')
 
             search_once = self.client.search(
                 index=self.index,
@@ -84,55 +84,58 @@ class ScanCmd(
         return total
 
     def cli_cmd(self) -> None:  # noqa: C901
+        query = self.read_json_input()
+
+        @validate_call(validate_return=True)
+        def generate_items() -> t.Generator[dict[str, JsonValue], None, None]:
+            return self.client.scan(
+                query=query,
+                scroll=self.scroll,
+                raise_on_error=self.raise_on_error,
+                preserve_order=self.preserve_order,
+                size=self.size,
+                request_timeout=self.request_timeout,
+                clear_scroll=self.clear_scroll,
+                scroll_kwargs=self.scroll_kwargs,
+                #
+                index=self.index,
+                doc_type=self.doc_type,
+                params=self.params,
+            )
+
+        _items = generate_items()
+
+        total = self._preview_total(query)
+
         if (not self.dry_run) and (not self.confirm()):
-            return
+            return self.start_ipython_if_need()
 
         if self.verbose:
             stderr_dim_console.print(self)
 
-        query = self.read_json_input()
-
-        items = self.client.scan(
-            query=query,
-            scroll=self.scroll,
-            raise_on_error=self.raise_on_error,
-            preserve_order=self.preserve_order,
-            size=self.size,
-            request_timeout=self.request_timeout,
-            clear_scroll=self.clear_scroll,
-            scroll_kwargs=self.scroll_kwargs,
-            #
-            index=self.index,
-            doc_type=self.doc_type,
-            params=self.params,
-        )
-
-        total = self._preview_total(query)
-
         if self.dry_run:
             stderr_console.print('Total:', total, style='b yellow')
-            return
+            return self.start_ipython_if_need()
 
         if self.is_output_stdout:
-            for item in items:
+            for _item in _items:
                 if self.pretty:
-                    self.output.print_json(data=item)
+                    self.output.print_json(data=_item)
                 else:
-                    self.output.print_json(data=item, indent=None)
+                    self.output.print_json(data=_item, indent=None)
 
-            return
+            return self.start_ipython_if_need()
 
         with self.progress(console=stderr_console, title='scan') as progress:
-            for item in progress.track(items, total=total):
-                self.output.out(self.json_to_str(item))
+            for _item in progress.track(_items, total=total):
+                self.output.out(self.json_to_str(_item))
 
                 if self.verbose:
                     if self.pretty:
-                        stderr_dim_console.print_json(data=item)
+                        stderr_dim_console.print_json(data=_item)
                     else:
-                        stderr_dim_console.print_json(data=item, indent=None)
+                        stderr_dim_console.print_json(data=_item, indent=None)
 
                     progress.refresh()
 
-        if self.ipython:
-            self.start_ipython()
+        return self.start_ipython_if_need()

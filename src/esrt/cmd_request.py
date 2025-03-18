@@ -51,8 +51,8 @@ class RequestCmd(
         if self.verbose:
             stderr_console.print(self)
 
-        with stderr_console.status('Request ...') as status:
-            status.update(spinner='bouncingBall')
+        with stderr_console.status('Request ...') as _status:
+            _status.update(spinner='bouncingBall')
 
             response = self.client.request(
                 method=self.method,
@@ -64,12 +64,11 @@ class RequestCmd(
 
         if isinstance(response, str):
             self.output.out(response)
-            return
+            return self.start_ipython_if_need()
 
         if self.pretty:
             self.output.print_json(data=response)
         else:
             self.output.print_json(data=response, indent=None)
 
-        if self.ipython:
-            self.start_ipython()
+        return self.start_ipython_if_need()

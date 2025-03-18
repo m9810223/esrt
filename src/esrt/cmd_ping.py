@@ -25,23 +25,22 @@ class PingCmd(
         if self.verbose:
             stderr_dim_console.print(f'Ping {self.client.hosts}')
 
-        with stderr_console.status('Ping ...') as status:
-            status.update(spinner='bouncingBall')
+        with stderr_console.status('Ping ...') as _status:
+            _status.update(spinner='bouncingBall')
 
-            p = self.client.ping()
+            result = self.client.ping()
 
-        if p is False:
+        if result is False:
             stderr_console.print('Ping failed', style='b red')
-            return
+            return self.start_ipython_if_need()
 
         stderr_console.print('Ping ok', style='b green')
         if self.info:
-            with stderr_console.status('Info ...') as status:
-                status.update(spinner='bouncingBall')
+            with stderr_console.status('Info ...') as _status:
+                _status.update(spinner='bouncingBall')
 
-                i = self.client.info()
+                info = self.client.info()
 
-            console.print_json(data=i)
+            console.print_json(data=info)
 
-        if self.ipython:
-            self.start_ipython()
+        return self.start_ipython_if_need()

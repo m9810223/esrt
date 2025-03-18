@@ -8,7 +8,7 @@ from pydantic import JsonValue
 from pydantic import validate_call
 
 from .typealiases import HttpMethod
-from .typealiases import JsonBodyT
+from .typealiases import JsonBodyT, JsonActionT
 
 
 class Client:
@@ -85,7 +85,7 @@ class Client:
     def streaming_bulk(  # noqa: PLR0913
         self,
         *,
-        actions: t.Iterable[t.Union[str, bytes, dict[str, JsonValue]]],
+        actions: t.Iterable[t.Union[str, bytes, JsonActionT]],
         chunk_size: int,
         max_chunk_bytes: int,
         raise_on_error: bool,
@@ -98,7 +98,7 @@ class Client:
         doc_type: t.Optional[str],
         params: dict[str, JsonValue],
         request_timeout: t.Optional[float],
-    ) -> t.Generator[tuple[bool, dict[str, JsonValue]], None, None]:
+    ) -> t.Generator[tuple[bool, JsonActionT], None, None]:
         return streaming_bulk(
             client=self._client,
             actions=actions,
