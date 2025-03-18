@@ -278,7 +278,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | tee -a _.ndjson | esrt bulk localhost -y -c 10000
+python examples/create-massive-docs.py | tee _.ndjson | esrt bulk localhost -y -c 10000
 # ->
 # ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:26    654321/? 24504/s
 

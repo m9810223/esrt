@@ -134,7 +134,7 @@ test-scan:
 
 [group('esrt')]
 test-others:
-    python examples/create-massive-docs.py | tee -a _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
+    python examples/create-massive-docs.py | tee _.ndjson | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
     python examples/copy-more-docs.py | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.copy-more-docs:handle
 
 [group('esrt')]
