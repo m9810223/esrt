@@ -2,6 +2,29 @@
 
 
 
+## v4.13.0 (2025-03-18)
+
+### Feature
+
+* feat: release ([`c3ab34b`](https://github.com/m9810223/esrt/commit/c3ab34b3f619e0610d07ca83aaff707c19d21c99))
+
+* feat: release ([`11603ce`](https://github.com/m9810223/esrt/commit/11603ce00ef9cb8fd074b0b616a6bc63db6f9fbd))
+
+### Unknown
+
+* WIP ([`b7ac75a`](https://github.com/m9810223/esrt/commit/b7ac75a6b7688d40fc87a7c623b0fb1d5fe2231d))
+
+* WIP ([`2844351`](https://github.com/m9810223/esrt/commit/28443516e493bbe415d3df2dc179282a3be8cbea))
+
+* WIP ([`d647f81`](https://github.com/m9810223/esrt/commit/d647f813ee79340422f67d2a8a9ee57d8d1032fb))
+
+* WIP ([`fb6e9e9`](https://github.com/m9810223/esrt/commit/fb6e9e94ec6b99801e0d27168e6aac3b1bb97cca))
+
+* WIP ([`4331353`](https://github.com/m9810223/esrt/commit/43313533eeb41a3b914a6b3fa63d380c0542fb98))
+
+* WIP ([`f0c0ad1`](https://github.com/m9810223/esrt/commit/f0c0ad1bd8a6f2f4260ffacf7bfbe9318a4457bc))
+
+
 ## v4.12.0 (2025-03-17)
 
 ### Feature
