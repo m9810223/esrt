@@ -95,7 +95,7 @@ class ScanCmd(
         total = t.cast(dict, search_once)['hits']['total']
         return total
 
-    def cli_cmd(self) -> None:
+    def cli_cmd(self) -> None:  # noqa: C901
         if (not self.dry_run) and (not self.confirm()):
             return
 

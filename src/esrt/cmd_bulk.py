@@ -21,6 +21,7 @@ from .cmd_base import RequiredNdJsonInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .exceptions import BulkIndexError
 from .handlers import HandlerT
 from .typealiases import JsonActionT
 
@@ -46,7 +47,7 @@ class BulkCmd(
     )
 
     chunk_size: int = Field(
-        default=2000,
+        default=500,
         validation_alias=AliasChoices(
             'c',
             'chunk_size',
@@ -112,6 +113,16 @@ class BulkCmd(
         ),
     )
 
+    request_timeout: float = Field(
+        default=10,
+        description=rich_text(
+            Text(
+                'Amount of time to wait for responses from the cluster',
+                style='blue b',
+            )
+        ),
+    )
+
     def _check(self) -> bool:
         with stderr_console.status('Ping ...') as status:
             status.update(spinner='bouncingBall')
@@ -160,29 +171,31 @@ class BulkCmd(
             self._simulate(actions=_actions)
             return
 
-        if not self.params:
-            self.params = {
-                'timeout': '1s',
-            }
-
-        for _, item in self.client.streaming_bulk(
-            actions=_actions,
-            chunk_size=self.chunk_size,
-            max_chunk_bytes=self.max_chunk_bytes,
-            raise_on_error=self.raise_on_error,
-            raise_on_exception=self.raise_on_exception,
-            max_retries=self.max_retries,
-            initial_backoff=self.initial_backoff,
-            max_backoff=self.max_backoff,
-            yield_ok=self.yield_ok,
-            index=self.index,
-            doc_type=self.doc_type,
-            params=self.params,
-        ):
-            if self.pretty:
-                stderr_dim_console.print_json(data=item)
-            else:
-                stderr_dim_console.print_json(data=item, indent=None)
+        try:
+            for _, item in self.client.streaming_bulk(  # elasticsearch.helpers.errors.BulkIndexError
+                actions=_actions,
+                chunk_size=self.chunk_size,
+                max_chunk_bytes=self.max_chunk_bytes,
+                raise_on_error=self.raise_on_error,
+                raise_on_exception=self.raise_on_exception,
+                max_retries=self.max_retries,
+                initial_backoff=self.initial_backoff,
+                max_backoff=self.max_backoff,
+                yield_ok=self.yield_ok,
+                index=self.index,
+                doc_type=self.doc_type,
+                params=self.params,
+                request_timeout=self.request_timeout,
+            ):
+                if self.pretty:
+                    stderr_dim_console.print_json(data=item)
+                else:
+                    stderr_dim_console.print_json(data=item, indent=None)
+        except BulkIndexError:
+            stderr_console.rule(style='yellow b')
+            stderr_console.print(
+                f'BulkIndexError, please decrease chunk_size (currently {self.chunk_size})', style='red b'
+            )
 
         if self.ipython:
             self.start_ipython()

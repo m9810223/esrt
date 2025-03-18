@@ -97,6 +97,7 @@ class Client:
         index: t.Optional[str],
         doc_type: t.Optional[str],
         params: dict[str, JsonValue],
+        request_timeout: t.Optional[float],
     ) -> t.Generator[tuple[bool, dict[str, JsonValue]], None, None]:
         return streaming_bulk(
             client=self._client,
@@ -114,6 +115,7 @@ class Client:
             index=index,
             doc_type=doc_type,
             params=params,
+            request_timeout=request_timeout,
         )
 
     @validate_call(validate_return=True)
