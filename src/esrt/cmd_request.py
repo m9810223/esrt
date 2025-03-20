@@ -4,6 +4,7 @@ from pydantic import AfterValidator
 from pydantic import AliasChoices
 from pydantic import BeforeValidator
 from pydantic import Field
+from pydantic_settings import CliPositionalArg
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import DefaultPrettyCmdMixin
@@ -38,12 +39,8 @@ class RequestCmd(
             'request',
         ),
     )
-    url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
+    url: CliPositionalArg[t.Annotated[str, AfterValidator(_validate_url)]] = Field(
         default='/',
-        validation_alias=AliasChoices(
-            'u',
-            'url',
-        ),
         description=rich_text('[b blue]Absolute url (without host) to target'),
     )
 

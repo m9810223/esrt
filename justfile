@@ -31,12 +31,12 @@ test-request:
     #!/usr/bin/env bash -eux
 
     {{ ESRT }} request {{ ES_HOST }} -X HEAD
-    {{ ESRT }} request {{ ES_HOST }} -X PUT -u /my-index 2>/dev/null || true
+    {{ ESRT }} request {{ ES_HOST }} -X PUT /my-index 2>/dev/null || true
 
-    {{ ESRT }} request {{ ES_HOST }} -u _cat/indices
-    {{ ESRT }} request {{ ES_HOST }} -u _cat/indices?v
-    {{ ESRT }} request {{ ES_HOST }} -u "_cat/indices?v&format=json"
-    {{ ESRT }} request {{ ES_HOST }} -u _cat/indices -p v= -p format=json
+    {{ ESRT }} request {{ ES_HOST }} /_cat/indices
+    {{ ESRT }} request {{ ES_HOST }} /_cat/indices?v
+    {{ ESRT }} request {{ ES_HOST }} '/_cat/indices?v&format=json'
+    {{ ESRT }} request {{ ES_HOST }} /_cat/indices -p v= -p format=json
 
 [group('esrt')]
 test-bulk:
@@ -74,7 +74,7 @@ test-bulk:
     { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} request {{ ES_HOST }} -u my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
+    {{ ESRT }} request {{ ES_HOST }} /my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
 
 [group('esrt')]
 test-search:

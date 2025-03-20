@@ -69,7 +69,7 @@ wheels = [
 
 [[package]]
 name = "esrt"
-version = "4.14.0"
+version = "4.15.0"
 source = { editable = "." }
 dependencies = [
     { name = "elasticsearch" },

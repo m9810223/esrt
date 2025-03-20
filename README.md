@@ -54,7 +54,7 @@ esrt request localhost -X HEAD
 Create a index:
 
 ```sh
-esrt request localhost -X PUT -u /my-index
+esrt request localhost -X PUT /my-index
 # ->
 # {
 #   "acknowledged": true,
@@ -68,16 +68,16 @@ esrt request localhost -X PUT -u /my-index
 Cat it:
 
 ```sh
-esrt request localhost -X GET -u _cat/indices
+esrt request localhost -X GET /_cat/indices
 # ->
 # yellow open my-index NMHssX4qTgeMFrA3cXPoKg 5 1 0 0 324b 324b
 
-esrt request localhost -X GET -u _cat/indices -p v=
+esrt request localhost -X GET /_cat/indices -p v=
 # ->
 # health status index    uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 # yellow open   my-index NMHssX4qTgeMFrA3cXPoKg   5   1          0            0       810b           810b
 
-esrt request localhost -X GET -u _cat/indices -p v= -p format=json
+esrt request localhost -X GET /_cat/indices -p v= -p format=json
 # ->
 # [
 #   {
@@ -149,7 +149,7 @@ alias jq_es_hits="jq '.hits.hits[]'"
 ```
 
 ```sh
-esrt request localhost -X GET -u my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:handle  # <- `examples/my-handlers.py`
+esrt request localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:handle  # <- `examples/my-handlers.py`
 # ->
 # ⠹ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
 ```
