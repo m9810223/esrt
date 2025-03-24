@@ -31,12 +31,12 @@ test-request:
     #!/usr/bin/env bash -eux
 
     {{ ESRT }} request {{ ES_HOST }} -X HEAD
-    {{ ESRT }} request {{ ES_HOST }} -X PUT /my-index 2>/dev/null || true
+    {{ ESRT }} request {{ ES_HOST }} -X PUT --url /my-index 2>/dev/null || true
 
-    {{ ESRT }} request {{ ES_HOST }} /_cat/indices
-    {{ ESRT }} request {{ ES_HOST }} /_cat/indices?v
-    {{ ESRT }} request {{ ES_HOST }} '/_cat/indices?v&format=json'
-    {{ ESRT }} request {{ ES_HOST }} /_cat/indices -p v= -p format=json
+    {{ ESRT }} request {{ ES_HOST }} --url /_cat/indices
+    {{ ESRT }} request {{ ES_HOST }} --url /_cat/indices?v
+    {{ ESRT }} request {{ ES_HOST }} --url '/_cat/indices?v&format=json'
+    {{ ESRT }} request {{ ES_HOST }} --url /_cat/indices -p v= -p format=json
 
 [group('esrt')]
 test-bulk:
@@ -45,36 +45,36 @@ test-bulk:
     {{ ESRT }} bulk {{ ES_HOST }} -y -f examples/bulk.ndjson
 
     echo '
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     ' | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
 
     echo '
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     ' | {{ ESRT }} bulk {{ ES_HOST }} -y -f -
 
     {{ ESRT }} bulk {{ ES_HOST }} -y -f - <<<'
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
     {{ ESRT }} bulk {{ ES_HOST }} -y -f - <<EOF
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     EOF
 
     {{ ESRT }} bulk {{ ES_HOST }} -y -d'
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
-    { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
+    { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} request {{ ES_HOST }} /my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
+    {{ ESRT }} request {{ ES_HOST }} --url /my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
 
 [group('esrt')]
 test-search:
