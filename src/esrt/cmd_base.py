@@ -79,12 +79,13 @@ def _validate_json_input(file: str) -> t.Optional[JsonBodyT]:
 JsonInput = t.Annotated[JsonBodyT, PlainValidator(_validate_json_input)]
 
 
+_record_console = Console(file=io.StringIO(), record=True)
+
+
 def rich_text(*objects: t.Any, sep: str = ' ', end: str = '\n') -> str:  # noqa: ANN401
     """Return a string representation of the object, formatted with rich text."""
-    file = io.StringIO()
-    record_console = Console(file=file, record=True)
-    record_console.print(*objects, sep=sep, end=end)  # color
-    return record_console.export_text(styles=True)
+    _record_console.print(*objects, sep=sep, end=end)  # color
+    return _record_console.export_text(styles=True)
 
 
 class _TransferSpeedColumn(TransferSpeedColumn):
