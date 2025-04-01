@@ -2,6 +2,27 @@
 
 
 
+## v5.0.0 (2025-04-01)
+
+### Breaking
+
+* refactor(cmd): unify input mixins and migrate SQL cmd to new structure
+
+- Removed deprecated `_es_sql.py` in favor of `cmd_sql.py` using new mixin pattern
+- Renamed and refactored input validation mixins:
+  - `JsonInputCmdMixin` ➜ `OptionalInputCmdMixin`
+  - `RequiredNdJsonInputCmdMixin` ➜ `RequiredNdInputCmdMixin`
+- Introduced `_InputCmdMixin` and `_NdInputCmdMixin` to reduce duplication
+- Updated all affected commands (`request`, `scan`, `search`, `bulk`) to use new mixins
+- Extended support for `str` input in HTTP body (e.g. for raw text SQL)
+
+BREAKING CHANGE: old `_es_sql.py` script interface is removed; consumers should use the new `sql` subcommand ([`57502e7`](https://github.com/m9810223/esrt/commit/57502e77706e3dd9ccaf5d15bc0b113011ac63cc))
+
+### Unknown
+
+* WIP ([`2142513`](https://github.com/m9810223/esrt/commit/2142513407043e0b4a118f78b7b29e9e90f30387))
+
+
 ## v4.17.0 (2025-03-24)
 
 ### Feature
