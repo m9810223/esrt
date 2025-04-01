@@ -4,14 +4,14 @@ from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
-from .cmd_base import JsonInputCmdMixin
+from .cmd_base import OptionalInputCmdMixin
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
 class SearchCmd(
     IpythonCmdMixin,
-    JsonInputCmdMixin,
+    OptionalInputCmdMixin,
     EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,

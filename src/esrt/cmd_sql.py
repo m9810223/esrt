@@ -2,7 +2,6 @@ import typing as t
 
 from pydantic import AfterValidator
 from pydantic import AliasChoices
-from pydantic import BeforeValidator
 from pydantic import Field
 
 from .cmd_base import BaseEsCmd
@@ -10,10 +9,9 @@ from .cmd_base import DefaultPrettyCmdMixin
 from .cmd_base import EsHeadersCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
-from .cmd_base import OptionalInputCmdMixin
+from .cmd_base import RequiredInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
-from .typealiases import HttpMethod
 
 
 def _validate_url(value: str) -> str:
@@ -22,29 +20,21 @@ def _validate_url(value: str) -> str:
     return value
 
 
-class RequestCmd(
+class SqlCmd(
     IpythonCmdMixin,
-    OptionalInputCmdMixin,
+    RequiredInputCmdMixin,
     EsHeadersCmdMixin,
     EsParamsCmdMixin,
     DefaultPrettyCmdMixin,
     BaseEsCmd,
 ):
-    method: t.Annotated[HttpMethod, BeforeValidator(str.upper)] = Field(
-        default='GET',
-        validation_alias=AliasChoices(
-            'X',
-            'method',
-            'request',
-        ),
-    )
-    url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
-        default='/',
+    sql_url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
+        default='/_sql',
         validation_alias=AliasChoices(
             'u',
-            'url',
+            'sql_url',
         ),
-        description=rich_text('[b blue]Absolute url (without host) to target'),
+        description=rich_text('[b blue]SQL API URL, e.g. `/_sql`, `/_xpack/sql`, `/_nlpcn/sql`, ...'),
     )
 
     def cli_cmd(self) -> None:
@@ -55,8 +45,8 @@ class RequestCmd(
             _status.update(spinner='bouncingBall')
 
             response = self.client.request(
-                method=self.method,
-                url=self.url,
+                method='GET',
+                url=self.sql_url,
                 headers=self.headers,
                 params=self.params,
                 body=self.read_input(),

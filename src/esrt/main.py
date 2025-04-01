@@ -18,6 +18,7 @@ from .cmd_ping import PingCmd
 from .cmd_request import RequestCmd
 from .cmd_scan import ScanCmd
 from .cmd_search import SearchCmd
+from .cmd_sql import SqlCmd
 from .handlers import add_cwd_to_sys_path
 
 
@@ -48,6 +49,7 @@ class MainCmd(BaseSettings):
     scan: CliSubCommand[ScanCmd]
     bulk: CliSubCommand[BulkCmd]
     request: CliSubCommand[RequestCmd]
+    sql: CliSubCommand[SqlCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:

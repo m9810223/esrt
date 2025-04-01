@@ -253,15 +253,7 @@ class BaseEsCmd(_BaseCmd):
     )
 
 
-class JsonInputCmdMixin(_BaseCmd):
-    @model_validator(mode='after')
-    def _validate_input(self) -> Self:
-        if (self.input_ is not None) and (self.data is not None):
-            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
-            raise ValueError(message)
-
-        return self
-
+class _InputCmdMixin(_BaseCmd):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -271,7 +263,7 @@ class JsonInputCmdMixin(_BaseCmd):
         description=rich_text(
             """[b yellow]example: '-f my_query.json'.""",
             """[b red]Or '-f -' for stdin.""",
-            """[b blue]A JSON file containing the search query.""",
+            """[b blue]A file containing the search query.""",
         ),
     )
     data: t.Optional[str] = Field(
@@ -319,7 +311,7 @@ class JsonInputCmdMixin(_BaseCmd):
         return json_body_type_adapter.validate_python(x)
 
 
-class RequiredNdJsonInputCmdMixin(_BaseCmd):
+class OptionalInputCmdMixin(_InputCmdMixin):
     @model_validator(mode='after')
     def _validate_input(self) -> Self:
         if (self.input_ is not None) and (self.data is not None):
@@ -328,6 +320,18 @@ class RequiredNdJsonInputCmdMixin(_BaseCmd):
 
         return self
 
+
+class RequiredInputCmdMixin(_InputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is None) and (self.data is None):
+            message = 'One of `-f/--input` or `-d/--data` is required.'
+            raise ValueError(message)
+
+        return self
+
+
+class _NdInputCmdMixin(_BaseCmd):
     input_: t.Optional[Input] = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -352,19 +356,6 @@ class RequiredNdJsonInputCmdMixin(_BaseCmd):
         ),
     )
 
-    @property
-    def is_input_stdin(self) -> bool:
-        return self.input_ == sys.stdin
-
-    def read_input(self) -> t.Optional[str]:
-        if self.data is not None:
-            return self.data
-
-        if self.input_ is None:
-            return None
-
-        return self.input_.read()
-
     def read_iterator_input(self) -> t.Iterable[str]:
         if self.data is not None:
             return self.data.strip().splitlines(keepends=True)
@@ -375,6 +366,16 @@ class RequiredNdJsonInputCmdMixin(_BaseCmd):
             self.input_.seek(0)
 
         return (x for x in self.input_ if x.strip())
+
+
+class RequiredNdInputCmdMixin(_NdInputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
 
 
 class EsIndexCmdMixin(BaseEsCmd):

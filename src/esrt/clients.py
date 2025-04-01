@@ -126,7 +126,7 @@ class Client:
         url: str,
         headers: dict,
         params: dict,
-        body: t.Optional[JsonBodyT],
+        body: t.Optional[t.Union[JsonBodyT, str]],
     ) -> JsonValue:
         return self._client.transport.perform_request(
             method=method,
