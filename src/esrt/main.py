@@ -28,6 +28,18 @@ class EsCmd(BaseSettings):
     The help text from the class docstring.
     """
 
+    ping: CliSubCommand[EsPingCmd]
+    search: CliSubCommand[EsSearchCmd]
+    scan: CliSubCommand[EsScanCmd]
+    bulk: CliSubCommand[EsBulkCmd]
+    request: CliSubCommand[EsRequestCmd]
+    sql: CliSubCommand[EsSqlCmd]
+
+    def cli_cmd(self) -> None:
+        CliApp.run_subcommand(self)
+
+
+class MainCmd(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
         # env_prefix='ESRT_',
@@ -44,12 +56,7 @@ class EsCmd(BaseSettings):
         ),
     )
 
-    ping: CliSubCommand[EsPingCmd]
-    search: CliSubCommand[EsSearchCmd]
-    scan: CliSubCommand[EsScanCmd]
-    bulk: CliSubCommand[EsBulkCmd]
-    request: CliSubCommand[EsRequestCmd]
-    sql: CliSubCommand[EsSqlCmd]
+    es: CliSubCommand[EsCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:
@@ -59,15 +66,11 @@ class EsCmd(BaseSettings):
         CliApp.run_subcommand(self)
 
 
-class MainCmd(BaseSettings):
-    es: CliSubCommand[EsCmd]
-
-
 def main() -> None:
     add_cwd_to_sys_path()
     try:
         with contextlib.suppress(KeyboardInterrupt):
-            CliApp.run(EsCmd)
+            CliApp.run(MainCmd)
     except Exception as e:  # noqa: BLE001
         stderr_console.rule('exc_info', style='b yellow')
         stderr_console.out(traceback.format_exc().strip(), style='b i')
