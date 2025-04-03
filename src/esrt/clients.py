@@ -12,7 +12,7 @@ from .typealiases import JsonActionT
 from .typealiases import JsonBodyT
 
 
-class Client:
+class EsClient:
     def __init__(self, host: str) -> None:
         self._client = Elasticsearch(hosts=host)
 

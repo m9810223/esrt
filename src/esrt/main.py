@@ -13,12 +13,12 @@ from pydantic_settings import SettingsConfigDict
 from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
-from .cmd_bulk import BulkCmd
-from .cmd_ping import PingCmd
-from .cmd_request import RequestCmd
-from .cmd_scan import ScanCmd
-from .cmd_search import SearchCmd
-from .cmd_sql import SqlCmd
+from .cmd_es_bulk import BulkCmd
+from .cmd_es_ping import PingCmd
+from .cmd_es_request import RequestCmd
+from .cmd_es_scan import ScanCmd
+from .cmd_es_search import SearchCmd
+from .cmd_es_sql import SqlCmd
 from .handlers import add_cwd_to_sys_path
 
 

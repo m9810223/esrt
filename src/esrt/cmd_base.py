@@ -35,7 +35,7 @@ from rich.prompt import Confirm
 from rich.text import Text
 from typing_extensions import Self
 
-from .clients import Client
+from .clients import EsClient
 from .typealiases import JsonBodyT
 
 
@@ -245,8 +245,8 @@ class IpythonCmdMixin(_BaseCmd):
 
 
 class BaseEsCmd(_BaseCmd):
-    client: CliPositionalArg[t.Annotated[Client, BeforeValidator(Client)]] = Field(
-        default=t.cast(Client, '127.0.0.1:9200'),
+    client: CliPositionalArg[t.Annotated[EsClient, BeforeValidator(EsClient)]] = Field(
+        default=t.cast(EsClient, '127.0.0.1:9200'),
         validation_alias=AliasChoices(
             'es_host',
         ),
