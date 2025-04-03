@@ -21,7 +21,7 @@ from .cmd_base import RequiredNdInputCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
-from .exceptions import BulkIndexError
+from .exceptions import EsBulkIndexError
 from .handlers import HandlerT
 from .typealiases import JsonActionT
 
@@ -61,7 +61,7 @@ class BulkCmd(
     raise_on_error: CliImplicitFlag[bool] = Field(
         default=False,  # True
         description=rich_text(
-            '[b blue]Raise `BulkIndexError` containing errors from the execution of the last chunk when some occur.'
+            '[b blue]Raise `EsBulkIndexError` containing errors from the execution of the last chunk when some occur.'
         ),
     )
     raise_on_exception: CliImplicitFlag[bool] = Field(
@@ -173,9 +173,9 @@ class BulkCmd(
                 else:
                     stderr_dim_console.print_json(data=_item, indent=None)
 
-        except BulkIndexError:
+        except EsBulkIndexError:
             stderr_console.print(
-                '\n[b red]BulkIndexError: ',
+                '\n[b red]EsBulkIndexError: ',
                 'You can ',
                 '[b yellow]increase `--max_retries` ',
                 'and ',
