@@ -2,6 +2,15 @@
 
 
 
+## v5.4.0 (2025-04-03)
+
+### Feature
+
+* feat: release
+
+BREAKING CHANGE ([`675958c`](https://github.com/m9810223/esrt/commit/675958c9e831adb2331d82e0c3fd0310baaaeeb9))
+
+
 ## v5.3.0 (2025-04-03)
 
 ### Feature
