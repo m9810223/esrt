@@ -12,7 +12,7 @@ esrt -V
 ```sh
 # or use `uv`
 pip install uv # install uv
-alias esrt='uvx esrt@4.6.0'
+alias esrt='uvx esrt@6.0.0'
 esrt -V
 ```
 
@@ -46,7 +46,7 @@ docker restart "esrt-es"
 Check server:
 
 ```sh
-esrt request localhost -X HEAD
+esrt es request localhost -X HEAD
 # ->
 # true
 ```
@@ -54,7 +54,7 @@ esrt request localhost -X HEAD
 Create a index:
 
 ```sh
-esrt request localhost -X PUT /my-index
+esrt es request localhost -X PUT /my-index
 # ->
 # {
 #   "acknowledged": true,
@@ -68,16 +68,16 @@ esrt request localhost -X PUT /my-index
 Cat it:
 
 ```sh
-esrt request localhost -X GET /_cat/indices
+esrt es request localhost -X GET /_cat/indices
 # ->
 # yellow open my-index NMHssX4qTgeMFrA3cXPoKg 5 1 0 0 324b 324b
 
-esrt request localhost -X GET /_cat/indices -p v=
+esrt es request localhost -X GET /_cat/indices -p v=
 # ->
 # health status index    uuid                   pri rep docs.count docs.deleted store.size pri.store.size
 # yellow open   my-index NMHssX4qTgeMFrA3cXPoKg   5   1          0            0       810b           810b
 
-esrt request localhost -X GET /_cat/indices -p v= -p format=json
+esrt es request localhost -X GET /_cat/indices -p v= -p format=json
 # ->
 # [
 #   {
@@ -109,7 +109,7 @@ Bulk with data from file `examples/bulk.ndjson`:
 ```
 
 ```sh
-esrt bulk localhost -y -f examples/bulk.ndjson
+esrt es bulk localhost -y -f examples/bulk.ndjson
 # ->
 # ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    4/? ?
 ```
@@ -119,7 +119,7 @@ esrt bulk localhost -y -f examples/bulk.ndjson
 Read payload from `stdin`. And `-d` can be omitted.
 
 ```sh
-esrt bulk localhost -y <<EOF
+esrt es bulk localhost -y <<EOF
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -131,7 +131,7 @@ EOF
 Piping `heredoc` also works.
 
 ```sh
-cat <<EOF | esrt bulk localhost -y
+cat <<EOF | esrt es bulk localhost -y
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index",  "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -149,7 +149,7 @@ alias jq_es_hits="jq '.hits.hits[]'"
 ```
 
 ```sh
-esrt request localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt bulk localhost -y -w examples.my-handlers:handle  # <- `examples/my-handlers.py`
+esrt es request localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt es bulk localhost -y -w examples.my-handlers:handle  # <- `examples/my-handlers.py`
 # ->
 # ⠹ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:00    3/? ?
 ```
@@ -159,7 +159,7 @@ esrt request localhost -X GET /my-index-2/_search | jq_es_hits -c | esrt bulk lo
 import json
 import typing as t
 
-from esrt import DocHandler
+from esrt es import DocHandler
 
 
 # function style
@@ -192,7 +192,7 @@ class MyHandler(DocHandler):
 ## `search`
 
 ```sh
-esrt search localhost | jq_es_hits -c
+esrt es search localhost | jq_es_hits -c
 # ->
 # {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 # {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
@@ -204,7 +204,7 @@ esrt search localhost | jq_es_hits -c
 ```
 
 ```sh
-esrt search localhost -f - <<EOF | jq_es_hits -c
+esrt es search localhost -f - <<EOF | jq_es_hits -c
 {"query": {"term": {"_index": "new-my-index-2"}}}
 EOF
 # ->
@@ -216,7 +216,7 @@ EOF
 ## `scan`
 
 ```sh
-esrt scan localhost -y
+esrt es scan localhost -y
 # ->
 # {"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 # {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
@@ -229,7 +229,7 @@ esrt scan localhost -y
 ```
 
 ```sh
-esrt scan localhost -y -f - <<EOF
+esrt es scan localhost -y -f - <<EOF
 {"query": {"term": {"field1": "cc"}}}
 EOF
 # ->
@@ -246,7 +246,7 @@ export ESRT_SQL_API=_xpack/sql
 ```
 
 ```sh
-esrt sql localhost -f - <<EOF | jq_es_hits -c
+esrt es sql localhost -f - <<EOF | jq_es_hits -c
 SELECT * from new-my-index-2
 EOF
 # ->
@@ -278,7 +278,7 @@ if __name__ == '__main__':
 ```
 
 ```sh
-python examples/create-massive-docs.py | tee _.ndjson | esrt bulk localhost -y -c 10000
+python examples/create-massive-docs.py | tee _.ndjson | esrt es bulk localhost -y -c 10000
 # ->
 # ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:26    654321/? 24504/s
 
@@ -331,7 +331,7 @@ def handle(actions: t.Iterable[str]):
 ```
 
 ```sh
-python examples/copy-more-docs.py | esrt bulk localhost -y -w examples.copy-more-docs:handle
+python examples/copy-more-docs.py | esrt es bulk localhost -y -w examples.copy-more-docs:handle
 # ->
 # ⠏ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:00:05    108642/? 18963/s
 ```
