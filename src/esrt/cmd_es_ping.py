@@ -9,7 +9,7 @@ from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
-class PingCmd(
+class EsPingCmd(
     IpythonCmdMixin,
     BaseEsCmd,
 ):

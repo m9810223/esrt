@@ -13,16 +13,16 @@ from pydantic_settings import SettingsConfigDict
 from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
-from .cmd_es_bulk import BulkCmd
-from .cmd_es_ping import PingCmd
-from .cmd_es_request import RequestCmd
-from .cmd_es_scan import ScanCmd
-from .cmd_es_search import SearchCmd
-from .cmd_es_sql import SqlCmd
+from .cmd_es_bulk import EsBulkCmd
+from .cmd_es_ping import EsPingCmd
+from .cmd_es_request import EsRequestCmd
+from .cmd_es_scan import EsScanCmd
+from .cmd_es_search import EsSearchCmd
+from .cmd_es_sql import EsSqlCmd
 from .handlers import add_cwd_to_sys_path
 
 
-class MainCmd(BaseSettings):
+class EsCmd(BaseSettings):
     # TODO: Add a description
     """
     The help text from the class docstring.
@@ -44,12 +44,12 @@ class MainCmd(BaseSettings):
         ),
     )
 
-    ping: CliSubCommand[PingCmd]
-    search: CliSubCommand[SearchCmd]
-    scan: CliSubCommand[ScanCmd]
-    bulk: CliSubCommand[BulkCmd]
-    request: CliSubCommand[RequestCmd]
-    sql: CliSubCommand[SqlCmd]
+    ping: CliSubCommand[EsPingCmd]
+    search: CliSubCommand[EsSearchCmd]
+    scan: CliSubCommand[EsScanCmd]
+    bulk: CliSubCommand[EsBulkCmd]
+    request: CliSubCommand[EsRequestCmd]
+    sql: CliSubCommand[EsSqlCmd]
 
     def cli_cmd(self) -> None:
         if self.version is True:
@@ -59,11 +59,15 @@ class MainCmd(BaseSettings):
         CliApp.run_subcommand(self)
 
 
+class MainCmd(BaseSettings):
+    es: CliSubCommand[EsCmd]
+
+
 def main() -> None:
     add_cwd_to_sys_path()
     try:
         with contextlib.suppress(KeyboardInterrupt):
-            CliApp.run(MainCmd)
+            CliApp.run(EsCmd)
     except Exception as e:  # noqa: BLE001
         stderr_console.rule('exc_info', style='b yellow')
         stderr_console.out(traceback.format_exc().strip(), style='b i')

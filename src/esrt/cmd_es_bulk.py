@@ -26,7 +26,7 @@ from .handlers import HandlerT
 from .typealiases import JsonActionT
 
 
-class BulkCmd(
+class EsBulkCmd(
     IpythonCmdMixin,
     ConfirmCmdMixin,
     RequiredNdInputCmdMixin,

@@ -21,7 +21,7 @@ from .cmd_base import stderr_dim_console
 from .typealiases import JsonBodyT
 
 
-class ScanCmd(
+class EsScanCmd(
     IpythonCmdMixin,
     ConfirmCmdMixin,
     OptionalInputCmdMixin,

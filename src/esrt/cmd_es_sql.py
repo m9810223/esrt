@@ -20,7 +20,7 @@ def _validate_url(value: str) -> str:
     return value
 
 
-class SqlCmd(
+class EsSqlCmd(
     IpythonCmdMixin,
     RequiredInputCmdMixin,
     EsHeadersCmdMixin,

@@ -22,7 +22,7 @@ def _validate_url(value: str) -> str:
     return value
 
 
-class RequestCmd(
+class EsRequestCmd(
     IpythonCmdMixin,
     OptionalInputCmdMixin,
     EsHeadersCmdMixin,
