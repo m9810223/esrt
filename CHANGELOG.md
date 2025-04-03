@@ -2,6 +2,19 @@
 
 
 
+## v5.3.0 (2025-04-03)
+
+### Feature
+
+* feat: release ([`52b7784`](https://github.com/m9810223/esrt/commit/52b7784c9e671bfa98bce9f3b260acfa142a72fd))
+
+* feat: release ([`deb7243`](https://github.com/m9810223/esrt/commit/deb7243b8162681d06b7088228aa8b575e104e82))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`d988c5a`](https://github.com/m9810223/esrt/commit/d988c5abfed267d34cadb1eecbcdfeb114c2f0b3))
+
+
 ## v5.2.0 (2025-04-03)
 
 ### Feature
