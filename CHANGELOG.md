@@ -2,6 +2,19 @@
 
 
 
+## v6.0.0 (2025-04-03)
+
+### Breaking
+
+* feat: release
+
+BREAKING CHANGE: release ([`d19577b`](https://github.com/m9810223/esrt/commit/d19577b92a02ee3d37e40c48c7861ce73122e4ab))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`18b03fc`](https://github.com/m9810223/esrt/commit/18b03fc07a9d368e25d8484f4806052ba2025857))
+
+
 ## v5.4.0 (2025-04-03)
 
 ### Feature
