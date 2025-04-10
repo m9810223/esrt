@@ -2,6 +2,24 @@
 
 
 
+## v7.0.0 (2025-04-10)
+
+### Breaking
+
+* feat(esrt): add support for verbose and output options across all ES commands
+
+- Introduced `VerboseCmdMixin` and `OutputCmdMixin` to unify handling of `-v/--verbose` and `-o/--output`
+- Applied new mixins to: es_ping, es_request, es_bulk, es_scan, es_search, es_sql
+- Refactored and reordered base class composition to ensure consistent CLI behavior
+- Added extensive test coverage in `justfile` for new verbose/output/pretty flags
+- Improved error messaging for invalid or missing input scenarios
+- Renamed `DefaultNoPrettyCmdMixin` → `DefaultNotPrettyCmdMixin` for clarity
+- Bumped version from 5.2.0 → 6.0.0 due to breaking interface changes
+
+BREAKING CHANGE: All command mixin compositions have been restructured.
+Commands expecting `-v/--verbose` or `-o/--output` now require updated mixin usage. ([`44e2cc0`](https://github.com/m9810223/esrt/commit/44e2cc0bbf9f0408caf04264045720c184346225))
+
+
 ## v6.0.0 (2025-04-03)
 
 ### Breaking
