@@ -5,7 +5,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "esrt"
-version = "7.0.0"
+version = "8.0.0"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [

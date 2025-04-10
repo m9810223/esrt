@@ -2,6 +2,20 @@
 
 
 
+## v8.0.0 (2025-04-10)
+
+### Breaking
+
+* feat(esrt): switch test input from raw DSL to SQL syntax; improve stdin fallback
+
+- Replace JSON DSL in test-es-sql with SQL queries to match plugin functionality
+- Remove `model_validator` from `RequiredInputCmdMixin`, move validation logic to `read_input`
+- Add fallback to read from stdin when no input is provided and stdin is not a TTY
+- Bump `esrt` version from 6.0.0 to 7.0.0
+
+BREAKING CHANGE: `RequiredInputCmdMixin` no longer raises at validation phase but during execution; CLI behavior may differ for invalid input combinations ([`e645f78`](https://github.com/m9810223/esrt/commit/e645f780c8a9b4ae982bdcf27ce4cfb2391a9212))
+
+
 ## v7.0.0 (2025-04-10)
 
 ### Breaking
