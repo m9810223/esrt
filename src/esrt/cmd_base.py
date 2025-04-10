@@ -330,21 +330,15 @@ class OptionalInputCmdMixin(_InputCmdMixin):
 
 
 class RequiredInputCmdMixin(_InputCmdMixin):
-    @model_validator(mode='after')
-    def _validate_input(self) -> Self:
-        if (self.input_ is None) and (self.data is None):
-            message = 'One of `-f/--input` or `-d/--data` is required.'
-            raise ValueError(message)
-
-        return self
-
     def read_input(self) -> str:
         if self.data is not None:
             return self.data
 
         if self.input_ is None:
-            stderr_console.print('no input', style='b red')
-            sys.exit(1)
+            if sys.stdin.isatty():
+                stderr_console.print('stdin is not a tty', style='b red')
+                sys.exit(1)
+            self.input_ = t.cast(io.TextIOWrapper, sys.stdin)
 
         return self.input_.read()
 

@@ -10,6 +10,7 @@ ES_PORT := "9200"
 start-es_server:
     docker run --name {{ ES_NAME }} --rm -itd --platform=linux/amd64 -p {{ ES_PORT }}:9200 elasticsearch:5.6.9-alpine
 
+[private]
 es_server-install-sql_plugin:
     docker exec {{ ES_NAME }} elasticsearch-plugin list | grep sql || docker exec {{ ES_NAME }} elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/5.6.9.0/elasticsearch-sql-5.6.9.0.zip || true
     docker restart {{ ES_NAME }}
@@ -177,28 +178,28 @@ test-es-sql: es_server-install-sql_plugin
     #!/usr/bin/env bash -eux
 
     echo '
-    {"query": {"term": {"field1": "cc"}}}
-    ' | {{ ESRT }} es sql {{ ES_HOST }} -y
+    select * from my-index
+    ' | {{ ESRT }} es sql {{ ES_HOST }}
 
     echo '
-    {"query": {"term": {"field1": "cc"}}}
-    ' | {{ ESRT }} es sql {{ ES_HOST }} -y -f -
+    select * from my-index
+    ' | {{ ESRT }} es sql {{ ES_HOST }} -f -
 
-    {{ ESRT }} es sql {{ ES_HOST }} -y -f - <<<'
-    {"query": {"term": {"field1": "cc"}}}
+    {{ ESRT }} es sql {{ ES_HOST }} -f - <<<'
+    select * from my-index
     '
 
-    {{ ESRT }} es sql {{ ES_HOST }} -y -f - <<EOF
-    {"query": {"term": {"field1": "cc"}}}
+    {{ ESRT }} es sql {{ ES_HOST }} -f - <<EOF
+    select * from my-index
     EOF
 
-    {{ ESRT }} es sql {{ ES_HOST }} -y -d'
-    {"query": {"term": {"field1": "cc"}}}
+    {{ ESRT }} es sql {{ ES_HOST }} -d'
+    select * from my-index
     '
 
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from *' -v
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from *' -o log.log
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from *' --no-pretty
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -v
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -o log.log
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' --no-pretty
 
 [group('esrt')]
 test-es-others:
