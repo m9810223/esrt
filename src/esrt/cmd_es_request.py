@@ -11,6 +11,8 @@ from .cmd_base import EsHeadersCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
 from .cmd_base import OptionalInputCmdMixin
+from .cmd_base import OutputCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .typealiases import HttpMethod
@@ -23,11 +25,13 @@ def _validate_url(value: str) -> str:
 
 
 class EsRequestCmd(
-    IpythonCmdMixin,
     OptionalInputCmdMixin,
     EsHeadersCmdMixin,
     EsParamsCmdMixin,
     DefaultPrettyCmdMixin,
+    OutputCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     method: t.Annotated[HttpMethod, BeforeValidator(str.upper)] = Field(

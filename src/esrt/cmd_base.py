@@ -99,29 +99,6 @@ class _TransferSpeedColumn(TransferSpeedColumn):
 
 
 class _BaseCmd(BaseSettings):
-    verbose: CliImplicitFlag[bool] = Field(
-        default=False,
-        validation_alias=AliasChoices(
-            'v',
-            'verbose',
-        ),
-    )
-
-    output: OutputConsole = Field(
-        default=t.cast(OutputConsole, sys.stdout),
-        validation_alias=AliasChoices(
-            'o',
-            'output',
-        ),
-    )
-
-    @property
-    def is_output_stdout(self) -> bool:
-        return self.output.file in [
-            sys.stdout,
-            getattr(sys.stdout, 'rich_proxied_file', None),  # * rich.progress.Progress
-        ]
-
     @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
     def progress(self, *, console: Console, title: str) -> Progress:
         return Progress(
@@ -155,7 +132,34 @@ class _BaseCmd(BaseSettings):
         )
 
 
-class ConfirmCmdMixin(_BaseCmd):
+class VerboseCmdMixin(_BaseCmd):
+    verbose: CliImplicitFlag[bool] = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            'v',
+            'verbose',
+        ),
+    )
+
+
+class OutputCmdMixin(_BaseCmd):
+    output: OutputConsole = Field(
+        default=t.cast(OutputConsole, sys.stdout),
+        validation_alias=AliasChoices(
+            'o',
+            'output',
+        ),
+    )
+
+    @property
+    def is_output_stdout(self) -> bool:
+        return self.output.file in [
+            sys.stdout,
+            getattr(sys.stdout, 'rich_proxied_file', None),  # * rich.progress.Progress
+        ]
+
+
+class ConfirmCmdMixin(VerboseCmdMixin, _BaseCmd):
     yes: CliImplicitFlag[bool] = Field(
         default=False,
         validation_alias=AliasChoices(
@@ -230,10 +234,14 @@ class IpythonCmdMixin(_BaseCmd):
             return
 
         curr_frame = inspect.currentframe()
-        assert curr_frame is not None
+        if curr_frame is None:
+            stderr_console.print('No current frame', style='b red')
+            sys.exit(1)
 
         target_frame = curr_frame.f_back
-        assert target_frame is not None
+        if target_frame is None:
+            stderr_console.print('No target frame', style='b red')
+            sys.exit(1)
 
         target_ns = target_frame.f_locals
         self._print_user_ns(target_ns)
@@ -282,6 +290,16 @@ class _InputCmdMixin(_BaseCmd):
     def is_input_stdin(self) -> bool:
         return self.input_ == sys.stdin
 
+
+class OptionalInputCmdMixin(_InputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     def read_input(self) -> t.Optional[str]:
         if self.data is not None:
             return self.data
@@ -311,16 +329,6 @@ class _InputCmdMixin(_BaseCmd):
         return json_body_type_adapter.validate_python(x)
 
 
-class OptionalInputCmdMixin(_InputCmdMixin):
-    @model_validator(mode='after')
-    def _validate_input(self) -> Self:
-        if (self.input_ is not None) and (self.data is not None):
-            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
-            raise ValueError(message)
-
-        return self
-
-
 class RequiredInputCmdMixin(_InputCmdMixin):
     @model_validator(mode='after')
     def _validate_input(self) -> Self:
@@ -329,6 +337,16 @@ class RequiredInputCmdMixin(_InputCmdMixin):
             raise ValueError(message)
 
         return self
+
+    def read_input(self) -> str:
+        if self.data is not None:
+            return self.data
+
+        if self.input_ is None:
+            stderr_console.print('no input', style='b red')
+            sys.exit(1)
+
+        return self.input_.read()
 
 
 class _NdInputCmdMixin(_BaseCmd):
@@ -356,11 +374,23 @@ class _NdInputCmdMixin(_BaseCmd):
         ),
     )
 
+
+class OptionalNdInputCmdMixin(_NdInputCmdMixin):
+    @model_validator(mode='after')
+    def _validate_input(self) -> Self:
+        if (self.input_ is not None) and (self.data is not None):
+            message = 'Only one of `-f/--input` or `-d/--data` is allowed.'
+            raise ValueError(message)
+
+        return self
+
     def read_iterator_input(self) -> t.Iterable[str]:
         if self.data is not None:
             return self.data.strip().splitlines(keepends=True)
 
-        assert self.input_ is not None
+        if self.input_ is None:
+            stderr_console.print('no input', style='b red')
+            sys.exit(1)
 
         if self.input_.seekable():
             self.input_.seek(0)
@@ -376,6 +406,21 @@ class RequiredNdInputCmdMixin(_NdInputCmdMixin):
             raise ValueError(message)
 
         return self
+
+    def read_iterator_input(self) -> t.Iterable[str]:
+        if self.data is not None:
+            return self.data.strip().splitlines(keepends=True)
+
+        if self.input_ is None:
+            if sys.stdin.isatty():
+                stderr_console.print('stdin is not a tty', style='b red')
+                sys.exit(1)
+            self.input_ = t.cast(io.TextIOWrapper, sys.stdin)
+
+        if self.input_.seekable():
+            self.input_.seek(0)
+
+        return (x for x in self.input_ if x.strip())
 
 
 class EsIndexCmdMixin(BaseEsCmd):
@@ -448,7 +493,7 @@ class DefaultPrettyCmdMixin(BaseEsCmd):
     )
 
 
-class DefaultNoPrettyCmdMixin(BaseEsCmd):
+class DefaultNotPrettyCmdMixin(BaseEsCmd):
     pretty: CliImplicitFlag[bool] = Field(
         default=False,
     )

@@ -4,6 +4,7 @@ from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import IpythonCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -11,6 +12,7 @@ from .cmd_base import stderr_dim_console
 
 class EsPingCmd(
     IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     info: CliImplicitFlag[bool] = Field(

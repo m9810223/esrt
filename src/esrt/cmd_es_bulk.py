@@ -11,13 +11,15 @@ from uvicorn.importer import import_from_string
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
-from .cmd_base import DefaultNoPrettyCmdMixin
+from .cmd_base import DefaultNotPrettyCmdMixin
 from .cmd_base import DryRunCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
+from .cmd_base import OutputCmdMixin
 from .cmd_base import RequiredNdInputCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -27,14 +29,16 @@ from .typealiases import JsonActionT
 
 
 class EsBulkCmd(
-    IpythonCmdMixin,
-    ConfirmCmdMixin,
-    RequiredNdInputCmdMixin,
-    EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
+    EsIndexCmdMixin,
+    RequiredNdInputCmdMixin,
+    DefaultNotPrettyCmdMixin,
+    ConfirmCmdMixin,
+    OutputCmdMixin,
     DryRunCmdMixin,
-    DefaultNoPrettyCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     handler: t.Annotated[HandlerT, BeforeValidator(import_from_string)] = Field(

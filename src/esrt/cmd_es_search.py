@@ -5,17 +5,21 @@ from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
 from .cmd_base import OptionalInputCmdMixin
+from .cmd_base import OutputCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
 
 
 class EsSearchCmd(
-    IpythonCmdMixin,
-    OptionalInputCmdMixin,
-    EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
+    EsIndexCmdMixin,
+    OptionalInputCmdMixin,
     DefaultPrettyCmdMixin,
+    OutputCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     def cli_cmd(self) -> None:

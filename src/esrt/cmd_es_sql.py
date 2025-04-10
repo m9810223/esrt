@@ -9,7 +9,9 @@ from .cmd_base import DefaultPrettyCmdMixin
 from .cmd_base import EsHeadersCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
+from .cmd_base import OutputCmdMixin
 from .cmd_base import RequiredInputCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 
@@ -21,11 +23,13 @@ def _validate_url(value: str) -> str:
 
 
 class EsSqlCmd(
-    IpythonCmdMixin,
-    RequiredInputCmdMixin,
     EsHeadersCmdMixin,
     EsParamsCmdMixin,
+    RequiredInputCmdMixin,
     DefaultPrettyCmdMixin,
+    OutputCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     sql_url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
@@ -49,7 +53,7 @@ class EsSqlCmd(
                 url=self.sql_url,
                 headers=self.headers,
                 params=self.params,
-                body=self.read_input(),
+                body=self.read_input().strip(),
             )
 
         if isinstance(response, str):

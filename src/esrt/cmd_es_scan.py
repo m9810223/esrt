@@ -8,13 +8,15 @@ from pydantic_settings import CliImplicitFlag
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
-from .cmd_base import DefaultNoPrettyCmdMixin
+from .cmd_base import DefaultNotPrettyCmdMixin
 from .cmd_base import DryRunCmdMixin
 from .cmd_base import EsDocTypeCmdMixin
 from .cmd_base import EsIndexCmdMixin
 from .cmd_base import EsParamsCmdMixin
 from .cmd_base import IpythonCmdMixin
 from .cmd_base import OptionalInputCmdMixin
+from .cmd_base import OutputCmdMixin
+from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
@@ -22,14 +24,16 @@ from .typealiases import JsonBodyT
 
 
 class EsScanCmd(
-    IpythonCmdMixin,
-    ConfirmCmdMixin,
-    OptionalInputCmdMixin,
-    EsIndexCmdMixin,
     EsDocTypeCmdMixin,
     EsParamsCmdMixin,
+    EsIndexCmdMixin,
+    OptionalInputCmdMixin,
+    DefaultNotPrettyCmdMixin,
+    ConfirmCmdMixin,
+    OutputCmdMixin,
     DryRunCmdMixin,
-    DefaultNoPrettyCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
     BaseEsCmd,
 ):
     scroll: str = '5m'
