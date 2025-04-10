@@ -2,6 +2,13 @@
 
 
 
+## v8.1.0 (2025-04-10)
+
+### Feature
+
+* feat: release ([`f17c1b1`](https://github.com/m9810223/esrt/commit/f17c1b151d44ebfb10725dda17ef557b98948b5d))
+
+
 ## v8.0.0 (2025-04-10)
 
 ### Breaking
