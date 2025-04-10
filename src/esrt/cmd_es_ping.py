@@ -25,7 +25,7 @@ class EsPingCmd(
 
     def cli_cmd(self) -> None:
         if self.verbose:
-            stderr_dim_console.print(f'Ping {self.client.hosts}')
+            stderr_dim_console.out(f'Ping {self.client.hosts}')
 
         with stderr_console.status('Ping ...') as _status:
             _status.update(spinner='bouncingBall')
@@ -33,10 +33,10 @@ class EsPingCmd(
             result = self.client.ping()
 
         if result is False:
-            stderr_console.print('Ping failed', style='b red')
+            stderr_console.out('Ping failed', style='b red')
             return self.start_ipython_if_need()
 
-        stderr_console.print('Ping ok', style='b green')
+        stderr_console.out('Ping ok', style='b green')
         if self.info:
             with stderr_console.status('Info ...') as _status:
                 _status.update(spinner='bouncingBall')
