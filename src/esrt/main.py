@@ -14,6 +14,7 @@ from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_es_bulk import EsBulkCmd
+from .cmd_es_info import EsInfoCmd
 from .cmd_es_ping import EsPingCmd
 from .cmd_es_request import EsRequestCmd
 from .cmd_es_scan import EsScanCmd
@@ -28,12 +29,14 @@ class EsCmd(BaseSettings):
     The help text from the class docstring.
     """
 
+    request: CliSubCommand[EsRequestCmd]
+    sql: CliSubCommand[EsSqlCmd]
+
     ping: CliSubCommand[EsPingCmd]
+    info: CliSubCommand[EsInfoCmd]
     search: CliSubCommand[EsSearchCmd]
     scan: CliSubCommand[EsScanCmd]
     bulk: CliSubCommand[EsBulkCmd]
-    request: CliSubCommand[EsRequestCmd]
-    sql: CliSubCommand[EsSqlCmd]
 
     def cli_cmd(self) -> None:
         CliApp.run_subcommand(self)

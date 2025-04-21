@@ -27,21 +27,23 @@ ES_HOST := "localhost:" + ES_PORT
 JQ_ES_HITS := "jq '.hits.hits[]'"
 
 [group('esrt')]
-test-es-ping:
-    #!/usr/bin/env bash -eux
+test-es: && restart-es_server test-es-ping test-es-request test-es-bulk test-es-search test-es-scan test-es-others
+    rm -f {{ RECORD_LOG_FILE }}
 
-    {{ ESRT }} es ping {{ ES_HOST }}
-    {{ ESRT }} es ping {{ ES_HOST }} -v
-    {{ ESRT }} es ping {{ ES_HOST }} -I
+TEST_LOG_FILE := "_.test.log"
+RECORD_LOG_FILE := "record.txt"
+[private]
+RECORD_CMD := "echo '\n---' >>" + RECORD_LOG_FILE + "; PS4=$'\n>>> '; exec > >(tee -a " + RECORD_LOG_FILE + ") 2>&1; set -eux"
 
 [group('esrt')]
 test-es-request:
-    #!/usr/bin/env bash -eux
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
 
     {{ ESRT }} es request {{ ES_HOST }}
     {{ ESRT }} es request {{ ES_HOST }} -X HEAD
     {{ ESRT }} es request {{ ES_HOST }} -v
-    {{ ESRT }} es request {{ ES_HOST }} -o log.log
+    {{ ESRT }} es request {{ ES_HOST }} -o {{ TEST_LOG_FILE }}
     {{ ESRT }} es request {{ ES_HOST }} -H a=1 -H b=false
     {{ ESRT }} es request {{ ES_HOST }} -u /_cat/indices -v -p v=true -p s=index
     {{ ESRT }} es request {{ ES_HOST }} -X PUT --url /my-index 2>/dev/null || true
@@ -52,8 +54,47 @@ test-es-request:
     {{ ESRT }} es request {{ ES_HOST }} --url /_cat/indices -p v= -p format=json
 
 [group('esrt')]
+test-es-sql: es_server-install-sql_plugin
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
+
+    echo '
+    select * from my-index
+    ' | {{ ESRT }} es sql {{ ES_HOST }}
+
+    echo '
+    select * from my-index
+    ' | {{ ESRT }} es sql {{ ES_HOST }} -f -
+
+    {{ ESRT }} es sql {{ ES_HOST }} -f - <<<'
+    select * from my-index
+    '
+
+    {{ ESRT }} es sql {{ ES_HOST }} -f - <<EOF
+    select * from my-index
+    EOF
+
+    {{ ESRT }} es sql {{ ES_HOST }} -d'
+    select * from my-index
+    '
+
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -v
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -o {{ TEST_LOG_FILE }}
+    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' --no-pretty
+
+[group('esrt')]
+test-es-ping:
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
+
+    {{ ESRT }} es ping {{ ES_HOST }}
+    {{ ESRT }} es ping {{ ES_HOST }} -v
+    {{ ESRT }} es ping {{ ES_HOST }} -I
+
+[group('esrt')]
 test-es-bulk:
-    #!/usr/bin/env bash -eux
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
 
     echo '
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
@@ -90,7 +131,7 @@ test-es-bulk:
     {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson
     {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -v
     {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -n
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -o log.log
+    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -o {{ TEST_LOG_FILE }}
     {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --no-pretty
     {{ ESRT }} es bulk {{ ES_HOST }} -y -i my-index-i -d '{ "_type": "type1", "_id": "1", "field1": "ii" }'
     {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --chunk_size 1
@@ -105,7 +146,8 @@ test-es-bulk:
 
 [group('esrt')]
 test-es-search:
-    #!/usr/bin/env bash -eux
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
 
     echo '
     {"query": {"term": {"_index": "new-my-index-2"}}}
@@ -129,7 +171,7 @@ test-es-search:
 
     {{ ESRT }} es search {{ ES_HOST }} | {{ JQ_ES_HITS }} -c
     {{ ESRT }} es search {{ ES_HOST }} -v
-    {{ ESRT }} es search {{ ES_HOST }} -o log.log
+    {{ ESRT }} es search {{ ES_HOST }} -o {{ TEST_LOG_FILE }}
     {{ ESRT }} es search {{ ES_HOST }} --no-pretty
     {{ ESRT }} es search {{ ES_HOST }} -i my-index
     {{ ESRT }} es search {{ ES_HOST }} -p from=1
@@ -137,7 +179,8 @@ test-es-search:
 
 [group('esrt')]
 test-es-scan:
-    #!/usr/bin/env bash -eux
+    #!/usr/bin/env bash
+    {{ RECORD_CMD }}
 
     echo '
     {"query": {"term": {"field1": "cc"}}}
@@ -162,7 +205,7 @@ test-es-scan:
     {{ ESRT }} es scan {{ ES_HOST }} -y
     {{ ESRT }} es scan {{ ES_HOST }} -y -v
     {{ ESRT }} es scan {{ ES_HOST }} -n
-    {{ ESRT }} es scan {{ ES_HOST }} -y -o log.log
+    {{ ESRT }} es scan {{ ES_HOST }} -y -o {{ TEST_LOG_FILE }}
     {{ ESRT }} es scan {{ ES_HOST }} -y --no-pretty
     {{ ESRT }} es scan {{ ES_HOST }} -y -i my-index
     {{ ESRT }} es scan {{ ES_HOST }} -y -p _source=false
@@ -174,37 +217,6 @@ test-es-scan:
     # {{ ESRT }} es scan {{ ES_HOST }} -y --scroll_kwargs rest_total_hits_as_int=
 
 [group('esrt')]
-test-es-sql: es_server-install-sql_plugin
-    #!/usr/bin/env bash -eux
-
-    echo '
-    select * from my-index
-    ' | {{ ESRT }} es sql {{ ES_HOST }}
-
-    echo '
-    select * from my-index
-    ' | {{ ESRT }} es sql {{ ES_HOST }} -f -
-
-    {{ ESRT }} es sql {{ ES_HOST }} -f - <<<'
-    select * from my-index
-    '
-
-    {{ ESRT }} es sql {{ ES_HOST }} -f - <<EOF
-    select * from my-index
-    EOF
-
-    {{ ESRT }} es sql {{ ES_HOST }} -d'
-    select * from my-index
-    '
-
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -v
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' -o log.log
-    {{ ESRT }} es sql {{ ES_HOST }} -d 'select * from my-index' --no-pretty
-
-[group('esrt')]
 test-es-others:
     python examples/create-massive-docs.py | tee _.ndjson | {{ ESRT }} es bulk {{ ES_HOST }} -y -f -
     python examples/copy-more-docs.py | {{ ESRT }} es bulk {{ ES_HOST }} -y -f - -w examples.copy-more-docs:handle
-
-[group('esrt')]
-test-es: restart-es_server test-es-ping test-es-request test-es-bulk test-es-search test-es-scan test-es-others

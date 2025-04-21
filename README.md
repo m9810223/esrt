@@ -2,17 +2,17 @@
 
 [![pypi](https://img.shields.io/pypi/v/esrt.svg)](https://pypi.python.org/pypi/esrt)
 
+[install](https://docs.astral.sh/uv/getting-started/installation/#installing-uv) [tool](https://docs.astral.sh/uv/concepts/tools/#tool-versions) ([`uv`](https://docs.astral.sh/uv/))
+
 ```sh
-# use `pipx`
-pip install pipx # install pipx
-alias esrt='pipx run esrt==4.6.0'
+alias esrt='uvx esrt@8.2.0'
 esrt -V
 ```
 
+[install](https://pipx.pypa.io/stable/installation/#installing-pipx) [`pipx`](https://pipx.pypa.io/stable/examples/#pipx-run-examples)
+
 ```sh
-# or use `uv`
-pip install uv # install uv
-alias esrt='uvx esrt@6.0.0'
+alias esrt='pipx run esrt==8.2.0'
 esrt -V
 ```
 
