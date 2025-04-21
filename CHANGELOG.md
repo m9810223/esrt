@@ -2,6 +2,31 @@
 
 
 
+## v8.2.0 (2025-04-21)
+
+### Chore
+
+* chore(release): bump esrt version to 8.2.0
+
+Updated `esrt` version from 8.1.0 to 8.2.0 in `pyproject.toml` and from 8.0.0 to 8.2.0 in `uv.lock` to reflect the latest release version.
+
+No code changes included in this commit — version bump only. ([`b2cf177`](https://github.com/m9810223/esrt/commit/b2cf177652d41185d2ec759bf7b1e717e55572c0))
+
+* chore(cli): replace console.print with console.out for consistency in EsPingCmd
+
+Switched from `console.print` to `console.out` in EsPingCmd for improved consistency in output method, likely to streamline formatting or control over stderr behavior. Also bumped internal package version from 7.0.0 to 8.0.0 in `uv.lock`.
+
+This change assumes `console.out` is a custom abstraction or more appropriate method for CLI output. Ensure it maintains compatibility across usage contexts. ([`ee094fe`](https://github.com/m9810223/esrt/commit/ee094fe513f33a55e12678267e147248df27a924))
+
+### Feature
+
+* feat: release ([`d90fa53`](https://github.com/m9810223/esrt/commit/d90fa53a8bf5ab3149271e2cd5d9ee850eaf5888))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of github.com:m9810223/esrt ([`726a957`](https://github.com/m9810223/esrt/commit/726a95785a9b39f5ee4d10d93b647b2de5392aee))
+
+
 ## v8.1.0 (2025-04-10)
 
 ### Feature
