@@ -205,7 +205,7 @@ class IpythonCmdMixin(_BaseCmd):
         """
         -f - (GOOD)
             sys.stdin.isatty() = True
-            sys.stdin.seekable() = True
+            sys.stdin.seekable() = False
             color OK!
         |
             sys.stdin.isatty() = False
