@@ -2,6 +2,13 @@
 
 
 
+## v8.3.0 (2025-04-23)
+
+### Feature
+
+* feat: release ([`1e0cf40`](https://github.com/m9810223/esrt/commit/1e0cf40c687f06da2617fac45da27ae267e17f12))
+
+
 ## v8.2.0 (2025-04-21)
 
 ### Chore
