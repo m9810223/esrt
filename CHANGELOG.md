@@ -2,6 +2,19 @@
 
 
 
+## v8.3.1 (2025-05-18)
+
+### Fix
+
+* fix(es_scan): allow size to be exactly 10000 by changing constraint from lt to le ([`2ad3b5b`](https://github.com/m9810223/esrt/commit/2ad3b5b5ffb2315c56fb80885d4b74383954ee53))
+
+### Unknown
+
+* WIP ([`c387473`](https://github.com/m9810223/esrt/commit/c387473d27e9e6d439ee839431f9b1cd26eefb81))
+
+* WIP ([`1246441`](https://github.com/m9810223/esrt/commit/12464410bd21a003181b5aca49f3ed9d1990bcee))
+
+
 ## v8.3.0 (2025-04-23)
 
 ### Feature
