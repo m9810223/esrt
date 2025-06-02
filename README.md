@@ -2,6 +2,8 @@
 
 [![pypi](https://img.shields.io/pypi/v/esrt.svg)](https://pypi.python.org/pypi/esrt)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/m9810223/esrt)
+
 [install](https://docs.astral.sh/uv/getting-started/installation/#installing-uv) [tool](https://docs.astral.sh/uv/concepts/tools/#tool-versions) ([`uv`](https://docs.astral.sh/uv/))
 
 ```sh
