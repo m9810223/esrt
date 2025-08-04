@@ -100,49 +100,49 @@ test-es-bulk:
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
-    ' | {{ ESRT }} es bulk {{ ES_HOST }} -y
+    ' | {{ ESRT }} es bulk {{ ES_HOST }}
 
     echo '
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
-    ' | {{ ESRT }} es bulk {{ ES_HOST }} -y -f -
+    ' | {{ ESRT }} es bulk {{ ES_HOST }} -f -
 
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f - <<<'
+    {{ ESRT }} es bulk {{ ES_HOST }} -f - <<<'
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f - <<EOF
+    {{ ESRT }} es bulk {{ ES_HOST }} -f - <<EOF
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     EOF
 
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -d'
+    {{ ESRT }} es bulk {{ ES_HOST }} -d'
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
     { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
     '
 
-    {{ ESRT }} es request {{ ES_HOST }} --url /my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} es bulk {{ ES_HOST }} -y -f - -w examples.my-handlers:handle
+    {{ ESRT }} es request {{ ES_HOST }} --url /my-index-2/_search | {{ JQ_ES_HITS }} -c | {{ ESRT }} es bulk {{ ES_HOST }} -f - -w examples.my-handlers:handle
 
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -v
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -n
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson -o {{ TEST_LOG_FILE }}
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --no-pretty
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -i my-index-i -d '{ "_type": "type1", "_id": "1", "field1": "ii" }'
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --chunk_size 1
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --max_chunk_bytes 1
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --raise_on_error
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --raise_on_exception
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --max_retries 0
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --initial_backoff 0
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --max_backoff 0
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --yield_ok
-    {{ ESRT }} es bulk {{ ES_HOST }} -y -f examples/bulk.ndjson --request_timeout 0
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson -v
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson -n
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson -o {{ TEST_LOG_FILE }}
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --no-pretty
+    {{ ESRT }} es bulk {{ ES_HOST }} -i my-index-i -d '{ "_type": "type1", "_id": "1", "field1": "ii" }'
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --chunk_size 1
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --max_chunk_bytes 1
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --raise_on_error
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --raise_on_exception
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --max_retries 0
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --initial_backoff 0
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --max_backoff 0
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --yield_ok
+    {{ ESRT }} es bulk {{ ES_HOST }} -f examples/bulk.ndjson --request_timeout 0
 
 [group('esrt')]
 test-es-search:
@@ -184,39 +184,39 @@ test-es-scan:
 
     echo '
     {"query": {"term": {"field1": "cc"}}}
-    ' | {{ ESRT }} es scan {{ ES_HOST }} -y
+    ' | {{ ESRT }} es scan {{ ES_HOST }}
 
     echo '
     {"query": {"term": {"field1": "cc"}}}
-    ' | {{ ESRT }} es scan {{ ES_HOST }} -y -f -
+    ' | {{ ESRT }} es scan {{ ES_HOST }} -f -
 
-    {{ ESRT }} es scan {{ ES_HOST }} -y -f - <<<'
+    {{ ESRT }} es scan {{ ES_HOST }} -f - <<<'
     {"query": {"term": {"field1": "cc"}}}
     '
 
-    {{ ESRT }} es scan {{ ES_HOST }} -y -f - <<EOF
+    {{ ESRT }} es scan {{ ES_HOST }} -f - <<EOF
     {"query": {"term": {"field1": "cc"}}}
     EOF
 
-    {{ ESRT }} es scan {{ ES_HOST }} -y -d'
+    {{ ESRT }} es scan {{ ES_HOST }} -d'
     {"query": {"term": {"field1": "cc"}}}
     '
 
-    {{ ESRT }} es scan {{ ES_HOST }} -y
-    {{ ESRT }} es scan {{ ES_HOST }} -y -v
+    {{ ESRT }} es scan {{ ES_HOST }}
+    {{ ESRT }} es scan {{ ES_HOST }} -v
     {{ ESRT }} es scan {{ ES_HOST }} -n
-    {{ ESRT }} es scan {{ ES_HOST }} -y -o {{ TEST_LOG_FILE }}
-    {{ ESRT }} es scan {{ ES_HOST }} -y --no-pretty
-    {{ ESRT }} es scan {{ ES_HOST }} -y -i my-index
-    {{ ESRT }} es scan {{ ES_HOST }} -y -p _source=false
-    {{ ESRT }} es scan {{ ES_HOST }} -y --doc_type type1
-    {{ ESRT }} es scan {{ ES_HOST }} -y --scroll 1s
-    {{ ESRT }} es scan {{ ES_HOST }} -y --raise_on_error
-    {{ ESRT }} es scan {{ ES_HOST }} -y -N 1
-    {{ ESRT }} es scan {{ ES_HOST }} -y -t 1
-    # {{ ESRT }} es scan {{ ES_HOST }} -y --scroll_kwargs rest_total_hits_as_int=
+    {{ ESRT }} es scan {{ ES_HOST }} -o {{ TEST_LOG_FILE }}
+    {{ ESRT }} es scan {{ ES_HOST }} --no-pretty
+    {{ ESRT }} es scan {{ ES_HOST }} -i my-index
+    {{ ESRT }} es scan {{ ES_HOST }} -p _source=false
+    {{ ESRT }} es scan {{ ES_HOST }} --doc_type type1
+    {{ ESRT }} es scan {{ ES_HOST }} --scroll 1s
+    {{ ESRT }} es scan {{ ES_HOST }} --raise_on_error
+    {{ ESRT }} es scan {{ ES_HOST }} -N 1
+    {{ ESRT }} es scan {{ ES_HOST }} -t 1
+    # {{ ESRT }} es scan {{ ES_HOST }} --scroll_kwargs rest_total_hits_as_int=
 
 [group('esrt')]
 test-es-others:
-    python examples/create-massive-docs.py | tee _.ndjson | {{ ESRT }} es bulk {{ ES_HOST }} -y -f -
-    python examples/copy-more-docs.py | {{ ESRT }} es bulk {{ ES_HOST }} -y -f - -w examples.copy-more-docs:handle
+    python examples/create-massive-docs.py | tee _.ndjson | {{ ESRT }} es bulk {{ ES_HOST }} -f -
+    python examples/copy-more-docs.py | {{ ESRT }} es bulk {{ ES_HOST }} -f - -w examples.copy-more-docs:handle
