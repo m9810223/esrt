@@ -15,6 +15,7 @@ from .cmd_base import OutputCmdMixin
 from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
+from .cmd_base import to_different_capitalization_conventions
 from .typealiases import HttpMethod
 
 
@@ -38,15 +39,15 @@ class EsRequestCmd(
         default='GET',
         validation_alias=AliasChoices(
             'X',
-            'method',
-            'request',
+            *to_different_capitalization_conventions('method'),
+            *to_different_capitalization_conventions('request'),
         ),
     )
     url: t.Annotated[str, AfterValidator(_validate_url)] = Field(
         default='/',
         validation_alias=AliasChoices(
             'u',
-            'url',
+            *to_different_capitalization_conventions('url'),
         ),
         description=rich_text('[b blue]Absolute url (without host) to target'),
     )

@@ -23,6 +23,7 @@ from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .cmd_base import to_different_capitalization_conventions
 from .exceptions import EsBulkIndexError
 from .handlers import HandlerT
 from .typealiases import JsonActionT
@@ -45,7 +46,7 @@ class EsBulkCmd(
         default=t.cast(HandlerT, 'esrt:handle'),
         validation_alias=AliasChoices(
             'w',
-            'handler',
+            *to_different_capitalization_conventions('handler'),
         ),
         description=rich_text('[b blue]A callable handles actions.'),
     )
@@ -54,7 +55,7 @@ class EsBulkCmd(
         default=2000,  # 500
         validation_alias=AliasChoices(
             'c',
-            'chunk_size',
+            *to_different_capitalization_conventions('chunk_size'),
         ),
         description=rich_text('[b blue]Number of docs in one chunk sent to es'),
     )

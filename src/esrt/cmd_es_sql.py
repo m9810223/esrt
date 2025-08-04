@@ -14,6 +14,7 @@ from .cmd_base import RequiredInputCmdMixin
 from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
+from .cmd_base import to_different_capitalization_conventions
 
 
 def _validate_url(value: str) -> str:
@@ -36,7 +37,7 @@ class EsSqlCmd(
         default='/_sql',
         validation_alias=AliasChoices(
             'u',
-            'sql_url',
+            *to_different_capitalization_conventions('sql_url'),
         ),
         description=rich_text('[b blue]SQL API URL, e.g. `/_sql`, `/_xpack/sql`, `/_nlpcn/sql`, ...'),
     )

@@ -14,6 +14,7 @@ from .__version__ import VERSION
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_es_bulk import EsBulkCmd
+from .cmd_es_bulk import to_different_capitalization_conventions
 from .cmd_es_info import EsInfoCmd
 from .cmd_es_ping import EsPingCmd
 from .cmd_es_request import EsRequestCmd
@@ -55,7 +56,7 @@ class MainCmd(BaseSettings):
         default=False,
         validation_alias=AliasChoices(
             'V',
-            'version',
+            *to_different_capitalization_conventions('version'),
         ),
     )
 

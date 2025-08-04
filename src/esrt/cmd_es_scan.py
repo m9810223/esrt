@@ -20,6 +20,7 @@ from .cmd_base import VerboseCmdMixin
 from .cmd_base import rich_text
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .cmd_base import to_different_capitalization_conventions
 from .typealiases import JsonBodyT
 
 
@@ -41,8 +42,8 @@ class EsScanCmd(
         default=True,
         validation_alias=AliasChoices(
             'e',
-            'raise',
-            'raise_on_error',
+            *to_different_capitalization_conventions('raise'),
+            *to_different_capitalization_conventions('raise_on_error'),
         ),
         description=rich_text('[b blue]Raises an exception if an error is encountered (some shards fail to execute).'),
     )
@@ -52,7 +53,7 @@ class EsScanCmd(
         le=10000,
         validation_alias=AliasChoices(
             'N',
-            'size',
+            *to_different_capitalization_conventions('size'),
         ),
         description=rich_text('[b blue]Size (per shard) of the batch send at each iteration.'),
     )
@@ -60,7 +61,7 @@ class EsScanCmd(
         default=None,
         validation_alias=AliasChoices(
             't',
-            'request_timeout',
+            *to_different_capitalization_conventions('request_timeout'),
         ),
         description=rich_text('[b blue]Explicit timeout for each call to scan.'),
     )
@@ -69,7 +70,7 @@ class EsScanCmd(
         default_factory=dict,
         validation_alias=AliasChoices(
             'k',
-            'scroll_kwargs',
+            *to_different_capitalization_conventions('scroll_kwargs'),
         ),
         description=rich_text('[b blue]Additional kwargs to be passed to `Elasticsearch.scroll`'),
     )

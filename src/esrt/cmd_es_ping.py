@@ -8,6 +8,7 @@ from .cmd_base import VerboseCmdMixin
 from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_base import stderr_dim_console
+from .cmd_base import to_different_capitalization_conventions
 
 
 class EsPingCmd(
@@ -19,7 +20,7 @@ class EsPingCmd(
         default=True,
         validation_alias=AliasChoices(
             'I',
-            'info',
+            *to_different_capitalization_conventions('info'),
         ),
     )
 
