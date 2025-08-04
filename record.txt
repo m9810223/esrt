@@ -4,9 +4,9 @@
 >>> uv run esrt es ping localhost:9200
 Ping ok
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -21,9 +21,9 @@ Ping ok
 Ping [{'host': 'localhost', 'port': 9200}]
 Ping ok
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -37,9 +37,9 @@ Ping ok
 >>> uv run esrt es ping localhost:9200 -I
 Ping ok
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -54,9 +54,9 @@ Ping ok
 
 >>> uv run esrt es request localhost:9200
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -75,7 +75,7 @@ EsRequestCmd(
     client=<EsClient([{'host': 'localhost', 'port': 9200}])>,
     verbose=True,
     ipython=False,
-    output=<console width=156 None>,
+    output=<console width=107 None>,
     pretty=True,
     params={},
     headers={},
@@ -85,9 +85,9 @@ EsRequestCmd(
     url='/'
 )
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -102,9 +102,9 @@ EsRequestCmd(
 
 >>> uv run esrt es request localhost:9200 -H a=1 -H b=false
 {
-  "name": "fekKj1S",
-  "cluster_name": "elasticsearch",
-  "cluster_uuid": "86c1zW_bSue2XTIalGqXQQ",
+  "name": "esrt-es",
+  "cluster_name": "esrt-es",
+  "cluster_uuid": "jxMzWPt4RBmI6inGplSHRQ",
   "version": {
     "number": "5.6.9",
     "build_hash": "877a590",
@@ -120,7 +120,7 @@ EsRequestCmd(
     client=<EsClient([{'host': 'localhost', 'port': 9200}])>,
     verbose=True,
     ipython=False,
-    output=<console width=156 None>,
+    output=<console width=107 None>,
     pretty=True,
     params={'v': 'true', 's': 'index'},
     headers={},
@@ -140,12 +140,12 @@ health status index uuid pri rep docs.count docs.deleted store.size pri.store.si
 }
 
 >>> uv run esrt es request localhost:9200 --url /_cat/indices
-yellow open my-index DEBkhVSxSJaBXx---Palmg 5 1 0 0 324b 324b
+yellow open my-index U5AKiEdhTl-_xJ95e5re0Q 5 1 0 0 324b 324b
 
 
 >>> uv run esrt es request localhost:9200 --url '/_cat/indices?v'
 health status index    uuid                   pri rep docs.count docs.deleted store.size pri.store.size
-yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0       324b           324b
+yellow open   my-index U5AKiEdhTl-_xJ95e5re0Q   5   1          0            0       324b           324b
 
 
 >>> uv run esrt es request localhost:9200 --url '/_cat/indices?v&format=json'
@@ -154,7 +154,7 @@ yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0   
     "health": "yellow",
     "status": "open",
     "index": "my-index",
-    "uuid": "DEBkhVSxSJaBXx---Palmg",
+    "uuid": "U5AKiEdhTl-_xJ95e5re0Q",
     "pri": "5",
     "rep": "1",
     "docs.count": "0",
@@ -170,7 +170,7 @@ yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0   
     "health": "yellow",
     "status": "open",
     "index": "my-index",
-    "uuid": "DEBkhVSxSJaBXx---Palmg",
+    "uuid": "U5AKiEdhTl-_xJ95e5re0Q",
     "pri": "5",
     "rep": "1",
     "docs.count": "0",
@@ -188,7 +188,7 @@ yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0   
 { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
 '
 
->>> uv run esrt es bulk localhost:9200 -y
+>>> uv run esrt es bulk localhost:9200
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
 
 >>> echo '
@@ -197,16 +197,16 @@ yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0   
 { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
 '
 
->>> uv run esrt es bulk localhost:9200 -y -f -
+>>> uv run esrt es bulk localhost:9200 -f -
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f -
+>>> uv run esrt es bulk localhost:9200 -f -
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f -
+>>> uv run esrt es bulk localhost:9200 -f -
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
 
->>> uv run esrt es bulk localhost:9200 -y '-d
+>>> uv run esrt es bulk localhost:9200 '-d
 { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "1", "field1": "11" }
 { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "2", "field1": "22" }
 { "_op_type": "index", "_index": "my-index-2", "_type": "type1", "_id": "3", "field1": "33" }
@@ -217,19 +217,19 @@ yellow open   my-index DEBkhVSxSJaBXx---Palmg   5   1          0            0   
 
 >>> jq '.hits.hits[]' -c
 
->>> uv run esrt es bulk localhost:9200 -y -f - -w examples.my-handlers:handle
-⠙ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
+>>> uv run esrt es bulk localhost:9200 -f - -w examples.my-handlers:handle
+⠸ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 3/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson -v
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson -v
 EsBulkCmd(
     client=<EsClient([{'host': 'localhost', 'port': 9200}])>,
     verbose=True,
     ipython=False,
     dry_run=False,
-    output=<console width=156 None>,
+    output=<console width=107 None>,
     yes=True,
     pretty=False,
     input_=<_io.TextIOWrapper name='examples/bulk.ndjson' mode='r' encoding='UTF-8'>,
@@ -237,7 +237,7 @@ EsBulkCmd(
     index=None,
     params={},
     doc_type=None,
-    handler=<function handle at 0x1038c2790>,
+    handler=<function handle at 0x1060f5790>,
     chunk_size=2000,
     max_chunk_bytes=104857600,
     raise_on_error=False,
@@ -254,49 +254,49 @@ EsBulkCmd(
 {"_op_type": "update", "_index": "my-index", "_type": "type1", "_id": "1", "doc": {"field2": "uu"}}
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson -n
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson -n
 Dry run
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 Dry run end
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson -o _.test.log
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson -o _.test.log
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --no-pretty
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --no-pretty
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -i my-index-i -d '{ "_type": "type1", "_id": "1", "field1": "ii" }'
+>>> uv run esrt es bulk localhost:9200 -i my-index-i -d '{ "_type": "type1", "_id": "1", "field1": "ii" }'
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 1/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --chunk_size 1
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --chunk_size 1
+⠙ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
+
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --max_chunk_bytes 1
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --max_chunk_bytes 1
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --raise_on_error
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --raise_on_error
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --raise_on_exception
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --raise_on_exception
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --max_retries 0
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --max_retries 0
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --initial_backoff 0
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --initial_backoff 0
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --max_backoff 0
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --max_backoff 0
-⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
-
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --yield_ok
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --yield_ok
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 {"index": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 45, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": false, "status": 200}}
 {"delete": {"found": true, "_index": "my-index", "_type": "type1", "_id": "1", "_version": 46, "result": "deleted", "_shards": {"total": 2, "successful": 1, "failed": 0}, "status": 200}}
 {"create": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 47, "result": "created", "_shards": {"total": 2, "successful": 1, "failed": 0}, "created": true, "status": 201}}
 {"update": {"_index": "my-index", "_type": "type1", "_id": "1", "_version": 48, "result": "updated", "_shards": {"total": 2, "successful": 1, "failed": 0}, "status": 200}}
 
->>> uv run esrt es bulk localhost:9200 -y -f examples/bulk.ndjson --request_timeout 0
+>>> uv run esrt es bulk localhost:9200 -f examples/bulk.ndjson --request_timeout 0
 ⠋ bulk ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ?  0:00:00 4/?  
 
 ---
@@ -310,7 +310,7 @@ Dry run end
 >>> jq '.hits.hits[]' -c
 {"_index":"my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
 {"_index":"new-my-index-2","_type":"type1","_id":"2","_score":1.0,"_source":{"field1":"22"}}
-{"_index":"my-index","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"cc"}}
+{"_index":"my-index","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"cc","field2":"uu"}}
 {"_index":"my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
 {"_index":"my-index-i","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"ii"}}
 {"_index":"new-my-index-2","_type":"type1","_id":"1","_score":1.0,"_source":{"field1":"11"}}
@@ -368,7 +368,7 @@ EsSearchCmd(
     client=<EsClient([{'host': 'localhost', 'port': 9200}])>,
     verbose=True,
     ipython=False,
-    output=<console width=156 None>,
+    output=<console width=107 None>,
     pretty=True,
     input_=None,
     data=None,
@@ -378,7 +378,7 @@ EsSearchCmd(
 )
 >null
 <{
-  "took": 24,
+  "took": 26,
   "timed_out": false,
   "_shards": {
     "total": 20,
@@ -470,7 +470,7 @@ EsSearchCmd(
 >>> uv run esrt es search localhost:9200 -o _.test.log
 
 >>> uv run esrt es search localhost:9200 --no-pretty
-{"took": 14, "timed_out": false, "_shards": {"total": 20, "successful": 20, "skipped": 0, "failed": 0}, "hits": {"total": 8, "max_score": 1.0, "hits": [{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": 1.0, "_source": {"field1": "22"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": 1.0, "_source": {"field1": "22"}}, {"_index": "my-index", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "cc", "field2": "uu"}}, {"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "11"}}, {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "ii"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "11"}}, {"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": 1.0, "_source": {"field1": "33"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": 1.0, "_source": {"field1": "33"}}]}}
+{"took": 12, "timed_out": false, "_shards": {"total": 20, "successful": 20, "skipped": 0, "failed": 0}, "hits": {"total": 8, "max_score": 1.0, "hits": [{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": 1.0, "_source": {"field1": "22"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": 1.0, "_source": {"field1": "22"}}, {"_index": "my-index", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "cc", "field2": "uu"}}, {"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "11"}}, {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "ii"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": 1.0, "_source": {"field1": "11"}}, {"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": 1.0, "_source": {"field1": "33"}}, {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": 1.0, "_source": {"field1": "33"}}]}}
 
 >>> uv run esrt es search localhost:9200 -i my-index
 {
@@ -502,7 +502,7 @@ EsSearchCmd(
 
 >>> uv run esrt es search localhost:9200 -p from=1
 {
-  "took": 33,
+  "took": 50,
   "timed_out": false,
   "_shards": {
     "total": 20,
@@ -584,7 +584,7 @@ EsSearchCmd(
 
 >>> uv run esrt es search localhost:9200 --doc_type type1
 {
-  "took": 56,
+  "took": 101,
   "timed_out": false,
   "_shards": {
     "total": 20,
@@ -679,51 +679,51 @@ EsSearchCmd(
 {"query": {"term": {"field1": "cc"}}}
 '
 
->>> uv run esrt es scan localhost:9200 -y
+>>> uv run esrt es scan localhost:9200
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
 >>> echo '
 {"query": {"term": {"field1": "cc"}}}
 '
 
->>> uv run esrt es scan localhost:9200 -y -f -
+>>> uv run esrt es scan localhost:9200 -f -
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 
->>> uv run esrt es scan localhost:9200 -y -f -
+>>> uv run esrt es scan localhost:9200 -f -
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 
->>> uv run esrt es scan localhost:9200 -y -f -
+>>> uv run esrt es scan localhost:9200 -f -
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 
->>> uv run esrt es scan localhost:9200 -y '-d
+>>> uv run esrt es scan localhost:9200 '-d
 {"query": {"term": {"field1": "cc"}}}
 '
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 
->>> uv run esrt es scan localhost:9200 -y
+>>> uv run esrt es scan localhost:9200
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y -v
+>>> uv run esrt es scan localhost:9200 -v
 EsScanCmd(
     client=<EsClient([{'host': 'localhost', 'port': 9200}])>,
     verbose=True,
     ipython=False,
     dry_run=False,
-    output=<console width=156 None>,
+    output=<console width=227 None>,
     yes=True,
     pretty=False,
     input_=None,
@@ -742,7 +742,7 @@ EsScanCmd(
     verbose=True,
     ipython=False,
     dry_run=False,
-    output=<console width=156 None>,
+    output=<console width=227 None>,
     yes=True,
     pretty=False,
     input_=None,
@@ -756,90 +756,90 @@ EsScanCmd(
     request_timeout=None,
     scroll_kwargs={}
 )
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
 >>> uv run esrt es scan localhost:9200 -n
 Total: 8
 
->>> uv run esrt es scan localhost:9200 -y -o _.test.log
+>>> uv run esrt es scan localhost:9200 -o _.test.log
   scan ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ? 100% 0:00:00 8/8 0:00:00
 
->>> uv run esrt es scan localhost:9200 -y --no-pretty
+>>> uv run esrt es scan localhost:9200 --no-pretty
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y -i my-index
+>>> uv run esrt es scan localhost:9200 -i my-index
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
 
->>> uv run esrt es scan localhost:9200 -y -p _source=false
+>>> uv run esrt es scan localhost:9200 -p _source=false
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y --doc_type type1
+>>> uv run esrt es scan localhost:9200 --doc_type type1
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y --scroll 1s
+>>> uv run esrt es scan localhost:9200 --scroll 1s
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y --raise_on_error
+>>> uv run esrt es scan localhost:9200 --raise_on_error
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y -N 1
+>>> uv run esrt es scan localhost:9200 -N 1
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
 
->>> uv run esrt es scan localhost:9200 -y -t 1
+>>> uv run esrt es scan localhost:9200 -t 1
+{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [0]}
 {"_index": "my-index", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "cc", "field2": "uu"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
 {"_index": "my-index-i", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "ii"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [0]}
+{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
 {"_index": "new-my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [0]}
-{"_index": "my-index-2", "_type": "type1", "_id": "2", "_score": null, "_source": {"field1": "22"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "1", "_score": null, "_source": {"field1": "11"}, "sort": [2]}
-{"_index": "my-index-2", "_type": "type1", "_id": "3", "_score": null, "_source": {"field1": "33"}, "sort": [2]}
