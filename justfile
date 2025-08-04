@@ -8,7 +8,10 @@ ES_PORT := "9200"
 
 [group('Elasticsearch')]
 start-es_server:
-    docker run --name {{ ES_NAME }} --rm -itd --platform=linux/amd64 -p {{ ES_PORT }}:9200 elasticsearch:5.6.9-alpine
+    docker run --name {{ ES_NAME }} --rm -itd --platform=linux/amd64 -p {{ ES_PORT }}:9200 --health-cmd="wget -q -O /dev/null http://localhost:9200/_cluster/health || exit 1" --health-interval=5s --health-timeout=3s --health-retries=3 elasticsearch:5.6.9-alpine elasticsearch -E node.name={{ ES_NAME }} -E cluster.name={{ ES_NAME }}
+    echo "等待 Elasticsearch 服務健康檢查..."
+    while [ "$(docker inspect --format='{{{{.State.Health.Status}}' {{ ES_NAME }})" != "healthy" ]; do echo "等待中..."; sleep 2; done
+    echo "Elasticsearch 服務已就緒！"
 
 [private]
 es_server-install-sql_plugin:
