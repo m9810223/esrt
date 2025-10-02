@@ -17,6 +17,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
+  "certifi>=2025.8.3",
   "elasticsearch==6.8.2",
   "ipython>=8.18.1",
   "pydantic>=2.10.6",
