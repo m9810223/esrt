@@ -78,7 +78,7 @@ wheels = [
 
 [[package]]
 name = "esrt"
-version = "8.5.0"
+version = "8.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "certifi" },

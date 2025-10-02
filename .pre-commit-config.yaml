@@ -25,7 +25,7 @@ repos:
   ### PYTHON
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 99abe27a5a16f301d9e0a3828181399dfbf54ebd # frozen: v0.11.0
+    rev: f298305809c552671cc47e0fec0ba43e96c146a2  # frozen: v0.13.2
     hooks: # https://beta.ruff.rs/docs/installation-and-usage/#usage
       - id: ruff
         args:
@@ -42,12 +42,12 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: "57b6ff7bf72affdd12c7f3fd6de761ba18a33b3a" # frozen: v2.5.1
+    rev: "8a22e281b3f6d1bb298aaabfc165a943a943882c"  # frozen: v2.7.0
     hooks:
       - id: pyproject-fmt
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "f40886d54c729f533f864ed6ce584e920feb0af7" # frozen: v1.15.0
+    rev: "9f70dc58c23dfcca1b97af99eaeee3140a807c7e"  # frozen: v1.18.2
     hooks:
       - id: mypy
         args:
@@ -56,7 +56,7 @@ repos:
   ### MISC
 
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: a6273196190bb0f68caf1dc68073cf62c719f725 # frozen: v2.14.0
+    rev: 19b28a9f0a0102b30776f054bea4176e7af50dbe  # frozen: v2.15.0
     hooks:
       - id: pretty-format-yaml
         args:
@@ -65,7 +65,7 @@ repos:
           - --autofix
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b # frozen: v5.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks: # https://pre-commit.com/hooks.html
       # `(\S) - ` -> `$1 # `
       - id: check-added-large-files # prevents giant files from being committed.
