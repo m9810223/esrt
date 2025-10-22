@@ -1,6 +1,7 @@
 # esrt - Elasticsearch Request Tool
 
 [![pypi](https://img.shields.io/pypi/v/esrt.svg)](https://pypi.python.org/pypi/esrt)
+[![esrt month downloads](https://static.pepy.tech/badge/esrt/month)](https://pepy.tech/project/esrt)
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/m9810223/esrt)
 
