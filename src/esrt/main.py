@@ -15,6 +15,7 @@ from .cmd_base import console
 from .cmd_base import stderr_console
 from .cmd_es_bulk import EsBulkCmd
 from .cmd_es_bulk import to_different_capitalization_conventions
+from .cmd_es_count import EsCountCmd
 from .cmd_es_info import EsInfoCmd
 from .cmd_es_ping import EsPingCmd
 from .cmd_es_request import EsRequestCmd
@@ -35,7 +36,10 @@ class EsCmd(BaseSettings):
 
     ping: CliSubCommand[EsPingCmd]
     info: CliSubCommand[EsInfoCmd]
+
+    count: CliSubCommand[EsCountCmd]
     search: CliSubCommand[EsSearchCmd]
+
     scan: CliSubCommand[EsScanCmd]
     bulk: CliSubCommand[EsBulkCmd]
 

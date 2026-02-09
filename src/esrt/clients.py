@@ -33,6 +33,22 @@ class EsClient:
         return self._client.info()
 
     @validate_call(validate_return=True)
+    def count(
+        self,
+        *,
+        index: t.Optional[str] = None,
+        doc_type: t.Optional[str] = None,
+        body: t.Optional[JsonBodyT] = None,
+        params: t.Optional[dict[str, JsonValue]] = None,
+    ) -> JsonValue:
+        return self._client.count(
+            index=index,
+            doc_type=doc_type,
+            body=body,
+            params=params,
+        )
+
+    @validate_call(validate_return=True)
     def search(
         self,
         *,
