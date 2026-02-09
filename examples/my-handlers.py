@@ -2,8 +2,7 @@ import json
 import typing as t
 
 
-
-def handle(actions: t.Iterable[str]):
+def handle(actions: t.Iterable[str]):  # noqa: ANN201
     for action in actions:
         obj = json.loads(action)
         prefix = 'new-'

@@ -14,7 +14,7 @@ if __name__ == '__main__':
         print(json.dumps(d))
 
 
-def handle(actions: t.Iterable[str]):
+def handle(actions: t.Iterable[str]):  # noqa: ANN201
     for action in actions:
         d: dict[str, t.Any] = json.loads(action)
         yield d
