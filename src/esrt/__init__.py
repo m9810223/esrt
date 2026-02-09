@@ -1,4 +1,4 @@
-from .handlers import  handle
+from .handlers import handle
 
 
 __all__ = [
