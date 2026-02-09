@@ -26,7 +26,7 @@ remove-es_server:
 restart-es_server: remove-es_server start-es_server
 
 ESRT := "uv run esrt"
-ES_HOST := "localhost:" + ES_PORT
+ES_HOST := "--host localhost:" + ES_PORT
 JQ_ES_HITS := "jq '.hits.hits[]'"
 
 [group('esrt')]

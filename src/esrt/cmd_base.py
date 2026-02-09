@@ -21,7 +21,6 @@ from pydantic import validate_call
 from pydantic.alias_generators import to_snake
 from pydantic_settings import BaseSettings
 from pydantic_settings import CliImplicitFlag
-from pydantic_settings import CliPositionalArg
 from pydantic_settings import SettingsConfigDict
 from rich.console import Console
 from rich.progress import BarColumn
@@ -121,6 +120,7 @@ def _validate_to_different_capitalization_conventions(field_name: str) -> AliasC
 
 class _BaseCmd(BaseSettings):
     model_config: t.ClassVar[SettingsConfigDict] = SettingsConfigDict(
+        env_prefix='ESRT_',
         alias_generator=AliasGenerator(validation_alias=_validate_to_different_capitalization_conventions),
     )
 
@@ -278,10 +278,10 @@ class IpythonCmdMixin(_BaseCmd):
 
 
 class BaseEsCmd(_BaseCmd):
-    client: CliPositionalArg[t.Annotated[EsClient, BeforeValidator(EsClient)]] = Field(
-        # default=t.cast(EsClient, '127.0.0.1:9200'),
+    client: t.Annotated[EsClient, BeforeValidator(EsClient)] = Field(
         validation_alias=AliasChoices(
-            'es_host',
+            'host',
+            *to_different_capitalization_conventions('es_host'),
         ),
     )
 
@@ -516,3 +516,46 @@ class DefaultNotPrettyCmdMixin(BaseEsCmd):
     pretty: CliImplicitFlag[bool] = Field(
         default=False,
     )
+
+
+class SimpleQueryCmd(
+    EsDocTypeCmdMixin,
+    EsParamsCmdMixin,
+    EsIndexCmdMixin,
+    OptionalInputCmdMixin,
+    DefaultPrettyCmdMixin,
+    OutputCmdMixin,
+    IpythonCmdMixin,
+    VerboseCmdMixin,
+    BaseEsCmd,
+):
+    _status_message: t.ClassVar[str]
+
+    def _execute_query(self, body: t.Optional[JsonBodyT]) -> JsonValue:
+        raise NotImplementedError
+
+    def cli_cmd(self) -> None:
+        if self.verbose:
+            stderr_console.print(self)
+
+        if self.verbose:
+            stderr_dim_console.print('>', end='')
+        body = self.read_json_input()
+
+        if self.verbose and not self.is_input_stdin:
+            stderr_console.print_json(data=body)
+
+        if self.verbose:
+            stderr_dim_console.print('<', end='')
+
+        with stderr_console.status(self._status_message) as _status:
+            _status.update(spinner='bouncingBall')
+
+            result = self._execute_query(body)
+
+        if self.pretty:
+            self.output.print_json(data=result)
+        else:
+            self.output.print_json(data=result, indent=None)
+
+        return self.start_ipython_if_need()

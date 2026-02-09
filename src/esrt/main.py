@@ -50,7 +50,7 @@ class EsCmd(BaseSettings):
 class MainCmd(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
-        # env_prefix='ESRT_',
+        env_prefix='ESRT_',
         cli_prog_name='esrt',
         cli_enforce_required=True,
         # cli_kebab_case=True,  # default is False

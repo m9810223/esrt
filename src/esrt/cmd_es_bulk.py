@@ -1,4 +1,5 @@
 from collections import deque
+import sys
 import typing as t
 
 from pydantic import AliasChoices
@@ -7,7 +8,6 @@ from pydantic import Field
 from pydantic import JsonValue
 from pydantic import validate_call
 from pydantic_settings import CliImplicitFlag
-from uvicorn.importer import import_from_string
 
 from .cmd_base import BaseEsCmd
 from .cmd_base import ConfirmCmdMixin
@@ -26,6 +26,7 @@ from .cmd_base import stderr_dim_console
 from .cmd_base import to_different_capitalization_conventions
 from .exceptions import EsBulkIndexError
 from .handlers import HandlerT
+from .handlers import import_from_string
 from .typealiases import JsonActionT
 
 
@@ -195,5 +196,6 @@ class EsBulkCmd(
                 '',
                 sep='\n',
             )
+            sys.exit(1)
 
         return self.start_ipython_if_need()
