@@ -24,8 +24,6 @@ dependencies = [
   "pydantic-settings>=2.8.1",
   "rich>=13.9.4",
   "typing-extensions>=4.12.2",
-  # uvicorn.importer.import_from_string
-  "uvicorn>=0.2.14",
 ]
 
 scripts.esrt = "esrt.__main__:main"
